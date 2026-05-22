@@ -1,0 +1,28 @@
+# Go build outputs
+*.test
+*.out
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Coverage
+coverage.out
+coverage.html
+*.cov
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vendor (本書はモジュールごとに分離するため使わない)
+vendor/
+
+# Testcontainers ログ
+testcontainers.log
