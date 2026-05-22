@@ -1,3 +1,5 @@
+//go:build pg
+
 package infrastructure
 
 import (
