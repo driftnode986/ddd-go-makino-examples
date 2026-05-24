@@ -1,6 +1,6 @@
 # ddd-go-makino-examples
 
-『現場で使える Go 言語ドメイン駆動設計』（牧野 誠）のサンプルコード。
+『[現場で使える Go 言語ドメイン駆動設計](https://www.amazon.co.jp/dp/B0H2R8N7WP)』（牧野 誠 著 / Amazon Kindle）のサンプルコード。
 
 書籍内のすべての Go コード片はこのリポジトリで動作確認できます。`go test ./...` で各章のテストが PASS することを確認しながら読み進めてください。
 
