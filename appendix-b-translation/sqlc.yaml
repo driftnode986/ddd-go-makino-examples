@@ -1,0 +1,18 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    schema: "db/identity_schema.sql"
+    queries: "db/identity_queries.sql"
+    gen:
+      go:
+        package: "sqlcgen"
+        out: "internal/identity/infrastructure/sqlcgen"
+        sql_package: "pgx/v5"
+  - engine: "postgresql"
+    schema: "db/booking_schema.sql"
+    queries: "db/booking_queries.sql"
+    gen:
+      go:
+        package: "sqlcgen"
+        out: "internal/booking/infrastructure/sqlcgen"
+        sql_package: "pgx/v5"
