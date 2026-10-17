@@ -40,8 +40,8 @@ func TestPricingService_CalculateFinalPrice(t *testing.T) {
 		if _, err := svc.CalculateFinalPrice(
 			yen(t, 3000),
 			coupon,
-		); err == nil {
-			t.Fatal("want error for expired coupon")
+		); !errors.Is(err, pricing.ErrCouponExpired) {
+			t.Fatalf("want ErrCouponExpired, got %v", err)
 		}
 	})
 	t.Run("discount larger than price", func(t *testing.T) {
@@ -60,5 +60,32 @@ func TestMoney_Subtract_CurrencyMismatch(t *testing.T) {
 		pricing.ErrCurrencyMismatch,
 	) {
 		t.Fatalf("want ErrCurrencyMismatch, got %v", err)
+	}
+}
+
+func TestMoney_AddAndEquals(t *testing.T) {
+	a, b := yen(t, 1000), yen(t, 500)
+	sum, err := a.Add(b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !sum.Equals(yen(t, 1500)) {
+		t.Fatalf("Add: got %v", sum)
+	}
+	if !a.Equals(yen(t, 1000)) {
+		t.Fatal("Add must not change the receiver")
+	}
+	usd, _ := pricing.NewMoney(10, "USD")
+	if _, err := a.Add(usd); !errors.Is(
+		err,
+		pricing.ErrCurrencyMismatch,
+	) {
+		t.Fatalf("want ErrCurrencyMismatch, got %v", err)
+	}
+	if _, err := pricing.NewMoney(-1, "JPY"); !errors.Is(
+		err,
+		pricing.ErrNegativeAmount,
+	) {
+		t.Fatalf("want ErrNegativeAmount, got %v", err)
 	}
 }

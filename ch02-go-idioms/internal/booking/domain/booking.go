@@ -24,11 +24,15 @@ func (b *Booking) Confirm() error {
 }
 
 // #region cancel
-func (b *Booking) Cancel(reason string) error {
+// clock は現在時刻を返す関数。テストでは固定の時刻を返す関数を渡す
+func (b *Booking) Cancel(
+	reason string,
+	clock func() time.Time,
+) error {
 	if b.status == StatusCompleted {
 		return ErrBookingCannotCancel
 	}
-	if time.Until(b.scheduledAt) < 24*time.Hour {
+	if b.scheduledAt.Sub(clock()) < 24*time.Hour {
 		return ErrBookingCannotCancel
 	}
 	b.status = StatusCancelled

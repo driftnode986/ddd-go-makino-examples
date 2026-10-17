@@ -7,13 +7,12 @@ import (
 	"net/http"
 
 	"github.com/driftnode986/ddd-go-makino-examples/ch02-go-idioms/internal/booking/domain"
-	identity "github.com/driftnode986/ddd-go-makino-examples/ch02-go-idioms/internal/identity/domain"
 )
 
 // #endregion
 
 // #region handle-create-booking-a
-// アプリケーション層でドメインエラーを HTTP ステータスに対応させる
+// HTTP のアダプタでドメインエラーを HTTP ステータスに対応させる
 func (h *Handler) handleCreateBooking(
 	w http.ResponseWriter,
 	r *http.Request,
@@ -26,12 +25,10 @@ func (h *Handler) handleCreateBooking(
 
 	// #endregion
 	// #region handle-create-booking-b
+	// このユースケースが返すエラーだけを並べる
 	switch {
-	case errors.Is(err, identity.ErrInvalidEmail),
-		errors.Is(err, identity.ErrInvalidDisplayName):
+	case errors.Is(err, domain.ErrInvalidBooking):
 		http.Error(w, err.Error(), http.StatusBadRequest)
-	case errors.Is(err, domain.ErrBookingNotFound):
-		http.Error(w, err.Error(), http.StatusNotFound)
 	case errors.Is(err, domain.ErrScheduleConflict):
 		http.Error(w, err.Error(), http.StatusConflict)
 	default:

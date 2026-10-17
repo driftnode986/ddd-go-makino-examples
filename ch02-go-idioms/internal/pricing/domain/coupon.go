@@ -8,15 +8,15 @@ type Coupon struct {
 	validUntil time.Time
 }
 
-// NewCoupon は validUntil まで使える、discount だけ割り引くクーポンを返す。
+// NewCoupon は validUntil まで使え、discount だけ割り引く
+// クーポンを返す。
 func NewCoupon(discount Money, validUntil time.Time) *Coupon {
 	return &Coupon{discount: discount, validUntil: validUntil}
 }
 
-// IsValidAt は now の時点でクーポンが使えるかを返す (validUntil ちょうどまで有効)。
-func (c *Coupon) IsValidAt(
-	now time.Time,
-) bool {
+// IsValidAt は now の時点でクーポンが使えるかを返す
+// (validUntil ちょうどまで有効)。
+func (c *Coupon) IsValidAt(now time.Time) bool {
 	return !now.After(c.validUntil)
 }
 

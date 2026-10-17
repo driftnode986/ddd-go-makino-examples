@@ -71,7 +71,8 @@ func TestBooking_Confirm(t *testing.T) {
 func TestBooking_Cancel(t *testing.T) {
 	t.Run("more than 24 hours before", func(t *testing.T) {
 		b := newBooking(t, time.Now().Add(48*time.Hour))
-		if err := b.Cancel("schedule changed"); err != nil {
+		err := b.Cancel("schedule changed", time.Now)
+		if err != nil {
 			t.Fatalf("Cancel: %v", err)
 		}
 		if b.Status() != domain.StatusCancelled ||
@@ -85,11 +86,30 @@ func TestBooking_Cancel(t *testing.T) {
 	})
 	t.Run("within 24 hours", func(t *testing.T) {
 		b := newBooking(t, time.Now().Add(1*time.Hour))
-		if err := b.Cancel("late"); !errors.Is(
+		if err := b.Cancel("late", time.Now); !errors.Is(
 			err,
 			domain.ErrBookingCannotCancel,
 		) {
 			t.Fatalf("want ErrBookingCannotCancel, got %v", err)
+		}
+	})
+	t.Run("decided by the injected clock", func(t *testing.T) {
+		at := time.Date(2026, 6, 2, 10, 0, 0, 0, time.UTC)
+		b := newBooking(t, at)
+		justIn := func() time.Time {
+			return at.Add(-24 * time.Hour)
+		}
+		tooLate := func() time.Time {
+			return at.Add(-23 * time.Hour)
+		}
+		if err := b.Cancel("late", tooLate); !errors.Is(
+			err,
+			domain.ErrBookingCannotCancel,
+		) {
+			t.Fatalf("23h before: want error, got %v", err)
+		}
+		if err := b.Cancel("ok", justIn); err != nil {
+			t.Fatalf("24h before: %v", err)
 		}
 	})
 	t.Run("completed", func(t *testing.T) {
@@ -100,7 +120,7 @@ func TestBooking_Cancel(t *testing.T) {
 		if err := b.MarkCompleted(); err != nil {
 			t.Fatal(err)
 		}
-		if err := b.Cancel("too late"); !errors.Is(
+		if err := b.Cancel("too late", time.Now); !errors.Is(
 			err,
 			domain.ErrBookingCannotCancel,
 		) {
@@ -131,7 +151,7 @@ func TestBooking_Reschedule(t *testing.T) {
 	if !b.ScheduledAt().Equal(newAt) {
 		t.Fatalf("ScheduledAt: got %v", b.ScheduledAt())
 	}
-	if err := b.Cancel("x"); err != nil {
+	if err := b.Cancel("x", time.Now); err != nil {
 		t.Fatal(err)
 	}
 	if err := b.Reschedule(newAt); !errors.Is(

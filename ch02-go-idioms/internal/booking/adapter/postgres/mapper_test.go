@@ -13,7 +13,7 @@ func TestToRow_CopiesDomainFields(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := b.Cancel("schedule changed"); err != nil {
+	if err := b.Cancel("schedule changed", time.Now); err != nil {
 		t.Fatal(err)
 	}
 	row := toRow(b)

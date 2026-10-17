@@ -2,9 +2,11 @@
 package pricing
 
 import (
-	"fmt"
+	"errors"
 	"time"
 )
+
+var ErrCouponExpired = errors.New("coupon expired")
 
 type Clock interface {
 	Now() time.Time
@@ -27,7 +29,7 @@ func (s *PricingService) CalculateFinalPrice(
 ) (Money, error) {
 	now := s.clock.Now()
 	if !coupon.IsValidAt(now) {
-		return Money{}, fmt.Errorf("coupon expired")
+		return Money{}, ErrCouponExpired
 	}
 	return base.Subtract(coupon.DiscountAmount())
 }

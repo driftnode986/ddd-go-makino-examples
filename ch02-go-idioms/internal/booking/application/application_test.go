@@ -1,9 +1,12 @@
 package application_test
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"iter"
+	"log/slog"
 	"testing"
 	"time"
 
@@ -185,4 +188,32 @@ func TestProcessMemberBookings(t *testing.T) {
 			t.Fatalf("want wrapped iteration error, got %v", err)
 		}
 	})
+}
+
+// JSON のログで booking_id が {} でなく ID の文字列になることを確かめる
+func TestBookLessonUseCase_Execute_LogsBookingIDAsString(
+	t *testing.T,
+) {
+	var buf bytes.Buffer
+	prev := slog.Default()
+	slog.SetDefault(slog.New(slog.NewJSONHandler(&buf, nil)))
+	t.Cleanup(func() { slog.SetDefault(prev) })
+
+	repo := &fakeRepo{}
+	if err := application.NewBookLessonUseCase(repo).Execute(
+		context.Background(),
+		input(),
+	); err != nil {
+		t.Fatal(err)
+	}
+	var entry struct {
+		BookingID any `json:"booking_id"`
+	}
+	if err := json.Unmarshal(buf.Bytes(), &entry); err != nil {
+		t.Fatalf("log is not JSON: %v: %s", err, buf.String())
+	}
+	if entry.BookingID != repo.saved[0].ID().String() {
+		t.Fatalf("booking_id: got %v want %s",
+			entry.BookingID, repo.saved[0].ID().String())
+	}
 }

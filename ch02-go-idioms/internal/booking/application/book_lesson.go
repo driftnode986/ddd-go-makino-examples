@@ -35,7 +35,7 @@ func (u *BookLessonUseCase) Execute(
 	}
 
 	slog.InfoContext(ctx, "booking placed",
-		"booking_id", booking.ID(),
+		"booking_id", booking.ID().String(),
 		"member_id", in.MemberID,
 		"lesson_id", in.LessonID,
 	)

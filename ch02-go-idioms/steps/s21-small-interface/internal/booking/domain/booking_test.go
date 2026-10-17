@@ -57,7 +57,7 @@ func TestBooking_StubMethodsKeepState(t *testing.T) {
 	b := &Booking{status: "pending"}
 	for name, call := range map[string]func() error{
 		"Confirm": b.Confirm,
-		"Cancel":  func() error { return b.Cancel("x") },
+		"Cancel":  func() error { return b.Cancel("x", time.Now) },
 		"Reschedule": func() error {
 			return b.Reschedule(time.Now())
 		},

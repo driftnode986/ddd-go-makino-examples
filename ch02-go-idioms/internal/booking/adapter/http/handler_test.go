@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/driftnode986/ddd-go-makino-examples/ch02-go-idioms/internal/booking/application"
 	"github.com/driftnode986/ddd-go-makino-examples/ch02-go-idioms/internal/booking/domain"
-	identity "github.com/driftnode986/ddd-go-makino-examples/ch02-go-idioms/internal/identity/domain"
 )
 
 type stubUseCase struct {
@@ -37,19 +37,12 @@ func TestHandleCreateBooking_MapsErrorsToStatus(t *testing.T) {
 	}{
 		{"created", nil, http.StatusCreated},
 		{
-			"invalid email",
-			identity.ErrInvalidEmail,
+			"invalid booking (wrapped)",
+			fmt.Errorf(
+				"create booking: %w",
+				domain.ErrInvalidBooking,
+			),
 			http.StatusBadRequest,
-		},
-		{
-			"invalid display name",
-			identity.ErrInvalidDisplayName,
-			http.StatusBadRequest,
-		},
-		{
-			"not found",
-			domain.ErrBookingNotFound,
-			http.StatusNotFound,
 		},
 		{
 			"conflict (wrapped error type)",
@@ -111,3 +104,22 @@ func TestServeHTTP_RejectsOtherMethods(t *testing.T) {
 
 // 本物のユースケースとつないでも型が合う
 var _ bookLessonExecutor = (*application.BookLessonUseCase)(nil)
+
+// 本物のユースケースにつなぎ、欠けた入力が 500 でなく 400 になることを確かめる
+func TestHandleCreateBooking_InvalidInputIsBadRequest(
+	t *testing.T,
+) {
+	uc := application.NewBookLessonUseCase(nil)
+	rec := httptest.NewRecorder()
+	NewHandler(uc).ServeHTTP(
+		rec,
+		httptest.NewRequest(
+			http.MethodPost,
+			"/bookings",
+			strings.NewReader(`{"member_id":"m1"}`),
+		),
+	)
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status: got %d want 400", rec.Code)
+	}
+}

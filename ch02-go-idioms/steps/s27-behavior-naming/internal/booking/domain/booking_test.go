@@ -2,6 +2,7 @@ package domain
 
 import (
 	"testing"
+	"time"
 
 	canonical "github.com/driftnode986/ddd-go-makino-examples/ch02-go-idioms/internal/booking/domain"
 )
@@ -23,7 +24,7 @@ func TestSetter_ChangesStateWithoutRules(t *testing.T) {
 // ビヘイビア側は中身を省略した版なので、状態を変えずに nil を返す。
 func TestBehaviorMethods_AreStubs(t *testing.T) {
 	b := &Booking{status: canonical.StatusPending}
-	if b.Confirm() != nil || b.Cancel("x") != nil ||
+	if b.Confirm() != nil || b.Cancel("x", time.Now) != nil ||
 		b.MarkCompleted() != nil {
 		t.Fatal("stubs should return nil")
 	}

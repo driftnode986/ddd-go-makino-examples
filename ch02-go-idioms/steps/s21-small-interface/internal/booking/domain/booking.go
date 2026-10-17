@@ -14,17 +14,16 @@ func (b *Booking) Confirm() error { /* ... */ return nil }
 
 func (b *Booking) Cancel(
 	reason string,
+	clock func() time.Time,
 ) error { /* ... */
 	return nil
 }
 
-func (b *Booking) Reschedule(
-	newAt time.Time,
-) error { /* ... */
+func (b *Booking) Reschedule(newAt time.Time) error {
+	/* ... */
 	return nil
 }
 
-func (b *Booking) MarkCompleted() error { /* ... */ return nil }
-func (b *Booking) ID() BookingID        { return b.id }
-
+func (b *Booking) MarkCompleted() error  { /* ... */ return nil }
+func (b *Booking) ID() BookingID         { return b.id }
 func (b *Booking) Status() BookingStatus { return b.status }
