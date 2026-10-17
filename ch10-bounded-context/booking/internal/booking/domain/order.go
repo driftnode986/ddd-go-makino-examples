@@ -35,6 +35,7 @@ func (i OrderItem) Quantity() int        { return i.quantity }
 func (i OrderItem) UnitPrice() Money     { return i.unitPrice }
 func (i OrderItem) Subtotal() Money      { return i.unitPrice.MulInt(i.quantity) }
 
+// #region order-events
 type Order struct {
 	id            OrderID
 	customerID    CustomerID
@@ -43,6 +44,25 @@ type Order struct {
 	placedAt      time.Time
 	pendingEvents []DomainEvent
 }
+
+// Confirm は注文を確定し、OrderPlaced イベントを発火する。
+func (o *Order) Confirm(now time.Time) error {
+	if o.status != StatusDraft {
+		return ErrCannotModify
+	}
+	o.status = StatusConfirmed
+	o.pendingEvents = append(o.pendingEvents, NewOrderPlaced(o, now))
+	return nil
+}
+
+// PullEvents は蓄積したイベントを取り出し、内部スライスをクリアする。
+func (o *Order) PullEvents() []DomainEvent {
+	events := o.pendingEvents
+	o.pendingEvents = nil
+	return events
+}
+
+// #endregion
 
 func NewOrder(customerID CustomerID, placedAt time.Time) *Order {
 	return &Order{
@@ -69,23 +89,6 @@ func (o *Order) AddItem(productID ProductID, quantity int, unitPrice Money) erro
 	}
 	o.items = append(o.items, item)
 	return nil
-}
-
-// Confirm は注文を確定し、OrderPlaced イベントを発火する。
-func (o *Order) Confirm(now time.Time) error {
-	if o.status != StatusDraft {
-		return ErrCannotModify
-	}
-	o.status = StatusConfirmed
-	o.pendingEvents = append(o.pendingEvents, NewOrderPlaced(o, now))
-	return nil
-}
-
-// PullEvents は蓄積したイベントを取り出し、内部スライスをクリアする。
-func (o *Order) PullEvents() []DomainEvent {
-	events := o.pendingEvents
-	o.pendingEvents = nil
-	return events
 }
 
 func (o *Order) Total() Money {

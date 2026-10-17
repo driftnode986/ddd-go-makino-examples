@@ -1,3 +1,4 @@
+// #region domain-event
 package domain
 
 import "time"
@@ -9,6 +10,9 @@ type DomainEvent interface {
 	AggregateID() string
 }
 
+// #endregion
+
+// #region order-placed
 // OrderPlaced は注文が確定された事実を表す。
 type OrderPlaced struct {
 	occurredAt  time.Time
@@ -33,3 +37,5 @@ func (e OrderPlaced) AggregateID() string   { return e.orderID.String() }
 func (e OrderPlaced) OrderID() OrderID       { return e.orderID }
 func (e OrderPlaced) CustomerID() CustomerID { return e.customerID }
 func (e OrderPlaced) TotalAmount() int64     { return e.totalAmount }
+
+// #endregion

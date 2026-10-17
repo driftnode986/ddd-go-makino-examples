@@ -1,3 +1,4 @@
+// #region outbox-types
 package infrastructure
 
 import (
@@ -29,6 +30,9 @@ func NewMemoryOutbox() *MemoryOutbox {
 	return &MemoryOutbox{}
 }
 
+// #endregion
+
+// #region outbox-append
 func (o *MemoryOutbox) Append(
 	ctx context.Context, events []domain.DomainEvent,
 ) error {
@@ -51,6 +55,9 @@ func (o *MemoryOutbox) Append(
 	return nil
 }
 
+// #endregion
+
+// #region unpublished-mark
 // Unpublished は未送信のイベントを id 順で返す (publisher 用)。
 func (o *MemoryOutbox) Unpublished() []OutboxEntry {
 	o.mu.Lock()
@@ -77,6 +84,9 @@ func (o *MemoryOutbox) MarkPublished(id int64, at time.Time) {
 	}
 }
 
+// #endregion
+
+// #region marshal-event
 // marshalEvent はドメインイベントを JSON にシリアライズする。
 // イベントごとに json タグを持つ DTO に詰め替えてから marshal する。
 func marshalEvent(ev domain.DomainEvent) ([]byte, error) {
@@ -97,3 +107,5 @@ func marshalEvent(ev domain.DomainEvent) ([]byte, error) {
 		return nil, fmt.Errorf("unknown event: %s", ev.EventName())
 	}
 }
+
+// #endregion

@@ -1,3 +1,4 @@
+// #region handler-types
 package application
 
 import (
@@ -18,6 +19,9 @@ type OrderPlacedHandler struct {
 	Logger      *slog.Logger
 }
 
+// #endregion
+
+// #region handle
 func (h *OrderPlacedHandler) Handle(
 	ctx context.Context, e events.OrderPlaced,
 ) error {
@@ -33,7 +37,10 @@ func (h *OrderPlacedHandler) Handle(
 	return nil
 }
 
+// #endregion
+
 // HandleWithIdempotency は冪等性ストアで重複処理を排除する。
+// #region handle-with-idempotency
 func (h *OrderPlacedHandler) HandleWithIdempotency(
 	ctx context.Context, eventID int64, e events.OrderPlaced,
 ) error {
@@ -53,3 +60,5 @@ func (h *OrderPlacedHandler) HandleWithIdempotency(
 
 	return h.Idempotency.MarkProcessed(ctx, eventID)
 }
+
+// #endregion

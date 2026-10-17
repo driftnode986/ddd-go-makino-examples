@@ -1,3 +1,4 @@
+// #region usecase-struct
 package application
 
 import (
@@ -8,22 +9,6 @@ import (
 	"github.com/driftnode986/ddd-go-makino-examples/ch10-bounded-context/booking/internal/booking/domain"
 )
 
-type OrderItemInput struct {
-	ProductID string
-	Quantity  int
-	UnitPrice int64
-}
-
-type PlaceOrderCommand struct {
-	CustomerID string
-	Items      []OrderItemInput
-}
-
-type PlaceOrderResult struct {
-	OrderID string
-	Total   int64
-}
-
 type PlaceOrderUseCase struct {
 	OrderRepo domain.Repository
 	Outbox    OutboxPort
@@ -31,6 +16,9 @@ type PlaceOrderUseCase struct {
 	Logger    *slog.Logger
 }
 
+// #endregion
+
+// #region execute-items
 func (uc *PlaceOrderUseCase) Execute(
 	ctx context.Context, cmd PlaceOrderCommand,
 ) (PlaceOrderResult, error) {
@@ -38,12 +26,6 @@ func (uc *PlaceOrderUseCase) Execute(
 	if err != nil {
 		return PlaceOrderResult{}, &ApplicationError{
 			Code: "INVALID_INPUT", Message: "invalid customer id", Cause: err,
-		}
-	}
-
-	if len(cmd.Items) == 0 {
-		return PlaceOrderResult{}, &ApplicationError{
-			Code: "INVALID_INPUT", Message: "items must not be empty",
 		}
 	}
 
@@ -63,7 +45,9 @@ func (uc *PlaceOrderUseCase) Execute(
 			return PlaceOrderResult{}, mapDomainError(err)
 		}
 	}
+	// #endregion
 
+	// #region execute-confirm-save
 	if err := o.Confirm(uc.Clock.Now()); err != nil {
 		return PlaceOrderResult{}, mapDomainError(err)
 	}
@@ -89,3 +73,5 @@ func (uc *PlaceOrderUseCase) Execute(
 		Total:   o.Total().Amount(),
 	}, nil
 }
+
+// #endregion

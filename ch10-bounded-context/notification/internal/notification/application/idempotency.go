@@ -1,3 +1,4 @@
+// #region idempotency-store
 package application
 
 import (
@@ -19,6 +20,9 @@ func NewMemoryIdempotencyStore() *MemoryIdempotencyStore {
 	return &MemoryIdempotencyStore{processed: map[int64]struct{}{}}
 }
 
+// #endregion
+
+// #region idempotency-methods
 func (s *MemoryIdempotencyStore) AlreadyProcessed(
 	ctx context.Context, eventID int64,
 ) (bool, error) {
@@ -36,3 +40,5 @@ func (s *MemoryIdempotencyStore) MarkProcessed(
 	s.processed[eventID] = struct{}{}
 	return nil
 }
+
+// #endregion
