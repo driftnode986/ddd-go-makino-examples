@@ -7,7 +7,10 @@ import (
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 )
 
-func NewRouter(handler *BookingHandler, logger *slog.Logger) chi.Router {
+func NewRouter(
+	handler *BookingHandler,
+	logger *slog.Logger,
+) chi.Router {
 	r := chi.NewRouter()
 	r.Use(chimiddleware.RequestID)
 	r.Use(chimiddleware.Recoverer)

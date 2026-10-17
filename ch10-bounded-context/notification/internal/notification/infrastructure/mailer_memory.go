@@ -19,10 +19,16 @@ func NewMemoryMailer() *MemoryMailer {
 	return &MemoryMailer{}
 }
 
-func (m *MemoryMailer) Send(ctx context.Context, customerID, body string) error {
+func (m *MemoryMailer) Send(
+	ctx context.Context,
+	customerID, body string,
+) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.records = append(m.records, MailRecord{CustomerID: customerID, Body: body})
+	m.records = append(
+		m.records,
+		MailRecord{CustomerID: customerID, Body: body},
+	)
 	return nil
 }
 

@@ -37,11 +37,16 @@ func TestListOrdersByCustomerHandler_ReturnsSummaries(t *testing.T) {
 		orders, fakePricing{unit: 1000}, fakeClock{now: placedAt},
 		slog.New(slog.NewTextHandler(io.Discard, nil)),
 	)
-	place := func(customerID string, qty int) application.PlaceOrderResult {
+	place := func(
+		customerID string,
+		qty int,
+	) application.PlaceOrderResult {
 		t.Helper()
 		r, err := uc.Execute(ctx, application.PlaceOrderCommand{
 			CustomerID: customerID,
-			Items:      []application.OrderItemRequest{{ProductID: "prod_001", Quantity: qty}},
+			Items: []application.OrderItemRequest{
+				{ProductID: "prod_001", Quantity: qty},
+			},
 		})
 		if err != nil {
 			t.Fatalf("Execute: %v", err)
@@ -52,7 +57,12 @@ func TestListOrdersByCustomerHandler_ReturnsSummaries(t *testing.T) {
 	place("cust_002", 1) // 別の顧客の注文は含まれない
 
 	h := &application.ListOrdersByCustomerHandler{Orders: orders}
-	got, err := h.Execute(ctx, application.ListOrdersByCustomerQuery{CustomerID: "cust_001"})
+	got, err := h.Execute(
+		ctx,
+		application.ListOrdersByCustomerQuery{
+			CustomerID: "cust_001",
+		},
+	)
 	if err != nil {
 		t.Fatalf("Execute: %v", err)
 	}
@@ -60,16 +70,26 @@ func TestListOrdersByCustomerHandler_ReturnsSummaries(t *testing.T) {
 		t.Fatalf("got %d orders, want 1", len(got))
 	}
 	want := application.OrderSummary{
-		OrderID: mine.OrderID, Total: 2000, Status: "draft", PlacedAt: placedAt.Unix(),
+		OrderID:  mine.OrderID,
+		Total:    2000,
+		Status:   "draft",
+		PlacedAt: placedAt.Unix(),
 	}
 	if got[0] != want {
 		t.Errorf("got %+v, want %+v", got[0], want)
 	}
 }
 
-func TestListOrdersByCustomerHandler_InvalidCustomerID(t *testing.T) {
-	h := &application.ListOrdersByCustomerHandler{Orders: infrastructure.NewInMemoryOrderRepository()}
-	_, err := h.Execute(context.Background(), application.ListOrdersByCustomerQuery{})
+func TestListOrdersByCustomerHandler_InvalidCustomerID(
+	t *testing.T,
+) {
+	h := &application.ListOrdersByCustomerHandler{
+		Orders: infrastructure.NewInMemoryOrderRepository(),
+	}
+	_, err := h.Execute(
+		context.Background(),
+		application.ListOrdersByCustomerQuery{},
+	)
 	if !errors.Is(err, domain.ErrInvalidID) {
 		t.Errorf("got %v, want ErrInvalidID", err)
 	}

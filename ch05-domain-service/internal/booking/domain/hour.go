@@ -30,7 +30,9 @@ func NewHour(s string) (Hour, error) {
 }
 
 // String は HH:MM 形式で時刻を返す。
-func (h Hour) String() string { return fmt.Sprintf("%02d:%02d", h.hourOfDay, h.minute) }
+func (h Hour) String() string {
+	return fmt.Sprintf("%02d:%02d", h.hourOfDay, h.minute)
+}
 
 // Before は other より前か。
 func (h Hour) Before(other Hour) bool {
@@ -58,5 +60,14 @@ func HoursOverlap(a, b, c, d Hour) bool {
 // Today は与えられた Clock の「今日」の Hour 時刻を time.Time として返す。
 func (h Hour) Today(clock Clock) time.Time {
 	now := clock.Now()
-	return time.Date(now.Year(), now.Month(), now.Day(), h.hourOfDay, h.minute, 0, 0, now.Location())
+	return time.Date(
+		now.Year(),
+		now.Month(),
+		now.Day(),
+		h.hourOfDay,
+		h.minute,
+		0,
+		0,
+		now.Location(),
+	)
 }

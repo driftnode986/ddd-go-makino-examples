@@ -16,7 +16,11 @@ type OrderItem struct {
 var ErrInvalidUnitPrice = errors.New("unit price must be positive")
 
 // NewOrderItem は OrderItem を生成する。
-func NewOrderItem(productID ProductID, quantity int, unitPrice Money) (OrderItem, error) {
+func NewOrderItem(
+	productID ProductID,
+	quantity int,
+	unitPrice Money,
+) (OrderItem, error) {
 	if productID.IsZero() {
 		return OrderItem{}, errors.New("productID required")
 	}
@@ -26,7 +30,11 @@ func NewOrderItem(productID ProductID, quantity int, unitPrice Money) (OrderItem
 	if unitPrice.Amount() <= 0 {
 		return OrderItem{}, ErrInvalidUnitPrice
 	}
-	return OrderItem{productID: productID, quantity: quantity, unitPrice: unitPrice}, nil
+	return OrderItem{
+		productID: productID,
+		quantity:  quantity,
+		unitPrice: unitPrice,
+	}, nil
 }
 
 // #endregion

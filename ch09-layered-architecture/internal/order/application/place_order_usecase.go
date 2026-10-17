@@ -70,9 +70,16 @@ func (uc *PlaceOrderUseCase) Execute(
 		}
 		unitPrice, err := domain.NewMoney(item.UnitPrice, "JPY")
 		if err != nil {
-			return PlaceOrderResult{}, fmt.Errorf("unit price: %w", err)
+			return PlaceOrderResult{}, fmt.Errorf(
+				"unit price: %w",
+				err,
+			)
 		}
-		if err := o.AddItem(productID, item.Quantity, unitPrice); err != nil {
+		if err := o.AddItem(
+			productID,
+			item.Quantity,
+			unitPrice,
+		); err != nil {
 			return PlaceOrderResult{}, mapDomainError(err)
 		}
 	}

@@ -7,7 +7,11 @@ import (
 	"github.com/driftnode986/ddd-go-makino-examples/ch05-domain-service/internal/pricing/domain"
 )
 
-func mustMoney(t *testing.T, amount int64, currency domain.Currency) domain.Money {
+func mustMoney(
+	t *testing.T,
+	amount int64,
+	currency domain.Currency,
+) domain.Money {
 	t.Helper()
 	m, err := domain.NewMoney(amount, currency)
 	if err != nil {
@@ -37,13 +41,21 @@ func TestCalculateDiscountedPrice(t *testing.T) {
 		{"20% off", 10000, 0.2, 8000},
 		{"50% off", 10000, 0.5, 5000},
 		{"100% off", 10000, 1.0, 0},
-		{"truncates fraction", 999, 0.1, 899}, // 999 * 900 / 1000 = 899.1 → 899
+		{
+			"truncates fraction",
+			999,
+			0.1,
+			899,
+		}, // 999 * 900 / 1000 = 899.1 → 899
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			original := mustMoney(t, tt.original, domain.JPY)
 			rate := mustRate(t, tt.rate)
-			got, err := domain.CalculateDiscountedPrice(original, rate)
+			got, err := domain.CalculateDiscountedPrice(
+				original,
+				rate,
+			)
 			if err != nil {
 				t.Fatalf("CalculateDiscountedPrice: %v", err)
 			}
@@ -77,10 +89,23 @@ func TestMoney_AddSubtract_CurrencyMismatch(t *testing.T) {
 	jpy := mustMoney(t, 1000, domain.JPY)
 	usd := mustMoney(t, 10, domain.USD)
 
-	if _, err := jpy.Add(usd); !errors.Is(err, domain.ErrCurrencyMismatch) {
-		t.Errorf("Add cross-currency: want ErrCurrencyMismatch got %v", err)
+	if _, err := jpy.Add(usd); !errors.Is(
+		err,
+		domain.ErrCurrencyMismatch,
+	) {
+		t.Errorf(
+			"Add cross-currency: want ErrCurrencyMismatch got %v",
+			err,
+		)
 	}
-	if _, err := jpy.Subtract(usd); !errors.Is(err, domain.ErrCurrencyMismatch) {
-		t.Errorf("Subtract cross-currency: want ErrCurrencyMismatch got %v", err)
+	if _, err := jpy.Subtract(usd); !errors.Is(
+		err,
+		domain.ErrCurrencyMismatch,
+	) {
+		t.Errorf(
+			"Subtract cross-currency: "+
+				"want ErrCurrencyMismatch got %v",
+			err,
+		)
 	}
 }

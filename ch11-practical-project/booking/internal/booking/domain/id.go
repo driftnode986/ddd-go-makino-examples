@@ -23,7 +23,9 @@ func (id BookingID) String() string { return id.value }
 
 type MemberID struct{ value string }
 
-func NewMemberID() MemberID { return MemberID{value: uuid.NewString()} }
+func NewMemberID() MemberID {
+	return MemberID{value: uuid.NewString()}
+}
 
 func MemberIDFrom(s string) (MemberID, error) {
 	if _, err := uuid.Parse(s); err != nil {
@@ -36,7 +38,9 @@ func (id MemberID) String() string { return id.value }
 
 type LessonID struct{ value string }
 
-func NewLessonID() LessonID { return LessonID{value: uuid.NewString()} }
+func NewLessonID() LessonID {
+	return LessonID{value: uuid.NewString()}
+}
 
 func LessonIDFrom(s string) (LessonID, error) {
 	if _, err := uuid.Parse(s); err != nil {

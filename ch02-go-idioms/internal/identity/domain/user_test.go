@@ -19,27 +19,55 @@ func mustEmail(t *testing.T, s string) domain.Email {
 
 func TestNewUser(t *testing.T) {
 	id := shared.NewUserID()
-	u, err := domain.NewUser(id, mustEmail(t, "a@example.com"), "Alice")
+	u, err := domain.NewUser(
+		id,
+		mustEmail(t, "a@example.com"),
+		"Alice",
+	)
 	if err != nil {
 		t.Fatalf("NewUser: %v", err)
 	}
-	if u.ID() != id || u.Email().String() != "a@example.com" || u.DisplayName() != "Alice" {
-		t.Fatalf("fields not set: %v %v %q", u.ID(), u.Email(), u.DisplayName())
+	if u.ID() != id || u.Email().String() != "a@example.com" ||
+		u.DisplayName() != "Alice" {
+		t.Fatalf(
+			"fields not set: %v %v %q",
+			u.ID(),
+			u.Email(),
+			u.DisplayName(),
+		)
 	}
-	if _, err := domain.NewUser(id, mustEmail(t, "a@example.com"), ""); !errors.Is(err, domain.ErrInvalidDisplayName) {
-		t.Fatalf("empty name: want ErrInvalidDisplayName, got %v", err)
+	if _, err := domain.NewUser(
+		id,
+		mustEmail(t, "a@example.com"),
+		"",
+	); !errors.Is(
+		err,
+		domain.ErrInvalidDisplayName,
+	) {
+		t.Fatalf(
+			"empty name: want ErrInvalidDisplayName, got %v",
+			err,
+		)
 	}
 }
 
 func TestUser_ChangeEmail(t *testing.T) {
-	u, err := domain.NewUser(shared.NewUserID(), mustEmail(t, "a@example.com"), "Alice")
+	u, err := domain.NewUser(
+		shared.NewUserID(),
+		mustEmail(t, "a@example.com"),
+		"Alice",
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := u.ChangeEmail(mustEmail(t, "a@example.com")); err == nil {
+	if err := u.ChangeEmail(
+		mustEmail(t, "a@example.com"),
+	); err == nil {
 		t.Fatal("same email: want error")
 	}
-	if err := u.ChangeEmail(mustEmail(t, "b@example.com")); err != nil {
+	if err := u.ChangeEmail(
+		mustEmail(t, "b@example.com"),
+	); err != nil {
 		t.Fatalf("ChangeEmail: %v", err)
 	}
 	if u.Email().String() != "b@example.com" {
@@ -73,7 +101,11 @@ func TestMoney_AddAndEquals(t *testing.T) {
 	}
 }
 
-func mustMoney(t *testing.T, amount int64, c domain.Currency) domain.Money {
+func mustMoney(
+	t *testing.T,
+	amount int64,
+	c domain.Currency,
+) domain.Money {
 	t.Helper()
 	m, err := domain.NewMoney(amount, c)
 	if err != nil {

@@ -9,7 +9,9 @@ import (
 
 type MemberID struct{ value string }
 
-func NewMemberID() MemberID { return MemberID{value: uuid.NewString()} }
+func NewMemberID() MemberID {
+	return MemberID{value: uuid.NewString()}
+}
 
 func MemberIDFrom(s string) (MemberID, error) {
 	if _, err := uuid.Parse(s); err != nil {

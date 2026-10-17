@@ -17,7 +17,8 @@ func NewLessonQuery(repo domain.LessonRepository) *LessonQuery {
 }
 
 // FindLessonView は Catalog BC が他 BC に公開する公表された言語 (LessonView) を返します。
-// Booking BC はこのメソッドのシグネチャを application.LessonQueryPort interface で受けます。
+// Booking BC はこのメソッドのシグネチャを
+// application.LessonQueryPort interface で受けます。
 func (q *LessonQuery) FindLessonView(ctx context.Context,
 	idStr string) (dto.LessonView, error) {
 	id, err := domain.LessonIDFrom(idStr)

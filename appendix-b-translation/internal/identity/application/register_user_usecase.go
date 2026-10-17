@@ -14,10 +14,18 @@ type RegisterUserUseCase struct {
 	idGen IDGenerator
 }
 
-func (uc *RegisterUserUseCase) Execute(ctx context.Context, cmd RegisterUserCommand) (domain.UserID, error) {
+func (uc *RegisterUserUseCase) Execute(
+	ctx context.Context,
+	cmd RegisterUserCommand,
+) (domain.UserID, error) {
 	var resultID domain.UserID
 	err := uc.txMgr.RunInTx(ctx, func(ctx context.Context) error {
-		user, err := domain.NewUser(uc.idGen.New(), cmd.Email, cmd.Name, uc.clock.Now())
+		user, err := domain.NewUser(
+			uc.idGen.New(),
+			cmd.Email,
+			cmd.Name,
+			uc.clock.Now(),
+		)
 		if err != nil {
 			return err
 		}
@@ -32,7 +40,16 @@ func (uc *RegisterUserUseCase) Execute(ctx context.Context, cmd RegisterUserComm
 
 // #endregion
 
-func NewRegisterUserUseCase(txMgr TxManager, users domain.UserRepository,
-	clock Clock, idGen IDGenerator) *RegisterUserUseCase {
-	return &RegisterUserUseCase{txMgr: txMgr, users: users, clock: clock, idGen: idGen}
+func NewRegisterUserUseCase(
+	txMgr TxManager,
+	users domain.UserRepository,
+	clock Clock,
+	idGen IDGenerator,
+) *RegisterUserUseCase {
+	return &RegisterUserUseCase{
+		txMgr: txMgr,
+		users: users,
+		clock: clock,
+		idGen: idGen,
+	}
 }

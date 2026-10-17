@@ -13,7 +13,10 @@ func TestBooking_Confirm_OnlyFromPending(t *testing.T) {
 	if b.Status() != StatusConfirmed {
 		t.Fatalf("Status: got %s", b.Status())
 	}
-	if err := b.Confirm(); !errors.Is(err, ErrBookingAlreadyConfirmed) {
+	if err := b.Confirm(); !errors.Is(
+		err,
+		ErrBookingAlreadyConfirmed,
+	) {
 		t.Fatalf("want ErrBookingAlreadyConfirmed, got %v", err)
 	}
 	var zero BookingID

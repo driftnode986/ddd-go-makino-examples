@@ -21,6 +21,11 @@ func TestSystemClock_Now_ReturnsCurrentTime(t *testing.T) {
 	got := c.Now()
 	after := time.Now()
 	if got.Before(before) || got.After(after) {
-		t.Fatalf("Now(): %v is not between %v and %v", got, before, after)
+		t.Fatalf(
+			"Now(): %v is not between %v and %v",
+			got,
+			before,
+			after,
+		)
 	}
 }

@@ -31,7 +31,11 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	repo := memory.NewBookingRepository()
-	placeUC := application.NewPlaceBookingUseCase(repo, stubLessonQuery{}, time.Now)
+	placeUC := application.NewPlaceBookingUseCase(
+		repo,
+		stubLessonQuery{},
+		time.Now,
+	)
 	listQ := application.NewListBookingsQuery(repo)
 	handler := httpx.NewBookingHandler(placeUC, listQ)
 	router := httpx.NewRouter(handler, logger)
@@ -58,7 +62,10 @@ func main() {
 	<-quit
 	logger.Info("shutting down...")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(
+		context.Background(),
+		10*time.Second,
+	)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
 		logger.Error("shutdown failed", "err", err)

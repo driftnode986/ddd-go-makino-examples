@@ -54,12 +54,16 @@ func TestHour_IsInThePast(t *testing.T) {
 	frozen := time.Date(2026, 6, 1, 12, 0, 0, 0, time.UTC)
 	clock := func() time.Time { return frozen }
 
-	past, _ := domain.NewHour(time.Date(2026, 6, 1, 9, 0, 0, 0, time.UTC))
+	past, _ := domain.NewHour(
+		time.Date(2026, 6, 1, 9, 0, 0, 0, time.UTC),
+	)
 	if !past.IsInThePast(clock) {
 		t.Errorf("9:00 should be in the past at 12:00")
 	}
 
-	future, _ := domain.NewHour(time.Date(2026, 6, 1, 15, 0, 0, 0, time.UTC))
+	future, _ := domain.NewHour(
+		time.Date(2026, 6, 1, 15, 0, 0, 0, time.UTC),
+	)
 	if future.IsInThePast(clock) {
 		t.Errorf("15:00 should not be in the past at 12:00")
 	}

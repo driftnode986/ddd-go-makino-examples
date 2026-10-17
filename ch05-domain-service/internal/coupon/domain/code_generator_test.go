@@ -18,7 +18,9 @@ func TestCodeGenerator_Generate(t *testing.T) {
 
 // #endregion
 
-func TestCodeGenerator_Generate_FixedRandomSelectsOtherIndex(t *testing.T) {
+func TestCodeGenerator_Generate_FixedRandomSelectsOtherIndex(
+	t *testing.T,
+) {
 	gen := domain.NewCodeGenerator(domain.FixedRandom{Value: 2})
 	code := gen.Generate()
 	// FixedRandom{Value: 2}.IntN(32) = 2 なので、alphabet[2] = 'C'

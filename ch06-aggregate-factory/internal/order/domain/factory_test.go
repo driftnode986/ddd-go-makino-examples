@@ -15,7 +15,10 @@ type stubIDGen struct {
 func (s *stubIDGen) NewOrderID() domain.OrderID { return s.id }
 
 func TestNewOrder_RejectsZero(t *testing.T) {
-	_, err := domain.NewOrder(domain.OrderID{}, customerID(t, "cust0001"))
+	_, err := domain.NewOrder(
+		domain.OrderID{},
+		customerID(t, "cust0001"),
+	)
 	if err == nil {
 		t.Errorf("NewOrder with zero id: want error got nil")
 	}
@@ -23,7 +26,10 @@ func TestNewOrder_RejectsZero(t *testing.T) {
 
 func TestOrderFactory_Create(t *testing.T) {
 	id := orderID(t, "order001")
-	factory := domain.NewOrderFactory(&stubIDGen{id: id}, domain.FixedClock{})
+	factory := domain.NewOrderFactory(
+		&stubIDGen{id: id},
+		domain.FixedClock{},
+	)
 	o, err := factory.Create(customerID(t, "cust0001"))
 	if err != nil {
 		t.Fatalf("Create: %v", err)
@@ -56,34 +62,52 @@ func TestNewOrderWithOptions_AppliesOptions(t *testing.T) {
 		t.Errorf("Notes: want=ギフト包装 got=%s", o.Notes())
 	}
 	if o.DiscountRate().Value() != 0.1 {
-		t.Errorf("DiscountRate: want=0.1 got=%v", o.DiscountRate().Value())
+		t.Errorf(
+			"DiscountRate: want=0.1 got=%v",
+			o.DiscountRate().Value(),
+		)
 	}
 }
 
 // #endregion
 
 func TestNewOrderWithOptions_ValidatesAfterOptions(t *testing.T) {
-	_, err := domain.NewOrderWithOptions(domain.OrderID{}, customerID(t, "cust0001"),
+	_, err := domain.NewOrderWithOptions(
+		domain.OrderID{},
+		customerID(t, "cust0001"),
 		domain.WithNotes("test"),
 	)
 	if err == nil {
-		t.Errorf("NewOrderWithOptions with zero id: want error got nil")
+		t.Errorf(
+			"NewOrderWithOptions with zero id: want error got nil",
+		)
 	}
 }
 
 func TestNewOrder_AndReconstructOrder_PreserveItems(t *testing.T) {
-	o, err := domain.NewOrder(orderID(t, "order001"), customerID(t, "cust0001"))
+	o, err := domain.NewOrder(
+		orderID(t, "order001"),
+		customerID(t, "cust0001"),
+	)
 	if err != nil {
 		t.Fatalf("NewOrder: %v", err)
 	}
-	if err := o.AddItem(productID(t, "prd00001"), 2, jpy(t, 1000)); err != nil {
+	if err := o.AddItem(
+		productID(t, "prd00001"),
+		2,
+		jpy(t, 1000),
+	); err != nil {
 		t.Fatalf("AddItem: %v", err)
 	}
 	items := o.Items()
 	placedAt := time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)
 
 	restored := domain.ReconstructOrder(
-		o.ID(), o.CustomerID(), items, domain.StatusConfirmed, placedAt,
+		o.ID(),
+		o.CustomerID(),
+		items,
+		domain.StatusConfirmed,
+		placedAt,
 	)
 	if !restored.ID().Equals(o.ID()) {
 		t.Errorf("ID mismatch after reconstruct")
@@ -92,7 +116,11 @@ func TestNewOrder_AndReconstructOrder_PreserveItems(t *testing.T) {
 		t.Errorf("Status: want=confirmed got=%v", restored.Status())
 	}
 	if !restored.PlacedAt().Equal(placedAt) {
-		t.Errorf("PlacedAt: want=%v got=%v", placedAt, restored.PlacedAt())
+		t.Errorf(
+			"PlacedAt: want=%v got=%v",
+			placedAt,
+			restored.PlacedAt(),
+		)
 	}
 	if len(restored.Items()) != 1 {
 		t.Errorf("Items: want 1 got %d", len(restored.Items()))
@@ -102,14 +130,24 @@ func TestNewOrder_AndReconstructOrder_PreserveItems(t *testing.T) {
 func TestReconstructOrder_DefensiveCopy(t *testing.T) {
 	id := orderID(t, "order001")
 	customer := customerID(t, "cust0001")
-	item, err := domain.NewOrderItem(productID(t, "prd00001"), 2, jpy(t, 1000))
+	item, err := domain.NewOrderItem(
+		productID(t, "prd00001"),
+		2,
+		jpy(t, 1000),
+	)
 	if err != nil {
 		t.Fatalf("NewOrderItem: %v", err)
 	}
 	items := []domain.OrderItem{item}
 	placedAt := time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)
 
-	restored := domain.ReconstructOrder(id, customer, items, domain.StatusConfirmed, placedAt)
+	restored := domain.ReconstructOrder(
+		id,
+		customer,
+		items,
+		domain.StatusConfirmed,
+		placedAt,
+	)
 	// 渡したスライスを外部から潰しても集約には影響しないこと
 	items[0] = domain.OrderItem{}
 	if restored.Items()[0].Quantity() != 2 {
@@ -119,8 +157,16 @@ func TestReconstructOrder_DefensiveCopy(t *testing.T) {
 
 func TestNewDiscountRate_Invalid(t *testing.T) {
 	for _, v := range []float64{-0.1, 1.1, 2.0} {
-		if _, err := domain.NewDiscountRate(v); !errors.Is(err, domain.ErrInvalidDiscountRate) {
-			t.Errorf("NewDiscountRate(%v): want ErrInvalidDiscountRate got %v", v, err)
+		if _, err := domain.NewDiscountRate(v); !errors.Is(
+			err,
+			domain.ErrInvalidDiscountRate,
+		) {
+			t.Errorf(
+				"NewDiscountRate(%v): "+
+					"want ErrInvalidDiscountRate got %v",
+				v,
+				err,
+			)
 		}
 	}
 }

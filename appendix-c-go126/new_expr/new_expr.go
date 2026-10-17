@@ -15,7 +15,8 @@ func yearsSince(t time.Time) int {
 	return int(time.Since(t).Hours() / (365.25 * 24))
 }
 
-// PersonJSON は Go 1.26 の new(expr) で Optional フィールドを 1 行で初期化します。
+// PersonJSON は Go 1.26 の new(expr) で
+// Optional フィールドを 1 行で初期化します。
 func PersonJSON(name string, born time.Time) ([]byte, error) {
 	p := Person{
 		Name: name,

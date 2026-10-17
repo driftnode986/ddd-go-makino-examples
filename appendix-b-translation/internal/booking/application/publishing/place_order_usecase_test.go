@@ -15,7 +15,10 @@ import (
 
 type fakeTx struct{ calls int }
 
-func (f *fakeTx) RunInTx(ctx context.Context, fn func(ctx context.Context) error) error {
+func (f *fakeTx) RunInTx(
+	ctx context.Context,
+	fn func(ctx context.Context) error,
+) error {
 	f.calls++
 	return fn(ctx)
 }
@@ -25,7 +28,10 @@ type recordingPublisher struct {
 	err    error
 }
 
-func (p *recordingPublisher) Publish(_ context.Context, e domain.DomainEvent) error {
+func (p *recordingPublisher) Publish(
+	_ context.Context,
+	e domain.DomainEvent,
+) error {
 	if p.err != nil {
 		return p.err
 	}
@@ -38,17 +44,28 @@ func TestPlaceOrderUseCase_PublishesOrderPlaced(t *testing.T) {
 	tx := &fakeTx{}
 	orders := infra.NewInMemoryOrderRepository()
 	pub := &recordingPublisher{}
-	uc := publishing.NewPlaceOrderUseCase(tx, orders, pub, test.NewFixedClock(time.Now()))
+	uc := publishing.NewPlaceOrderUseCase(
+		tx,
+		orders,
+		pub,
+		test.NewFixedClock(time.Now()),
+	)
 
 	err := uc.Execute(ctx, application.PlaceOrderCommand{
 		CustomerID: "cus_001",
-		Items:      []domain.OrderItem{{ProductID: "p1", Quantity: 1, UnitPrice: 500}},
+		Items: []domain.OrderItem{
+			{ProductID: "p1", Quantity: 1, UnitPrice: 500},
+		},
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
 	if tx.calls != 1 || len(pub.events) != 1 {
-		t.Fatalf("tx calls = %d, events = %d", tx.calls, len(pub.events))
+		t.Fatalf(
+			"tx calls = %d, events = %d",
+			tx.calls,
+			len(pub.events),
+		)
 	}
 	placed, ok := pub.events[0].(domain.OrderPlaced)
 	if !ok {
@@ -61,13 +78,28 @@ func TestPlaceOrderUseCase_PublishesOrderPlaced(t *testing.T) {
 
 func TestPlaceOrderUseCase_ReturnsPublishError(t *testing.T) {
 	errBroker := errors.New("broker down")
-	uc := publishing.NewPlaceOrderUseCase(&fakeTx{}, infra.NewInMemoryOrderRepository(),
-		&recordingPublisher{err: errBroker}, test.NewFixedClock(time.Now()))
-	err := uc.Execute(context.Background(), application.PlaceOrderCommand{
-		CustomerID: "cus_001",
-		Items:      []domain.OrderItem{{ProductID: "p1", Quantity: 1, UnitPrice: 500}},
-	})
+	uc := publishing.NewPlaceOrderUseCase(
+		&fakeTx{},
+		infra.NewInMemoryOrderRepository(),
+		&recordingPublisher{
+			err: errBroker,
+		},
+		test.NewFixedClock(time.Now()),
+	)
+	err := uc.Execute(
+		context.Background(),
+		application.PlaceOrderCommand{
+			CustomerID: "cus_001",
+			Items: []domain.OrderItem{
+				{ProductID: "p1", Quantity: 1, UnitPrice: 500},
+			},
+		},
+	)
 	if !errors.Is(err, errBroker) {
-		t.Errorf("err = %v, want broker down（トランザクションをロールバックさせるためにエラーを返す）", err)
+		t.Errorf(
+			"err = %v, want broker down"+
+				"（トランザクションをロールバックさせるためにエラーを返す）",
+			err,
+		)
 	}
 }

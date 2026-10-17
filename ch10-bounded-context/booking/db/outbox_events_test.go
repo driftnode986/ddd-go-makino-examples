@@ -23,8 +23,9 @@ func startPostgres(t *testing.T) *pgx.Conn {
 		postgres.WithUsername("test"),
 		postgres.WithPassword("test"),
 		testcontainers.WithWaitStrategy(
-			wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).
+			wait.ForLog(
+				"database system is ready to accept connections",
+			).WithOccurrence(2).
 				WithStartupTimeout(30*time.Second),
 		),
 	)
@@ -45,7 +46,8 @@ func startPostgres(t *testing.T) *pgx.Conn {
 }
 
 // in-memory の outbox が作った行を、本のスキーマの outbox_events に入れ、
-// publisher と同じ「published_at IS NULL を id 順に読む → published_at を立てる」を確かめる。
+// publisher と同じ「published_at IS NULL を id 順に読む →
+// published_at を立てる」を確かめる。
 func TestOutboxSchema_StoresAndPublishesEvents(t *testing.T) {
 	ctx := context.Background()
 	conn := startPostgres(t)
@@ -69,7 +71,8 @@ func TestOutboxSchema_StoresAndPublishesEvents(t *testing.T) {
 	}
 	for _, e := range outbox.Unpublished() {
 		_, err := conn.Exec(ctx, `INSERT INTO outbox_events
-			(event_name, aggregate_id, payload, occurred_at) VALUES ($1, $2, $3, $4)`,
+			(event_name, aggregate_id, payload, occurred_at)
+			VALUES ($1, $2, $3, $4)`,
 			e.EventName, e.AggregateID, e.Payload, e.OccurredAt)
 		if err != nil {
 			t.Fatalf("insert: %v", err)
@@ -81,8 +84,10 @@ func TestOutboxSchema_StoresAndPublishesEvents(t *testing.T) {
 		name  string
 		total int64
 	)
-	err := conn.QueryRow(ctx, `SELECT id, event_name, (payload->>'total_amount')::bigint
-		FROM outbox_events WHERE published_at IS NULL ORDER BY id LIMIT 1`).
+	err := conn.QueryRow(ctx, `SELECT id, event_name,
+		(payload->>'total_amount')::bigint
+		FROM outbox_events WHERE published_at IS NULL
+		ORDER BY id LIMIT 1`).
 		Scan(&id, &name, &total)
 	if err != nil {
 		t.Fatalf("select unpublished: %v", err)
@@ -91,13 +96,20 @@ func TestOutboxSchema_StoresAndPublishesEvents(t *testing.T) {
 		t.Errorf("event = %s, total = %d", name, total)
 	}
 
-	if _, err := conn.Exec(ctx,
-		`UPDATE outbox_events SET published_at = now() WHERE id = $1`, id); err != nil {
+	if _, err := conn.Exec(
+		ctx,
+		`UPDATE outbox_events SET published_at = now()
+		WHERE id = $1`,
+		id,
+	); err != nil {
 		t.Fatal(err)
 	}
 	var left int
-	if err := conn.QueryRow(ctx,
-		`SELECT count(*) FROM outbox_events WHERE published_at IS NULL`).Scan(&left); err != nil {
+	if err := conn.QueryRow(
+		ctx,
+		`SELECT count(*) FROM outbox_events
+		WHERE published_at IS NULL`,
+	).Scan(&left); err != nil {
 		t.Fatal(err)
 	}
 	if left != 0 {

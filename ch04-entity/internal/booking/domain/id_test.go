@@ -36,7 +36,13 @@ func TestNewBooking_RejectsZeroID(t *testing.T) {
 	clock := func() time.Time { return now }
 	mid, _ := domain.NewID[domain.MemberTag]("memb-0001")
 	lid, _ := domain.NewID[domain.LessonTag]("less-0001")
-	_, err := domain.NewBooking(domain.BookingID{}, mid, lid, now.Add(time.Hour), clock)
+	_, err := domain.NewBooking(
+		domain.BookingID{},
+		mid,
+		lid,
+		now.Add(time.Hour),
+		clock,
+	)
 	if err == nil {
 		t.Fatal("want error for zero BookingID")
 	}

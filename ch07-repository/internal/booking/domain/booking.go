@@ -23,7 +23,12 @@ type Booking struct {
 
 // #endregion
 
-func NewBooking(id BookingID, memberID MemberID, lessonID LessonID, scheduledAt time.Time) *Booking {
+func NewBooking(
+	id BookingID,
+	memberID MemberID,
+	lessonID LessonID,
+	scheduledAt time.Time,
+) *Booking {
 	return &Booking{
 		id:          id,
 		memberID:    memberID,

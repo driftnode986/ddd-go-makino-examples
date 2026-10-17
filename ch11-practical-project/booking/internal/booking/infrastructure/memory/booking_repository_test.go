@@ -27,14 +27,19 @@ func TestBookingRepository_SaveFindList(t *testing.T) {
 	if err != nil || len(list) != 1 {
 		t.Errorf("ListByMember = %d, %v", len(list), err)
 	}
-	if list, _ := repo.ListByMember(ctx, domain.NewMemberID()); len(list) != 0 {
+	if list, _ := repo.ListByMember(ctx, domain.NewMemberID()); len(
+		list,
+	) != 0 {
 		t.Errorf("other member's bookings = %d, want 0", len(list))
 	}
 }
 
 func TestBookingRepository_NotFound(t *testing.T) {
 	repo := memory.NewBookingRepository()
-	_, err := repo.FindByID(context.Background(), domain.NewBookingID())
+	_, err := repo.FindByID(
+		context.Background(),
+		domain.NewBookingID(),
+	)
 	if !errors.Is(err, domain.ErrBookingNotFound) {
 		t.Fatalf("err = %v, want ErrBookingNotFound", err)
 	}

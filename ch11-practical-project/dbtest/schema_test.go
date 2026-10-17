@@ -20,10 +20,12 @@ import (
 var migrations = []string{
 	"../booking/internal/booking/infrastructure/postgres/migrations",
 	"../catalog/internal/catalog/infrastructure/postgres/migrations",
-	"../identity/internal/identity/infrastructure/postgres/migrations",
+	"../identity/internal/identity/" +
+		"infrastructure/postgres/migrations",
 }
 
-const bookingQueries = "../booking/internal/booking/infrastructure/postgres/queries.sql"
+const bookingQueries = "../booking/internal/booking/" +
+	"infrastructure/postgres/queries.sql"
 
 func startPostgres(t *testing.T) *pgx.Conn {
 	t.Helper()
@@ -33,8 +35,9 @@ func startPostgres(t *testing.T) *pgx.Conn {
 		postgres.WithUsername("test"),
 		postgres.WithPassword("test"),
 		testcontainers.WithWaitStrategy(
-			wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).
+			wait.ForLog(
+				"database system is ready to accept connections",
+			).WithOccurrence(2).
 				WithStartupTimeout(30*time.Second),
 		),
 	)
@@ -85,18 +88,30 @@ func loadQueries(t *testing.T, path string) map[string]string {
 		if i+1 < len(idx) {
 			end = idx[i+1][0]
 		}
-		out[string(src[m[2]:m[3]])] = strings.TrimSpace(string(src[m[1]:end]))
+		out[string(src[m[2]:m[3]])] = strings.TrimSpace(
+			string(src[m[1]:end]),
+		)
 	}
 	return out
 }
 
-func TestMigrations_KeepEachBCInItsOwnSchemaWithoutForeignKeys(t *testing.T) {
+func TestMigrations_KeepEachBCInItsOwnSchemaWithoutForeignKeys(
+	t *testing.T,
+) {
 	conn := startPostgres(t)
 	ctx := context.Background()
 
-	for _, table := range []string{"booking.bookings", "catalog.lessons", "identity.members"} {
+	for _, table := range []string{
+		"booking.bookings",
+		"catalog.lessons",
+		"identity.members",
+	} {
 		var exists bool
-		if err := conn.QueryRow(ctx, `SELECT to_regclass($1) IS NOT NULL`, table).Scan(&exists); err != nil {
+		if err := conn.QueryRow(
+			ctx,
+			`SELECT to_regclass($1) IS NOT NULL`,
+			table,
+		).Scan(&exists); err != nil {
 			t.Fatal(err)
 		}
 		if !exists {
@@ -104,9 +119,11 @@ func TestMigrations_KeepEachBCInItsOwnSchemaWithoutForeignKeys(t *testing.T) {
 		}
 	}
 	var fks int
-	err := conn.QueryRow(ctx, `SELECT count(*) FROM information_schema.table_constraints
+	err := conn.QueryRow(ctx, `SELECT count(*)
+		FROM information_schema.table_constraints
 		WHERE constraint_type = 'FOREIGN KEY'
-		AND table_schema IN ('booking', 'catalog', 'identity')`).Scan(&fks)
+		AND table_schema IN ('booking', 'catalog', 'identity')`).
+		Scan(&fks)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -120,16 +137,38 @@ func TestBookingQueries_SaveAndGet(t *testing.T) {
 	ctx := context.Background()
 	q := loadQueries(t, bookingQueries)
 	if len(q) != 2 {
-		t.Fatalf("queries = %v, want GetBookingByID and SaveBooking", q)
+		t.Fatalf(
+			"queries = %v, want GetBookingByID and SaveBooking",
+			q,
+		)
 	}
 
 	id, member, lesson := uuid.New(), uuid.New(), uuid.New()
 	created := time.Date(2026, 5, 23, 10, 0, 0, 0, time.UTC)
-	if _, err := conn.Exec(ctx, q["SaveBooking"], id, member, lesson, "pending", 1, created); err != nil {
+	if _, err := conn.Exec(
+		ctx,
+		q["SaveBooking"],
+		id,
+		member,
+		lesson,
+		"pending",
+		1,
+		created,
+	); err != nil {
 		t.Fatalf("SaveBooking (insert): %v", err)
 	}
-	// 同じ id で保存し直すと status と version だけが更新される（ON CONFLICT ... DO UPDATE）
-	if _, err := conn.Exec(ctx, q["SaveBooking"], id, member, lesson, "confirmed", 2, created); err != nil {
+	// 同じ id で保存し直すと status と version だけが更新される
+	// （ON CONFLICT ... DO UPDATE）
+	if _, err := conn.Exec(
+		ctx,
+		q["SaveBooking"],
+		id,
+		member,
+		lesson,
+		"confirmed",
+		2,
+		created,
+	); err != nil {
 		t.Fatalf("SaveBooking (update): %v", err)
 	}
 
@@ -140,14 +179,27 @@ func TestBookingQueries_SaveAndGet(t *testing.T) {
 		createdAt                   time.Time
 	)
 	err := conn.QueryRow(ctx, q["GetBookingByID"], id).
-		Scan(&gotID, &gotMember, &gotLesson, &status, &version, &createdAt)
+		Scan(
+			&gotID,
+			&gotMember,
+			&gotLesson,
+			&status,
+			&version,
+			&createdAt,
+		)
 	if err != nil {
 		t.Fatalf("GetBookingByID: %v", err)
 	}
 	if gotID != id || gotMember != member || gotLesson != lesson {
 		t.Errorf("ids = %v %v %v", gotID, gotMember, gotLesson)
 	}
-	if status != "confirmed" || version != 2 || !createdAt.Equal(created) {
-		t.Errorf("status = %s, version = %d, created_at = %v", status, version, createdAt)
+	if status != "confirmed" || version != 2 ||
+		!createdAt.Equal(created) {
+		t.Errorf(
+			"status = %s, version = %d, created_at = %v",
+			status,
+			version,
+			createdAt,
+		)
 	}
 }

@@ -8,8 +8,15 @@ import (
 	"github.com/driftnode986/ddd-go-makino-examples/ch02-go-idioms/internal/booking/domain"
 )
 
-func (u *BookLessonUseCase) Execute(ctx context.Context, in BookLessonInput) error {
-	booking, err := domain.NewBooking(in.MemberID, in.LessonID, in.ScheduledAt)
+func (u *BookLessonUseCase) Execute(
+	ctx context.Context,
+	in BookLessonInput,
+) error {
+	booking, err := domain.NewBooking(
+		in.MemberID,
+		in.LessonID,
+		in.ScheduledAt,
+	)
 	if err != nil {
 		return fmt.Errorf("create booking: %w", err)
 	}

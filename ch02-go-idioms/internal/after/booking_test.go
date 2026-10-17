@@ -17,7 +17,10 @@ func newBooking(t *testing.T) *after.Booking {
 }
 
 func TestNewBooking_ReturnsErrorOnEmptyID(t *testing.T) {
-	if _, err := after.NewBooking("", "m-1"); !errors.Is(err, after.ErrBookingIDRequired) {
+	if _, err := after.NewBooking("", "m-1"); !errors.Is(
+		err,
+		after.ErrBookingIDRequired,
+	) {
 		t.Fatalf("want ErrBookingIDRequired, got %v", err)
 	}
 }
@@ -27,8 +30,13 @@ func TestBooking_Cancel_RecordsReasonInOneCall(t *testing.T) {
 	if err := b.Cancel("schedule changed"); err != nil {
 		t.Fatal(err)
 	}
-	if b.Status() != after.StatusCancelled || b.CancelReason() != "schedule changed" {
-		t.Fatalf("got status=%s reason=%q", b.Status(), b.CancelReason())
+	if b.Status() != after.StatusCancelled ||
+		b.CancelReason() != "schedule changed" {
+		t.Fatalf(
+			"got status=%s reason=%q",
+			b.Status(),
+			b.CancelReason(),
+		)
 	}
 	if b.ID() != "b-1" || b.MemberID() != "m-1" {
 		t.Fatalf("got id=%s member=%s", b.ID(), b.MemberID())
@@ -37,7 +45,10 @@ func TestBooking_Cancel_RecordsReasonInOneCall(t *testing.T) {
 
 func TestBooking_RulesStopInvalidTransitions(t *testing.T) {
 	b := newBooking(t)
-	if err := b.MarkCompleted(); !errors.Is(err, after.ErrCannotComplete) {
+	if err := b.MarkCompleted(); !errors.Is(
+		err,
+		after.ErrCannotComplete,
+	) {
 		t.Fatalf("complete from pending: got %v", err)
 	}
 	if err := b.Confirm(); err != nil {
@@ -49,7 +60,10 @@ func TestBooking_RulesStopInvalidTransitions(t *testing.T) {
 	if err := b.MarkCompleted(); err != nil {
 		t.Fatal(err)
 	}
-	if err := b.Cancel("too late"); !errors.Is(err, after.ErrCannotCancel) {
+	if err := b.Cancel("too late"); !errors.Is(
+		err,
+		after.ErrCannotCancel,
+	) {
 		t.Fatalf("cancel after completed: got %v", err)
 	}
 }

@@ -64,12 +64,18 @@ func TestUser_Deactivate(t *testing.T) {
 	}
 
 	// 二度目の退会はエラー
-	if err := u.Deactivate(clock); !errors.Is(err, domain.ErrAlreadyDeactivated) {
+	if err := u.Deactivate(clock); !errors.Is(
+		err,
+		domain.ErrAlreadyDeactivated,
+	) {
 		t.Errorf("want ErrAlreadyDeactivated, got %v", err)
 	}
 
 	// 退会後の Rename は不可
-	if err := u.Rename("New Name", clock); !errors.Is(err, domain.ErrCannotUpdateDeactivated) {
+	if err := u.Rename("New Name", clock); !errors.Is(
+		err,
+		domain.ErrCannotUpdateDeactivated,
+	) {
 		t.Errorf("want ErrCannotUpdateDeactivated, got %v", err)
 	}
 }

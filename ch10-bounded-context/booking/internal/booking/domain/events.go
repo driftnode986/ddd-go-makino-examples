@@ -30,9 +30,15 @@ func NewOrderPlaced(o *Order, now time.Time) OrderPlaced {
 	}
 }
 
-func (e OrderPlaced) EventName() string     { return "booking.OrderPlaced" }
+func (e OrderPlaced) EventName() string {
+	return "booking.OrderPlaced"
+}
+
 func (e OrderPlaced) OccurredAt() time.Time { return e.occurredAt }
-func (e OrderPlaced) AggregateID() string   { return e.orderID.String() }
+
+func (e OrderPlaced) AggregateID() string {
+	return e.orderID.String()
+}
 
 func (e OrderPlaced) OrderID() OrderID       { return e.orderID }
 func (e OrderPlaced) CustomerID() CustomerID { return e.customerID }

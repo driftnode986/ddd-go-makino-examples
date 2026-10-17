@@ -20,7 +20,11 @@ func newBooking(t *testing.T) *domain.Booking {
 func TestBooking_NewBooking_DefaultsToPendingVersion1(t *testing.T) {
 	b := newBooking(t)
 	if b.Status() != domain.StatusPending {
-		t.Errorf("status = %v, want %v", b.Status(), domain.StatusPending)
+		t.Errorf(
+			"status = %v, want %v",
+			b.Status(),
+			domain.StatusPending,
+		)
 	}
 	if b.Version() != 1 {
 		t.Errorf("version = %d, want 1", b.Version())
@@ -33,7 +37,11 @@ func TestBooking_Confirm_IncrementsVersion(t *testing.T) {
 		t.Fatalf("Confirm: %v", err)
 	}
 	if b.Status() != domain.StatusConfirmed {
-		t.Errorf("status = %v, want %v", b.Status(), domain.StatusConfirmed)
+		t.Errorf(
+			"status = %v, want %v",
+			b.Status(),
+			domain.StatusConfirmed,
+		)
 	}
 	if b.Version() != 2 {
 		t.Errorf("version = %d, want 2", b.Version())
@@ -47,7 +55,11 @@ func TestBooking_Cancel_FromConfirmed(t *testing.T) {
 		t.Fatalf("Cancel: %v", err)
 	}
 	if b.Status() != domain.StatusCancelled {
-		t.Errorf("status = %v, want %v", b.Status(), domain.StatusCancelled)
+		t.Errorf(
+			"status = %v, want %v",
+			b.Status(),
+			domain.StatusCancelled,
+		)
 	}
 }
 

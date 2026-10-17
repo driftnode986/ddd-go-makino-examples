@@ -4,7 +4,9 @@ import "testing"
 
 // 混在させても、アドレスを取れる変数ならポインタレシーバのメソッドも呼べる。
 // 呼べなくなるのは、マップの要素や関数の戻り値のようにアドレスを取れない値。
-func TestMixedReceivers_AddressableValueCanCallPointerMethod(t *testing.T) {
+func TestMixedReceivers_AddressableValueCanCallPointerMethod(
+	t *testing.T,
+) {
 	var b Booking
 	if err := b.Confirm(); err != nil { // (&b).Confirm() として呼ばれる
 		t.Fatal(err)

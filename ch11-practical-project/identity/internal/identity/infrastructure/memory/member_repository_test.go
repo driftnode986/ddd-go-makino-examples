@@ -24,7 +24,13 @@ func TestMemberRepository_SaveAndFind(t *testing.T) {
 	if err != nil || got.Name() != "Taro" {
 		t.Fatalf("FindByID = %v, %v", got, err)
 	}
-	if _, err := repo.FindByID(ctx, domain.NewMemberID()); !errors.Is(err, domain.ErrMemberNotFound) {
+	if _, err := repo.FindByID(
+		ctx,
+		domain.NewMemberID(),
+	); !errors.Is(
+		err,
+		domain.ErrMemberNotFound,
+	) {
 		t.Errorf("err = %v, want ErrMemberNotFound", err)
 	}
 }

@@ -18,7 +18,9 @@ type PostgresBookingRepository struct {
 	pool *pgxpool.Pool
 }
 
-func NewPostgresBookingRepository(pool *pgxpool.Pool) *PostgresBookingRepository {
+func NewPostgresBookingRepository(
+	pool *pgxpool.Pool,
+) *PostgresBookingRepository {
 	return &PostgresBookingRepository{pool: pool}
 }
 
@@ -55,12 +57,15 @@ func (r *PostgresBookingRepository) Add(
 	row := toBookingRow(b)
 	q := r.queries(ctx)
 	if err := q.InsertBooking(ctx, sqlcgen.InsertBookingParams{
-		ID:          row.ID,
-		MemberID:    row.MemberID,
-		LessonID:    row.LessonID,
-		Status:      row.Status,
-		ScheduledAt: pgtype.Timestamptz{Time: row.ScheduledAt, Valid: true},
-		Version:     int32(row.Version),
+		ID:       row.ID,
+		MemberID: row.MemberID,
+		LessonID: row.LessonID,
+		Status:   row.Status,
+		ScheduledAt: pgtype.Timestamptz{
+			Time:  row.ScheduledAt,
+			Valid: true,
+		},
+		Version: int32(row.Version),
 	}); err != nil {
 		return fmt.Errorf("insert booking: %w", err)
 	}
@@ -78,8 +83,11 @@ func (r *PostgresBookingRepository) Save(
 	rowsAffected, err := q.UpdateBookingWithVersion(
 		ctx,
 		sqlcgen.UpdateBookingWithVersionParams{
-			Status:          row.Status,
-			ScheduledAt:     pgtype.Timestamptz{Time: row.ScheduledAt, Valid: true},
+			Status: row.Status,
+			ScheduledAt: pgtype.Timestamptz{
+				Time:  row.ScheduledAt,
+				Valid: true,
+			},
 			Version:         int32(row.Version),
 			ID:              row.ID,
 			ExpectedVersion: int32(row.Version - 1),
@@ -101,7 +109,8 @@ func (r *PostgresBookingRepository) Save(
 func (r *PostgresBookingRepository) Remove(
 	ctx context.Context, id domain.BookingID,
 ) error {
-	rowsAffected, err := r.queries(ctx).DeleteBooking(ctx, id.String())
+	rowsAffected, err := r.queries(ctx).
+		DeleteBooking(ctx, id.String())
 	if err != nil {
 		return fmt.Errorf("delete booking: %w", err)
 	}
@@ -115,7 +124,8 @@ func (r *PostgresBookingRepository) Remove(
 func (r *PostgresBookingRepository) ListByMember(
 	ctx context.Context, memberID domain.MemberID,
 ) ([]*domain.Booking, error) {
-	rows, err := r.queries(ctx).ListBookingsByMember(ctx, memberID.String())
+	rows, err := r.queries(ctx).
+		ListBookingsByMember(ctx, memberID.String())
 	if err != nil {
 		return nil, fmt.Errorf("list bookings: %w", err)
 	}

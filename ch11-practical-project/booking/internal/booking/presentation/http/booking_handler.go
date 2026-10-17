@@ -30,16 +30,22 @@ type placeRequest struct {
 	LessonID string `json:"lesson_id"`
 }
 
-func (h *BookingHandler) place(w http.ResponseWriter, r *http.Request) {
+func (h *BookingHandler) place(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	var req placeRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeError(w, http.StatusBadRequest, "invalid json")
 		return
 	}
-	out, err := h.placeUC.Execute(r.Context(), application.PlaceBookingInput{
-		MemberID: req.MemberID,
-		LessonID: req.LessonID,
-	})
+	out, err := h.placeUC.Execute(
+		r.Context(),
+		application.PlaceBookingInput{
+			MemberID: req.MemberID,
+			LessonID: req.LessonID,
+		},
+	)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
@@ -47,7 +53,10 @@ func (h *BookingHandler) place(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusCreated, out)
 }
 
-func (h *BookingHandler) listByMember(w http.ResponseWriter, r *http.Request) {
+func (h *BookingHandler) listByMember(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	memberID := chi.URLParam(r, "member_id")
 	views, err := h.listQ.ByMember(r.Context(), memberID)
 	if err != nil {

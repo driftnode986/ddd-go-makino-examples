@@ -81,13 +81,21 @@ func MakeListOrdersHandler(
 	return func(w http.ResponseWriter, r *http.Request) {
 		customerID := r.URL.Query().Get("customer_id")
 		if customerID == "" {
-			writeError(w, http.StatusBadRequest,
-				"MISSING_CUSTOMER_ID", "customer_id query parameter is required")
+			writeError(
+				w,
+				http.StatusBadRequest,
+				"MISSING_CUSTOMER_ID",
+				"customer_id query parameter is required",
+			)
 			return
 		}
 
-		result, err := query.Execute(r.Context(),
-			application.ListOrdersByCustomerQuery{CustomerID: customerID})
+		result, err := query.Execute(
+			r.Context(),
+			application.ListOrdersByCustomerQuery{
+				CustomerID: customerID,
+			},
+		)
 		if err != nil {
 			writeApplicationError(w, logger, r, err)
 			return

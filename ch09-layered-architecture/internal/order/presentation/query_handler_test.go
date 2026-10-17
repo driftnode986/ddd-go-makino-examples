@@ -16,19 +16,34 @@ import (
 )
 
 // placeOrder は POST /orders を通して注文を 1 件作り、注文 ID を返す。
-func placeOrder(t *testing.T, repo *infrastructure.MemoryOrderRepository) string {
+func placeOrder(
+	t *testing.T,
+	repo *infrastructure.MemoryOrderRepository,
+) string {
 	t.Helper()
 	uc := &application.PlaceOrderUseCase{
 		OrderRepo: repo,
 		Clock:     application.SystemClock{},
 		Logger:    slog.New(slog.NewTextHandler(io.Discard, nil)),
 	}
-	body := `{"customer_id":"cus_001","items":[{"product_id":"p1","quantity":1,"unit_price":800}]}`
+	body := `{"customer_id":"cus_001","items":[` +
+		`{"product_id":"p1","quantity":1,"unit_price":800}]}`
 	rec := httptest.NewRecorder()
-	presentation.MakePlaceOrderHandler(uc, slog.Default()).ServeHTTP(rec,
-		httptest.NewRequest(http.MethodPost, "/orders", strings.NewReader(body)))
+	presentation.MakePlaceOrderHandler(uc, slog.Default()).
+		ServeHTTP(
+			rec,
+			httptest.NewRequest(
+				http.MethodPost,
+				"/orders",
+				strings.NewReader(body),
+			),
+		)
 	if rec.Code != http.StatusCreated {
-		t.Fatalf("place order: status = %d, body=%s", rec.Code, rec.Body.String())
+		t.Fatalf(
+			"place order: status = %d, body=%s",
+			rec.Code,
+			rec.Body.String(),
+		)
 	}
 	var resp presentation.PlaceOrderResponse
 	if err := json.NewDecoder(rec.Body).Decode(&resp); err != nil {
@@ -41,7 +56,11 @@ func TestGetOrderHandler_Found(t *testing.T) {
 	repo := infrastructure.NewMemoryOrderRepository()
 	id := placeOrder(t, repo)
 	handler := presentation.MakeGetOrderHandler(
-		&application.GetOrderQueryHandler{OrderRepo: repo}, slog.Default())
+		&application.GetOrderQueryHandler{
+			OrderRepo: repo,
+		},
+		slog.Default(),
+	)
 
 	req := httptest.NewRequest(http.MethodGet, "/orders/"+id, nil)
 	req.SetPathValue("id", id)
@@ -64,10 +83,21 @@ func TestListOrdersHandler(t *testing.T) {
 	repo := infrastructure.NewMemoryOrderRepository()
 	placeOrder(t, repo)
 	handler := presentation.MakeListOrdersHandler(
-		&application.ListOrdersByCustomerHandler{OrderRepo: repo}, slog.Default())
+		&application.ListOrdersByCustomerHandler{
+			OrderRepo: repo,
+		},
+		slog.Default(),
+	)
 
 	rec := httptest.NewRecorder()
-	handler.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/orders?customer_id=cus_001", nil))
+	handler.ServeHTTP(
+		rec,
+		httptest.NewRequest(
+			http.MethodGet,
+			"/orders?customer_id=cus_001",
+			nil,
+		),
+	)
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d, body=%s", rec.Code, rec.Body.String())
 	}
@@ -80,19 +110,29 @@ func TestListOrdersHandler(t *testing.T) {
 	}
 
 	rec = httptest.NewRecorder()
-	handler.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/orders", nil))
+	handler.ServeHTTP(
+		rec,
+		httptest.NewRequest(http.MethodGet, "/orders", nil),
+	)
 	if rec.Code != http.StatusBadRequest {
-		t.Errorf("without customer_id: status = %d, want 400", rec.Code)
+		t.Errorf(
+			"without customer_id: status = %d, want 400",
+			rec.Code,
+		)
 	}
 }
 
 func TestLoggingMiddleware_RecordsStatus(t *testing.T) {
 	var buf bytes.Buffer
 	logger := slog.New(slog.NewJSONHandler(&buf, nil))
-	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusTeapot)
-	})
-	handler := presentation.RequestIDMiddleware(presentation.LoggingMiddleware(logger)(next))
+	next := http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusTeapot)
+		},
+	)
+	handler := presentation.RequestIDMiddleware(
+		presentation.LoggingMiddleware(logger)(next),
+	)
 
 	req := httptest.NewRequest(http.MethodGet, "/ping", nil)
 	req.Header.Set("X-Request-ID", "req-1")
@@ -102,7 +142,8 @@ func TestLoggingMiddleware_RecordsStatus(t *testing.T) {
 	if err := json.Unmarshal(buf.Bytes(), &entry); err != nil {
 		t.Fatalf("log is not JSON: %q", buf.String())
 	}
-	if entry["status"] != float64(http.StatusTeapot) || entry["request_id"] != "req-1" {
+	if entry["status"] != float64(http.StatusTeapot) ||
+		entry["request_id"] != "req-1" {
 		t.Errorf("log entry = %v", entry)
 	}
 }

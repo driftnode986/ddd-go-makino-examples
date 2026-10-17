@@ -18,18 +18,29 @@ type UserRepositoryPG struct {
 	queries *sqlcgen.Queries
 }
 
-func (r *UserRepositoryPG) Add(ctx context.Context, u *domain.User) error {
+func (r *UserRepositoryPG) Add(
+	ctx context.Context,
+	u *domain.User,
+) error {
 	return r.q(ctx).InsertUser(ctx, sqlcgen.InsertUserParams{
-		ID:        u.ID().String(),
-		Email:     u.Email().String(),
-		Name:      u.Name(),
-		CreatedAt: pgtype.Timestamptz{Time: u.CreatedAt(), Valid: true},
+		ID:    u.ID().String(),
+		Email: u.Email().String(),
+		Name:  u.Name(),
+		CreatedAt: pgtype.Timestamptz{
+			Time:  u.CreatedAt(),
+			Valid: true,
+		},
 	})
 }
 
-func (r *UserRepositoryPG) Save(ctx context.Context, u *domain.User) error {
+func (r *UserRepositoryPG) Save(
+	ctx context.Context,
+	u *domain.User,
+) error {
 	n, err := r.q(ctx).UpdateUser(ctx, sqlcgen.UpdateUserParams{
-		ID: u.ID().String(), Email: u.Email().String(), Name: u.Name(),
+		ID: u.ID().
+			String(),
+		Email: u.Email().String(), Name: u.Name(),
 	})
 	if err != nil {
 		return err
@@ -46,12 +57,18 @@ func NewUserRepositoryPG(db sqlcgen.DBTX) *UserRepositoryPG {
 	return &UserRepositoryPG{queries: sqlcgen.New(db)}
 }
 
-func (r *UserRepositoryPG) FindByID(ctx context.Context, id domain.UserID) (*domain.User, error) {
+func (r *UserRepositoryPG) FindByID(
+	ctx context.Context,
+	id domain.UserID,
+) (*domain.User, error) {
 	row, err := r.q(ctx).GetUserByID(ctx, id.String())
 	return toUser(row, err)
 }
 
-func (r *UserRepositoryPG) FindByEmail(ctx context.Context, email domain.Email) (*domain.User, error) {
+func (r *UserRepositoryPG) FindByEmail(
+	ctx context.Context,
+	email domain.Email,
+) (*domain.User, error) {
 	row, err := r.q(ctx).GetUserByEmail(ctx, email.String())
 	return toUser(row, err)
 }
@@ -75,7 +92,12 @@ func toUser(row sqlcgen.User, err error) (*domain.User, error) {
 	if err != nil {
 		return nil, fmt.Errorf("stored email: %w", err)
 	}
-	return domain.ReconstructUser(domain.UserID(row.ID), email, row.Name, row.CreatedAt.Time), nil
+	return domain.ReconstructUser(
+		domain.UserID(row.ID),
+		email,
+		row.Name,
+		row.CreatedAt.Time,
+	), nil
 }
 
 var _ domain.UserRepository = (*UserRepositoryPG)(nil)

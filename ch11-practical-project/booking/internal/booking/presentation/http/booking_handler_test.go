@@ -24,8 +24,12 @@ import (
 func setupTestServer(t *testing.T) *httptest.Server {
 	t.Helper()
 	repo := memory.NewBookingRepository()
-	stub := &stubLessonQuery{view: dto.LessonView{ID: uuid.NewString(), Name: "Yoga"}}
-	now := func() time.Time { return time.Date(2026, 5, 23, 10, 0, 0, 0, time.UTC) }
+	stub := &stubLessonQuery{
+		view: dto.LessonView{ID: uuid.NewString(), Name: "Yoga"},
+	}
+	now := func() time.Time {
+		return time.Date(2026, 5, 23, 10, 0, 0, 0, time.UTC)
+	}
 	placeUC := application.NewPlaceBookingUseCase(repo, stub, now)
 	listQ := application.NewListBookingsQuery(repo)
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
@@ -46,7 +50,11 @@ func TestPlaceBooking_HTTP(t *testing.T) {
         "lesson_id": "` + uuid.NewString() + `"
     }`)
 
-	res, err := http.Post(srv.URL+"/booking/bookings", "application/json", body)
+	res, err := http.Post(
+		srv.URL+"/booking/bookings",
+		"application/json",
+		body,
+	)
 	if err != nil {
 		t.Fatalf("POST error: %v", err)
 	}
@@ -73,9 +81,15 @@ func TestPlaceBooking_HTTP(t *testing.T) {
 
 func TestPlaceBooking_HTTP_InvalidInput(t *testing.T) {
 	srv := setupTestServer(t)
-	body := strings.NewReader(`{"member_id":"not-uuid","lesson_id":"not-uuid"}`)
+	body := strings.NewReader(
+		`{"member_id":"not-uuid","lesson_id":"not-uuid"}`,
+	)
 
-	res, err := http.Post(srv.URL+"/booking/bookings", "application/json", body)
+	res, err := http.Post(
+		srv.URL+"/booking/bookings",
+		"application/json",
+		body,
+	)
 	if err != nil {
 		t.Fatalf("POST error: %v", err)
 	}

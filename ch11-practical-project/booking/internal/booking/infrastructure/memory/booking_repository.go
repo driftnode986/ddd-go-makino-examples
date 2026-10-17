@@ -13,10 +13,15 @@ type BookingRepository struct {
 }
 
 func NewBookingRepository() *BookingRepository {
-	return &BookingRepository{bookings: map[domain.BookingID]*domain.Booking{}}
+	return &BookingRepository{
+		bookings: map[domain.BookingID]*domain.Booking{},
+	}
 }
 
-func (r *BookingRepository) Save(_ context.Context, b *domain.Booking) error {
+func (r *BookingRepository) Save(
+	_ context.Context,
+	b *domain.Booking,
+) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.bookings[b.ID()] = b

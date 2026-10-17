@@ -37,16 +37,27 @@ type Order struct {
 }
 
 // PlaceOrder は明細と顧客から新しい注文を作る。
-func PlaceOrder(items []OrderItem, customerID CustomerID, now time.Time) (*Order, error) {
+func PlaceOrder(
+	items []OrderItem,
+	customerID CustomerID,
+	now time.Time,
+) (*Order, error) {
 	if customerID == "" {
-		return nil, fmt.Errorf("%w: customer id required", ErrInvalidOrder)
+		return nil, fmt.Errorf(
+			"%w: customer id required",
+			ErrInvalidOrder,
+		)
 	}
 	if len(items) == 0 {
 		return nil, fmt.Errorf("%w: items required", ErrInvalidOrder)
 	}
 	for _, it := range items {
 		if it.Quantity <= 0 || it.UnitPrice < 0 {
-			return nil, fmt.Errorf("%w: invalid item %q", ErrInvalidOrder, it.ProductID)
+			return nil, fmt.Errorf(
+				"%w: invalid item %q",
+				ErrInvalidOrder,
+				it.ProductID,
+			)
 		}
 	}
 	return &Order{
@@ -59,17 +70,28 @@ func PlaceOrder(items []OrderItem, customerID CustomerID, now time.Time) (*Order
 }
 
 // ReconstructOrder は保存済みの値から注文を組み立て直す（リポジトリとテストが使う）。
-func ReconstructOrder(id OrderID, customerID CustomerID, items []OrderItem,
-	status OrderStatus, placedAt time.Time) *Order {
+func ReconstructOrder(
+	id OrderID,
+	customerID CustomerID,
+	items []OrderItem,
+	status OrderStatus,
+	placedAt time.Time,
+) *Order {
 	return &Order{id: id, customerID: customerID,
-		items: append([]OrderItem(nil), items...), status: status, placedAt: placedAt}
+		items: append(
+			[]OrderItem(nil),
+			items...), status: status, placedAt: placedAt}
 }
 
 func (o *Order) ID() OrderID            { return o.id }
 func (o *Order) CustomerID() CustomerID { return o.customerID }
-func (o *Order) Items() []OrderItem     { return append([]OrderItem(nil), o.items...) }
-func (o *Order) Status() OrderStatus    { return o.status }
-func (o *Order) PlacedAt() time.Time    { return o.placedAt }
+
+func (o *Order) Items() []OrderItem {
+	return append([]OrderItem(nil), o.items...)
+}
+
+func (o *Order) Status() OrderStatus { return o.status }
+func (o *Order) PlacedAt() time.Time { return o.placedAt }
 
 // Subtotal は税抜きの合計金額（円）。
 func (o *Order) Subtotal() int64 {

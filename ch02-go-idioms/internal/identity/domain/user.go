@@ -21,7 +21,11 @@ var ErrInvalidDisplayName = errors.New("invalid display name")
 
 // #region user-methods
 // NewUser はファクトリ関数。不変条件を 1 箇所で検証
-func NewUser(id UserID, email Email, displayName string) (*User, error) {
+func NewUser(
+	id UserID,
+	email Email,
+	displayName string,
+) (*User, error) {
 	if displayName == "" {
 		return nil, ErrInvalidDisplayName
 	}

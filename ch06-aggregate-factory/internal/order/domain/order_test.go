@@ -46,7 +46,10 @@ func jpy(t *testing.T, amount int64) domain.Money {
 
 func newTestOrder(t *testing.T) *domain.Order {
 	t.Helper()
-	o, err := domain.NewOrder(orderID(t, "order001"), customerID(t, "cust0001"))
+	o, err := domain.NewOrder(
+		orderID(t, "order001"),
+		customerID(t, "cust0001"),
+	)
 	if err != nil {
 		t.Fatalf("NewOrder: %v", err)
 	}
@@ -55,11 +58,17 @@ func newTestOrder(t *testing.T) *domain.Order {
 
 // #region test-add-item-only-in-draft
 func TestOrder_AddItem_OnlyInDraft(t *testing.T) {
-	clock := domain.FixedClock{T: time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)}
+	clock := domain.FixedClock{
+		T: time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC),
+	}
 	o := newTestOrder(t)
 
 	// draft 状態で追加できる
-	if err := o.AddItem(productID(t, "prd00001"), 2, jpy(t, 1000)); err != nil {
+	if err := o.AddItem(
+		productID(t, "prd00001"),
+		2,
+		jpy(t, 1000),
+	); err != nil {
 		t.Fatalf("AddItem in draft: %v", err)
 	}
 
@@ -67,9 +76,17 @@ func TestOrder_AddItem_OnlyInDraft(t *testing.T) {
 	if err := o.Confirm(clock); err != nil {
 		t.Fatalf("Confirm: %v", err)
 	}
-	err := o.AddItem(productID(t, "prd00002"), 1, jpy(t, 500))
+	err := o.AddItem(
+		productID(t, "prd00002"),
+		1,
+		jpy(t, 500),
+	)
 	if !errors.Is(err, domain.ErrCannotModifyConfirmed) {
-		t.Errorf("AddItem in confirmed: want ErrCannotModifyConfirmed got %v", err)
+		t.Errorf(
+			"AddItem in confirmed: "+
+				"want ErrCannotModifyConfirmed got %v",
+			err,
+		)
 	}
 }
 
@@ -77,18 +94,33 @@ func TestOrder_AddItem_OnlyInDraft(t *testing.T) {
 
 func TestOrder_AddItem_RejectsInvalidQuantity(t *testing.T) {
 	o := newTestOrder(t)
-	err := o.AddItem(productID(t, "prd00001"), 0, jpy(t, 1000))
+	err := o.AddItem(
+		productID(t, "prd00001"),
+		0,
+		jpy(t, 1000),
+	)
 	if !errors.Is(err, domain.ErrInvalidQuantity) {
-		t.Errorf("AddItem quantity=0: want ErrInvalidQuantity got %v", err)
+		t.Errorf(
+			"AddItem quantity=0: want ErrInvalidQuantity got %v",
+			err,
+		)
 	}
 }
 
 func TestOrder_RemoveItem(t *testing.T) {
 	o := newTestOrder(t)
-	if err := o.AddItem(productID(t, "prd00001"), 2, jpy(t, 1000)); err != nil {
+	if err := o.AddItem(
+		productID(t, "prd00001"),
+		2,
+		jpy(t, 1000),
+	); err != nil {
 		t.Fatalf("AddItem: %v", err)
 	}
-	if err := o.AddItem(productID(t, "prd00002"), 1, jpy(t, 500)); err != nil {
+	if err := o.AddItem(
+		productID(t, "prd00002"),
+		1,
+		jpy(t, 500),
+	); err != nil {
 		t.Fatalf("AddItem: %v", err)
 	}
 	if err := o.RemoveItem(productID(t, "prd00001")); err != nil {
@@ -99,14 +131,21 @@ func TestOrder_RemoveItem(t *testing.T) {
 	}
 	err := o.RemoveItem(productID(t, "prd99999"))
 	if !errors.Is(err, domain.ErrItemNotFound) {
-		t.Errorf("RemoveItem missing: want ErrItemNotFound got %v", err)
+		t.Errorf(
+			"RemoveItem missing: want ErrItemNotFound got %v",
+			err,
+		)
 	}
 }
 
 // #region test-items-returns-copy
 func TestOrder_Items_ReturnsCopy(t *testing.T) {
 	o := newTestOrder(t)
-	if err := o.AddItem(productID(t, "prd00001"), 2, jpy(t, 1000)); err != nil {
+	if err := o.AddItem(
+		productID(t, "prd00001"),
+		2,
+		jpy(t, 1000),
+	); err != nil {
 		t.Fatalf("AddItem: %v", err)
 	}
 
@@ -116,7 +155,10 @@ func TestOrder_Items_ReturnsCopy(t *testing.T) {
 
 	again := o.Items()
 	if again[0].Quantity() != 2 {
-		t.Errorf("internal state polluted: want 2 got %d", again[0].Quantity())
+		t.Errorf(
+			"internal state polluted: want 2 got %d",
+			again[0].Quantity(),
+		)
 	}
 }
 
@@ -124,7 +166,9 @@ func TestOrder_Items_ReturnsCopy(t *testing.T) {
 
 // #region test-confirm-rejects-empty
 func TestOrder_Confirm_RejectsEmpty(t *testing.T) {
-	clock := domain.FixedClock{T: time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)}
+	clock := domain.FixedClock{
+		T: time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC),
+	}
 	o := newTestOrder(t)
 	err := o.Confirm(clock)
 	if !errors.Is(err, domain.ErrEmptyOrder) {
@@ -136,10 +180,18 @@ func TestOrder_Confirm_RejectsEmpty(t *testing.T) {
 
 func TestOrder_TotalAmount(t *testing.T) {
 	o := newTestOrder(t)
-	if err := o.AddItem(productID(t, "prd00001"), 2, jpy(t, 1000)); err != nil {
+	if err := o.AddItem(
+		productID(t, "prd00001"),
+		2,
+		jpy(t, 1000),
+	); err != nil {
 		t.Fatalf("AddItem: %v", err)
 	}
-	if err := o.AddItem(productID(t, "prd00002"), 3, jpy(t, 500)); err != nil {
+	if err := o.AddItem(
+		productID(t, "prd00002"),
+		3,
+		jpy(t, 500),
+	); err != nil {
 		t.Fatalf("AddItem: %v", err)
 	}
 	total, err := o.TotalAmount()

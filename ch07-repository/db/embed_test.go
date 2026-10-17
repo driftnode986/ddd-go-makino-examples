@@ -9,6 +9,9 @@ import (
 
 func TestSchema_EmbedsBookingsTable(t *testing.T) {
 	if !strings.Contains(db.Schema, "CREATE TABLE bookings") {
-		t.Errorf("Schema does not contain the bookings table:\n%s", db.Schema)
+		t.Errorf(
+			"Schema does not contain the bookings table:\n%s",
+			db.Schema,
+		)
 	}
 }

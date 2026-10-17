@@ -7,7 +7,10 @@ import (
 )
 
 type IdempotencyStore interface {
-	AlreadyProcessed(ctx context.Context, eventID int64) (bool, error)
+	AlreadyProcessed(
+		ctx context.Context,
+		eventID int64,
+	) (bool, error)
 	MarkProcessed(ctx context.Context, eventID int64) error
 }
 

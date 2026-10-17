@@ -13,10 +13,15 @@ type LessonRepository struct {
 }
 
 func NewLessonRepository() *LessonRepository {
-	return &LessonRepository{lessons: map[domain.LessonID]*domain.Lesson{}}
+	return &LessonRepository{
+		lessons: map[domain.LessonID]*domain.Lesson{},
+	}
 }
 
-func (r *LessonRepository) Save(_ context.Context, l *domain.Lesson) error {
+func (r *LessonRepository) Save(
+	_ context.Context,
+	l *domain.Lesson,
+) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.lessons[l.ID()] = l
@@ -34,7 +39,9 @@ func (r *LessonRepository) FindByID(_ context.Context,
 	return l, nil
 }
 
-func (r *LessonRepository) List(_ context.Context) ([]*domain.Lesson, error) {
+func (r *LessonRepository) List(
+	_ context.Context,
+) ([]*domain.Lesson, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	out := make([]*domain.Lesson, 0, len(r.lessons))

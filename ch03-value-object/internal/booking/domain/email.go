@@ -8,7 +8,8 @@ import (
 	"strings"
 )
 
-// Email は値オブジェクト。フィールドは非公開で、コンストラクタ経由でのみ生成される。
+// Email は値オブジェクト。
+// フィールドは非公開で、コンストラクタ経由でのみ生成される。
 type Email struct {
 	local  string
 	domain string
@@ -20,7 +21,8 @@ var ErrInvalidEmail = errors.New("invalid email")
 // #endregion
 
 // #region new-email
-// NewEmail は RFC 5322 に従ってメールアドレスを検証し、Email を返す。
+// NewEmail は RFC 5322 に従ってメールアドレスを検証し、
+// Email を返す。
 func NewEmail(s string) (Email, error) {
 	addr, err := mail.ParseAddress(s)
 	if err != nil {

@@ -22,7 +22,11 @@ type Booking struct {
 	createdAt time.Time
 }
 
-func NewBooking(memberID MemberID, lessonID LessonID, now time.Time) *Booking {
+func NewBooking(
+	memberID MemberID,
+	lessonID LessonID,
+	now time.Time,
+) *Booking {
 	return &Booking{
 		id:        NewBookingID(),
 		memberID:  memberID,
@@ -33,8 +37,14 @@ func NewBooking(memberID MemberID, lessonID LessonID, now time.Time) *Booking {
 	}
 }
 
-func RestoreBooking(id BookingID, memberID MemberID, lessonID LessonID,
-	status BookingStatus, version int, createdAt time.Time) *Booking {
+func RestoreBooking(
+	id BookingID,
+	memberID MemberID,
+	lessonID LessonID,
+	status BookingStatus,
+	version int,
+	createdAt time.Time,
+) *Booking {
 	return &Booking{id: id, memberID: memberID, lessonID: lessonID,
 		status: status, version: version, createdAt: createdAt}
 }

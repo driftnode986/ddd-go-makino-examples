@@ -11,7 +11,8 @@ func TestBooking_CancelBySetters(t *testing.T) {
 	// キャンセルするには、呼び出し側が 2 つの Setter を正しい順で呼ぶ必要がある
 	b.SetStatus("cancelled")
 	b.SetCancelReason("schedule changed")
-	if b.Status != "cancelled" || b.GetCancelReason() != "schedule changed" {
+	if b.Status != "cancelled" ||
+		b.GetCancelReason() != "schedule changed" {
 		t.Fatalf("got %+v", b)
 	}
 }

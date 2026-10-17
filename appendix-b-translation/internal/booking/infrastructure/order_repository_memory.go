@@ -15,13 +15,18 @@ type InMemoryOrderRepository struct {
 }
 
 func NewInMemoryOrderRepository() *InMemoryOrderRepository {
-	return &InMemoryOrderRepository{orders: map[domain.OrderID]*domain.Order{}}
+	return &InMemoryOrderRepository{
+		orders: map[domain.OrderID]*domain.Order{},
+	}
 }
 
 // ErrDuplicateOrder は同じ ID の注文を 2 回 Add したときのエラー。
 var ErrDuplicateOrder = errors.New("order already exists")
 
-func (r *InMemoryOrderRepository) Add(_ context.Context, o *domain.Order) error {
+func (r *InMemoryOrderRepository) Add(
+	_ context.Context,
+	o *domain.Order,
+) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if _, ok := r.orders[o.ID()]; ok {
@@ -31,7 +36,10 @@ func (r *InMemoryOrderRepository) Add(_ context.Context, o *domain.Order) error 
 	return nil
 }
 
-func (r *InMemoryOrderRepository) FindByID(_ context.Context, id domain.OrderID) (*domain.Order, error) {
+func (r *InMemoryOrderRepository) FindByID(
+	_ context.Context,
+	id domain.OrderID,
+) (*domain.Order, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	o, ok := r.orders[id]

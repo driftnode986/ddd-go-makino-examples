@@ -15,7 +15,9 @@ func TestFixedRandom_IntN_ReturnsValueModN(t *testing.T) {
 }
 
 func TestSystemRandom_IntN_StaysInRange(t *testing.T) {
-	var r domain.RandomSource = domain.SystemRandom{R: rand.New(rand.NewPCG(1, 2))}
+	var r domain.RandomSource = domain.SystemRandom{
+		R: rand.New(rand.NewPCG(1, 2)),
+	}
 	for range 100 {
 		if got := r.IntN(32); got < 0 || got >= 32 {
 			t.Fatalf("IntN(32) out of range: %d", got)

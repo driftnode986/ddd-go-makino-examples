@@ -10,7 +10,10 @@ import (
 // TxManager は fn を 1 つのトランザクションの中で実行する。
 // fn がエラーを返したらロールバックし、nil ならコミットする。
 type TxManager interface {
-	RunInTx(ctx context.Context, fn func(ctx context.Context) error) error
+	RunInTx(
+		ctx context.Context,
+		fn func(ctx context.Context) error,
+	) error
 }
 
 // Clock は現在時刻を返す。テストでは固定の時刻に差し替える。

@@ -9,7 +9,11 @@ import (
 
 func TestMemoryMailer_RecordsMail(t *testing.T) {
 	m := infrastructure.NewMemoryMailer()
-	if err := m.Send(context.Background(), "cus_001", "hello"); err != nil {
+	if err := m.Send(
+		context.Background(),
+		"cus_001",
+		"hello",
+	); err != nil {
 		t.Fatal(err)
 	}
 	if m.SentCount() != 1 {

@@ -10,7 +10,10 @@ import (
 // Persistence Model の db タグがカラム名に対応している
 func TestUserRow_DBTags(t *testing.T) {
 	typ := reflect.TypeFor[persistence.UserRow]()
-	for field, want := range map[string]string{"ID": "id", "Email": "email"} {
+	for field, want := range map[string]string{
+		"ID":    "id",
+		"Email": "email",
+	} {
 		f, ok := typ.FieldByName(field)
 		if !ok {
 			t.Fatalf("field %s not found", field)

@@ -15,7 +15,11 @@ func TestBooking_Confirm_FromPending(t *testing.T) {
 		t.Fatalf("Confirm() error = %v", err)
 	}
 	if b.Status() != domain.BookingStatusConfirmed {
-		t.Errorf("status = %v, want %v", b.Status(), domain.BookingStatusConfirmed)
+		t.Errorf(
+			"status = %v, want %v",
+			b.Status(),
+			domain.BookingStatusConfirmed,
+		)
 	}
 	if b.Version() != 2 {
 		t.Errorf("version = %d, want 2", b.Version())
@@ -41,7 +45,11 @@ func TestBooking_Cancel_FromPending(t *testing.T) {
 		t.Fatalf("Cancel() error = %v", err)
 	}
 	if b.Status() != domain.BookingStatusCancelled {
-		t.Errorf("status = %v, want %v", b.Status(), domain.BookingStatusCancelled)
+		t.Errorf(
+			"status = %v, want %v",
+			b.Status(),
+			domain.BookingStatusCancelled,
+		)
 	}
 }
 
@@ -56,7 +64,11 @@ func TestBooking_Cancel_FromConfirmed(t *testing.T) {
 		t.Fatalf("Cancel() error = %v", err)
 	}
 	if booking.Status() != domain.BookingStatusCancelled {
-		t.Errorf("status = %v, want %v", booking.Status(), domain.BookingStatusCancelled)
+		t.Errorf(
+			"status = %v, want %v",
+			booking.Status(),
+			domain.BookingStatusCancelled,
+		)
 	}
 	if booking.Version() != 2 {
 		t.Errorf("version = %d, want 2", booking.Version())

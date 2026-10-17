@@ -15,7 +15,10 @@ type OrderHandler struct {
 	orders     domain.OrderRepository
 }
 
-func NewOrderHandler(placeOrder *application.PlaceOrderUseCase, orders domain.OrderRepository) *OrderHandler {
+func NewOrderHandler(
+	placeOrder *application.PlaceOrderUseCase,
+	orders domain.OrderRepository,
+) *OrderHandler {
 	return &OrderHandler{placeOrder: placeOrder, orders: orders}
 }
 
@@ -35,16 +38,27 @@ type placeOrderRequest struct {
 	} `json:"items"`
 }
 
-func (h *OrderHandler) place(w http.ResponseWriter, r *http.Request) {
+func (h *OrderHandler) place(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	var req placeOrderRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid json"})
+		writeJSON(
+			w,
+			http.StatusBadRequest,
+			map[string]string{"error": "invalid json"},
+		)
 		return
 	}
-	cmd := application.PlaceOrderCommand{CustomerID: domain.CustomerID(req.CustomerID)}
+	cmd := application.PlaceOrderCommand{
+		CustomerID: domain.CustomerID(req.CustomerID),
+	}
 	for _, it := range req.Items {
 		cmd.Items = append(cmd.Items, domain.OrderItem{
-			ProductID: it.ProductID, Quantity: it.Quantity, UnitPrice: it.UnitPrice,
+			ProductID: it.ProductID,
+			Quantity:  it.Quantity,
+			UnitPrice: it.UnitPrice,
 		})
 	}
 	res, err := h.placeOrder.Execute(r.Context(), cmd)
@@ -52,16 +66,27 @@ func (h *OrderHandler) place(w http.ResponseWriter, r *http.Request) {
 		h.writeError(w, err)
 		return
 	}
-	writeJSON(w, http.StatusCreated, map[string]any{"order_id": res.OrderID, "total": res.Total})
+	writeJSON(
+		w,
+		http.StatusCreated,
+		map[string]any{"order_id": res.OrderID, "total": res.Total},
+	)
 }
 
 func (h *OrderHandler) get(w http.ResponseWriter, r *http.Request) {
-	o, err := h.orders.FindByID(r.Context(), domain.OrderID(r.PathValue("id")))
+	o, err := h.orders.FindByID(
+		r.Context(),
+		domain.OrderID(r.PathValue("id")),
+	)
 	if err != nil {
 		h.writeError(w, err)
 		return
 	}
-	writeJSON(w, http.StatusOK, map[string]any{"order_id": o.ID(), "status": o.Status()})
+	writeJSON(
+		w,
+		http.StatusOK,
+		map[string]any{"order_id": o.ID(), "status": o.Status()},
+	)
 }
 
 // writeError は入力の誤りを 400 にし、それ以外は mapErrorToHTTPStatus に任せる。

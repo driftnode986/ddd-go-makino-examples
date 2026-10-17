@@ -14,7 +14,11 @@ func NewCoupon(discount Money, validUntil time.Time) *Coupon {
 }
 
 // IsValidAt は now の時点でクーポンが使えるかを返す (validUntil ちょうどまで有効)。
-func (c *Coupon) IsValidAt(now time.Time) bool { return !now.After(c.validUntil) }
+func (c *Coupon) IsValidAt(
+	now time.Time,
+) bool {
+	return !now.After(c.validUntil)
+}
 
 // DiscountAmount は割引額を返す。
 func (c *Coupon) DiscountAmount() Money { return c.discount }

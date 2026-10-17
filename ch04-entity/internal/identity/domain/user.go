@@ -51,21 +51,33 @@ var (
 	// ErrAlreadyDeactivated はすでに退会済みの利用者を表す。
 	ErrAlreadyDeactivated = errors.New("user already deactivated")
 	// ErrCannotUpdateDeactivated は退会済み利用者の更新を表す。
-	ErrCannotUpdateDeactivated = errors.New("cannot update deactivated user")
+	ErrCannotUpdateDeactivated = errors.New(
+		"cannot update deactivated user",
+	)
 	// ErrInvalidName は不正な氏名を表す。
 	ErrInvalidName = errors.New("invalid name")
 )
 
 // NewUser は User エンティティを生成する。
-func NewUser(id UserID, email, name string, clock func() time.Time) (*User, error) {
+func NewUser(
+	id UserID,
+	email, name string,
+	clock func() time.Time,
+) (*User, error) {
 	if id.IsZero() {
 		return nil, errors.New("user id required")
 	}
 	if !strings.Contains(email, "@") {
-		return nil, fmt.Errorf("%w: email must contain @", ErrInvalidName)
+		return nil, fmt.Errorf(
+			"%w: email must contain @",
+			ErrInvalidName,
+		)
 	}
 	if strings.TrimSpace(name) == "" {
-		return nil, fmt.Errorf("%w: name must not be empty", ErrInvalidName)
+		return nil, fmt.Errorf(
+			"%w: name must not be empty",
+			ErrInvalidName,
+		)
 	}
 	now := clock()
 	return &User{
@@ -86,7 +98,10 @@ func (u *User) Rename(name string, clock func() time.Time) error {
 	}
 	trimmed := strings.TrimSpace(name)
 	if trimmed == "" {
-		return fmt.Errorf("%w: name must not be empty", ErrInvalidName)
+		return fmt.Errorf(
+			"%w: name must not be empty",
+			ErrInvalidName,
+		)
 	}
 	u.name = trimmed
 	u.version++

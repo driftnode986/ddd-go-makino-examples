@@ -14,7 +14,10 @@ import (
 
 // #region handle-create-booking
 // アプリケーション層でドメインエラーを HTTP ステータスに対応させる
-func (h *Handler) handleCreateBooking(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) handleCreateBooking(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	err := h.useCase.Execute(r.Context(), buildInput(r))
 	if err == nil {
 		w.WriteHeader(http.StatusCreated)
@@ -30,8 +33,17 @@ func (h *Handler) handleCreateBooking(w http.ResponseWriter, r *http.Request) {
 	case errors.Is(err, domain.ErrScheduleConflict):
 		http.Error(w, err.Error(), http.StatusConflict)
 	default:
-		slog.ErrorContext(r.Context(), "unexpected error", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		slog.ErrorContext(
+			r.Context(),
+			"unexpected error",
+			"error",
+			err,
+		)
+		http.Error(
+			w,
+			"internal server error",
+			http.StatusInternalServerError,
+		)
 	}
 }
 

@@ -40,7 +40,10 @@ func TestInMemoryBookingRepository_FindByID_NotFound(t *testing.T) {
 func TestInMemoryBookingRepository_Save_AfterFindByID(t *testing.T) {
 	ctx := context.Background()
 	repo := infrastructure.NewInMemoryBookingRepository()
-	if err := repo.Add(ctx, mustNewBooking(t, "2026-06-01T10:00:00Z")); err != nil {
+	if err := repo.Add(
+		ctx,
+		mustNewBooking(t, "2026-06-01T10:00:00Z"),
+	); err != nil {
 		t.Fatalf("Add: %v", err)
 	}
 	b, err := repo.FindByID(ctx, mustBookingID(t, "bk_001"))
@@ -59,7 +62,11 @@ func TestInMemoryBookingRepository_Save_AfterFindByID(t *testing.T) {
 		t.Fatalf("FindByID: %v", err)
 	}
 	if got.Status() != domain.StatusConfirmed || got.Version() != 2 {
-		t.Errorf("got status=%v version=%d, want confirmed/2", got.Status(), got.Version())
+		t.Errorf(
+			"got status=%v version=%d, want confirmed/2",
+			got.Status(),
+			got.Version(),
+		)
 	}
 }
 
@@ -80,7 +87,11 @@ func TestInMemoryBookingRepository_StoresCopy(t *testing.T) {
 		t.Fatalf("FindByID: %v", err)
 	}
 	if got.Status() != domain.StatusPending || got.Version() != 1 {
-		t.Errorf("got status=%v version=%d, want pending/1", got.Status(), got.Version())
+		t.Errorf(
+			"got status=%v version=%d, want pending/1",
+			got.Status(),
+			got.Version(),
+		)
 	}
 }
 
@@ -109,7 +120,10 @@ func TestInMemoryBookingRepository_Remove(t *testing.T) {
 	if !errors.Is(err, domain.ErrNotFound) {
 		t.Errorf("after Remove: got %v, want ErrNotFound", err)
 	}
-	if err := repo.Remove(ctx, b.ID()); !errors.Is(err, domain.ErrNotFound) {
+	if err := repo.Remove(ctx, b.ID()); !errors.Is(
+		err,
+		domain.ErrNotFound,
+	) {
 		t.Errorf("Remove twice: got %v, want ErrNotFound", err)
 	}
 }

@@ -22,8 +22,9 @@ func startPostgres(t *testing.T, schema string) *pgxpool.Pool {
 		postgres.WithUsername("test"),
 		postgres.WithPassword("test"),
 		testcontainers.WithWaitStrategy(
-			wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).
+			wait.ForLog(
+				"database system is ready to accept connections",
+			).WithOccurrence(2).
 				WithStartupTimeout(30*time.Second),
 		),
 	)
@@ -49,7 +50,10 @@ func startPostgres(t *testing.T, schema string) *pgxpool.Pool {
 func count(t *testing.T, pool *pgxpool.Pool) int {
 	t.Helper()
 	var n int
-	if err := pool.QueryRow(context.Background(), "SELECT count(*) FROM items").Scan(&n); err != nil {
+	if err := pool.QueryRow(
+		context.Background(),
+		"SELECT count(*) FROM items",
+	).Scan(&n); err != nil {
 		t.Fatal(err)
 	}
 	return n
@@ -57,7 +61,10 @@ func count(t *testing.T, pool *pgxpool.Pool) int {
 
 func TestTxManager_CommitsAndRollsBack(t *testing.T) {
 	ctx := context.Background()
-	pool := startPostgres(t, "CREATE TABLE items (id INT PRIMARY KEY)")
+	pool := startPostgres(
+		t,
+		"CREATE TABLE items (id INT PRIMARY KEY)",
+	)
 	m := pgxtx.NewTxManager(pool)
 	insert := func(id int) func(ctx context.Context) error {
 		return func(ctx context.Context) error {
@@ -65,7 +72,11 @@ func TestTxManager_CommitsAndRollsBack(t *testing.T) {
 			if !ok {
 				return errors.New("no tx in context")
 			}
-			_, err := tx.Exec(ctx, "INSERT INTO items (id) VALUES ($1)", id)
+			_, err := tx.Exec(
+				ctx,
+				"INSERT INTO items (id) VALUES ($1)",
+				id,
+			)
 			return err
 		}
 	}
@@ -84,7 +95,11 @@ func TestTxManager_CommitsAndRollsBack(t *testing.T) {
 		t.Fatalf("err = %v, want boom", err)
 	}
 	if n := count(t, pool); n != 1 {
-		t.Errorf("rows = %d, want 1 (the second insert must be rolled back)", n)
+		t.Errorf(
+			"rows = %d, want 1 "+
+				"(the second insert must be rolled back)",
+			n,
+		)
 	}
 	if _, ok := pgxtx.TxFromContext(ctx); ok {
 		t.Error("TxFromContext outside RunInTx: want false")

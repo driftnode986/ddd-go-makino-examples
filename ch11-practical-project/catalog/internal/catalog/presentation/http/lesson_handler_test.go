@@ -19,18 +19,28 @@ import (
 
 func TestGetLesson_HTTP(t *testing.T) {
 	repo := memory.NewLessonRepository()
-	l, err := domain.NewLesson("Pilates", 8, 3000, time.Now(), "trainer-2")
+	l, err := domain.NewLesson(
+		"Pilates",
+		8,
+		3000,
+		time.Now(),
+		"trainer-2",
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if err := repo.Save(context.Background(), l); err != nil {
 		t.Fatal(err)
 	}
-	router := httpx.NewRouter(httpx.NewLessonHandler(application.NewLessonQuery(repo)))
+	router := httpx.NewRouter(
+		httpx.NewLessonHandler(application.NewLessonQuery(repo)),
+	)
 	srv := httptest.NewServer(router)
 	t.Cleanup(srv.Close)
 
-	res, err := http.Get(srv.URL + "/catalog/lessons/" + l.ID().String())
+	res, err := http.Get(
+		srv.URL + "/catalog/lessons/" + l.ID().String(),
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -46,12 +56,17 @@ func TestGetLesson_HTTP(t *testing.T) {
 		t.Errorf("view = %+v", view)
 	}
 
-	missing, err := http.Get(srv.URL + "/catalog/lessons/" + uuid.NewString())
+	missing, err := http.Get(
+		srv.URL + "/catalog/lessons/" + uuid.NewString(),
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 	_ = missing.Body.Close()
 	if missing.StatusCode != http.StatusNotFound {
-		t.Errorf("missing lesson: status = %d, want 404", missing.StatusCode)
+		t.Errorf(
+			"missing lesson: status = %d, want 404",
+			missing.StatusCode,
+		)
 	}
 }

@@ -15,8 +15,10 @@ const (
 	EUR Currency = "EUR"
 )
 
-// Money は値オブジェクト。Amount と Currency を 1 つの概念として扱う。
-// Amount は最小単位 (JPY なら円、USD ならセント) で保持し、浮動小数の誤差を避ける。
+// Money は値オブジェクト。
+// Amount と Currency を 1 つの概念として扱う。
+// Amount は最小単位 (JPY なら円、USD ならセント) で保持し、
+// 浮動小数の誤差を避ける。
 type Money struct {
 	amount   int64
 	currency Currency
@@ -56,10 +58,16 @@ func (m Money) Currency() Currency { return m.currency }
 func (m Money) Add(other Money) (Money, error) {
 	if m.currency != other.currency {
 		return Money{}, fmt.Errorf(
-			"%w: %s vs %s", ErrCurrencyMismatch, m.currency, other.currency,
+			"%w: %s vs %s",
+			ErrCurrencyMismatch,
+			m.currency,
+			other.currency,
 		)
 	}
-	return Money{amount: m.amount + other.amount, currency: m.currency}, nil
+	return Money{
+		amount:   m.amount + other.amount,
+		currency: m.currency,
+	}, nil
 }
 
 // Equals は値が完全に一致するときに真。

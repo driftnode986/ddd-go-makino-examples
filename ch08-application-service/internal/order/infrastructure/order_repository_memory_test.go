@@ -16,7 +16,10 @@ func newOrder(t *testing.T, customer string) *domain.Order {
 	if err != nil {
 		t.Fatalf("NewCustomerID: %v", err)
 	}
-	return domain.NewOrder(id, time.Date(2026, 6, 1, 10, 0, 0, 0, time.UTC))
+	return domain.NewOrder(
+		id,
+		time.Date(2026, 6, 1, 10, 0, 0, 0, time.UTC),
+	)
 }
 
 func TestInMemoryOrderRepository_AddFindSave(t *testing.T) {
@@ -27,7 +30,10 @@ func TestInMemoryOrderRepository_AddFindSave(t *testing.T) {
 	if err := repo.Add(ctx, o); err != nil {
 		t.Fatalf("Add: %v", err)
 	}
-	if err := repo.Add(ctx, o); !errors.Is(err, domain.ErrDuplicate) {
+	if err := repo.Add(ctx, o); !errors.Is(
+		err,
+		domain.ErrDuplicate,
+	) {
 		t.Errorf("Add twice: got %v, want ErrDuplicate", err)
 	}
 	got, err := repo.FindByID(ctx, o.ID())
@@ -37,14 +43,20 @@ func TestInMemoryOrderRepository_AddFindSave(t *testing.T) {
 	if err := repo.Save(ctx, o); err != nil {
 		t.Errorf("Save: %v", err)
 	}
-	if err := repo.Save(ctx, newOrder(t, "cust_001")); !errors.Is(err, domain.ErrNotFound) {
+	if err := repo.Save(ctx, newOrder(t, "cust_001")); !errors.Is(
+		err,
+		domain.ErrNotFound,
+	) {
 		t.Errorf("Save unknown: got %v, want ErrNotFound", err)
 	}
 	missing, err := domain.NewOrderID("ord_missing")
 	if err != nil {
 		t.Fatalf("NewOrderID: %v", err)
 	}
-	if _, err := repo.FindByID(ctx, missing); !errors.Is(err, domain.ErrNotFound) {
+	if _, err := repo.FindByID(ctx, missing); !errors.Is(
+		err,
+		domain.ErrNotFound,
+	) {
 		t.Errorf("FindByID unknown: got %v, want ErrNotFound", err)
 	}
 }
@@ -81,6 +93,10 @@ func TestStubPricing_UnitPrice(t *testing.T) {
 		t.Fatalf("UnitPrice: %v", err)
 	}
 	if m.Amount() != 1000 || m.Currency() != "JPY" {
-		t.Errorf("got %d %s, want 1000 JPY", m.Amount(), m.Currency())
+		t.Errorf(
+			"got %d %s, want 1000 JPY",
+			m.Amount(),
+			m.Currency(),
+		)
 	}
 }

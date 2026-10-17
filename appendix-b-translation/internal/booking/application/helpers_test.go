@@ -16,13 +16,18 @@ import (
 func newPlaceOrderCommand() application.PlaceOrderCommand {
 	return application.PlaceOrderCommand{
 		CustomerID: "cus_001",
-		Items:      []domain.OrderItem{{ProductID: "prod_001", Quantity: 2, UnitPrice: 1500}},
+		Items: []domain.OrderItem{
+			{ProductID: "prod_001", Quantity: 2, UnitPrice: 1500},
+		},
 	}
 }
 
 // buildExpectedOrder は Execute が保存するはずの注文を組み立てる。
-func buildExpectedOrder(id domain.OrderID, cmd application.PlaceOrderCommand,
-	placedAt time.Time) *domain.Order {
+func buildExpectedOrder(
+	id domain.OrderID,
+	cmd application.PlaceOrderCommand,
+	placedAt time.Time,
+) *domain.Order {
 	return domain.ReconstructOrder(id, cmd.CustomerID, cmd.Items,
 		domain.OrderStatusPlaced, placedAt)
 }
@@ -30,8 +35,11 @@ func buildExpectedOrder(id domain.OrderID, cmd application.PlaceOrderCommand,
 func TestPlaceOrderUseCase_ReturnsTotalAndErrors(t *testing.T) {
 	ctx := context.Background()
 	clock := test.NewFixedClock(time.Now())
-	uc := application.NewPlaceOrderUseCase(infra.NewInMemoryOrderRepository(),
-		domain.NewPricingService(10), clock)
+	uc := application.NewPlaceOrderUseCase(
+		infra.NewInMemoryOrderRepository(),
+		domain.NewPricingService(10),
+		clock,
+	)
 
 	res, err := uc.Execute(ctx, newPlaceOrderCommand())
 	if err != nil {
@@ -40,7 +48,10 @@ func TestPlaceOrderUseCase_ReturnsTotalAndErrors(t *testing.T) {
 	if res.Total != 3300 {
 		t.Errorf("total = %d, want 3300", res.Total)
 	}
-	_, err = uc.Execute(ctx, application.PlaceOrderCommand{CustomerID: "cus_001"})
+	_, err = uc.Execute(
+		ctx,
+		application.PlaceOrderCommand{CustomerID: "cus_001"},
+	)
 	if !errors.Is(err, domain.ErrInvalidOrder) {
 		t.Errorf("no items: err = %v, want ErrInvalidOrder", err)
 	}

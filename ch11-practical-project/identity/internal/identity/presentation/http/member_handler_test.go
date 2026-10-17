@@ -12,12 +12,21 @@ import (
 )
 
 func TestRegisterMember_HTTP(t *testing.T) {
-	uc := application.NewRegisterMemberUseCase(memory.NewMemberRepository())
-	srv := httptest.NewServer(httpx.NewRouter(httpx.NewMemberHandler(uc)))
+	uc := application.NewRegisterMemberUseCase(
+		memory.NewMemberRepository(),
+	)
+	srv := httptest.NewServer(
+		httpx.NewRouter(httpx.NewMemberHandler(uc)),
+	)
 	t.Cleanup(srv.Close)
 
-	res, err := http.Post(srv.URL+"/identity/members", "application/json",
-		strings.NewReader(`{"email":"jiro@example.com","name":"Jiro"}`))
+	res, err := http.Post(
+		srv.URL+"/identity/members",
+		"application/json",
+		strings.NewReader(
+			`{"email":"jiro@example.com","name":"Jiro"}`,
+		),
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -26,13 +35,19 @@ func TestRegisterMember_HTTP(t *testing.T) {
 		t.Errorf("status = %d, want 201", res.StatusCode)
 	}
 
-	bad, err := http.Post(srv.URL+"/identity/members", "application/json",
-		strings.NewReader(`{"email":"broken","name":"Jiro"}`))
+	bad, err := http.Post(
+		srv.URL+"/identity/members",
+		"application/json",
+		strings.NewReader(`{"email":"broken","name":"Jiro"}`),
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 	_ = bad.Body.Close()
 	if bad.StatusCode != http.StatusBadRequest {
-		t.Errorf("invalid email: status = %d, want 400", bad.StatusCode)
+		t.Errorf(
+			"invalid email: status = %d, want 400",
+			bad.StatusCode,
+		)
 	}
 }

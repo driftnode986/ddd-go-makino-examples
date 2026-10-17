@@ -31,7 +31,10 @@ func confirmedOrder(t *testing.T) *domain.Order {
 func TestMemoryOutbox_AppendAndPublish(t *testing.T) {
 	o := confirmedOrder(t)
 	outbox := infrastructure.NewMemoryOutbox()
-	if err := outbox.Append(context.Background(), o.PullEvents()); err != nil {
+	if err := outbox.Append(
+		context.Background(),
+		o.PullEvents(),
+	); err != nil {
 		t.Fatalf("Append: %v", err)
 	}
 
@@ -40,14 +43,16 @@ func TestMemoryOutbox_AppendAndPublish(t *testing.T) {
 		t.Fatalf("unpublished = %d, want 1", len(entries))
 	}
 	got := entries[0]
-	if got.ID != 1 || got.EventName != "booking.OrderPlaced" || got.AggregateID != o.ID().String() {
+	if got.ID != 1 || got.EventName != "booking.OrderPlaced" ||
+		got.AggregateID != o.ID().String() {
 		t.Errorf("entry = %+v", got)
 	}
 	var payload map[string]any
 	if err := json.Unmarshal(got.Payload, &payload); err != nil {
 		t.Fatalf("payload is not JSON: %v", err)
 	}
-	if payload["order_id"] != o.ID().String() || payload["total_amount"] != float64(3000) {
+	if payload["order_id"] != o.ID().String() ||
+		payload["total_amount"] != float64(3000) {
 		t.Errorf("payload = %v", payload)
 	}
 
@@ -59,13 +64,19 @@ func TestMemoryOutbox_AppendAndPublish(t *testing.T) {
 
 type unknownEvent struct{}
 
-func (unknownEvent) EventName() string     { return "booking.Unknown" }
+func (unknownEvent) EventName() string {
+	return "booking.Unknown"
+}
+
 func (unknownEvent) OccurredAt() time.Time { return time.Time{} }
 func (unknownEvent) AggregateID() string   { return "x" }
 
 func TestMemoryOutbox_RejectsUnknownEvent(t *testing.T) {
 	outbox := infrastructure.NewMemoryOutbox()
-	err := outbox.Append(context.Background(), []domain.DomainEvent{unknownEvent{}})
+	err := outbox.Append(
+		context.Background(),
+		[]domain.DomainEvent{unknownEvent{}},
+	)
 	if err == nil {
 		t.Fatal("Append(unknown event): want error, got nil")
 	}

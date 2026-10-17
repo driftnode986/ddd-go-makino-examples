@@ -20,17 +20,24 @@ func TestMemoryUserRepository(t *testing.T) {
 	if err := repo.Add(ctx, u); err != nil {
 		t.Fatal(err)
 	}
-	if err := repo.Add(ctx, u); !errors.Is(err, infrastructure.ErrDuplicateUser) {
+	if err := repo.Add(ctx, u); !errors.Is(
+		err,
+		infrastructure.ErrDuplicateUser,
+	) {
 		t.Errorf("second Add err = %v", err)
 	}
 	if err := repo.Save(ctx, u); err != nil {
 		t.Errorf("Save: %v", err)
 	}
-	if got, err := repo.FindByID(ctx, "usr_1"); err != nil || got != u {
+	if got, err := repo.FindByID(ctx, "usr_1"); err != nil ||
+		got != u {
 		t.Errorf("FindByID = %v, %v", got, err)
 	}
 	other, _ := domain.NewEmail("x@example.com")
-	if _, err := repo.FindByEmail(ctx, other); !errors.Is(err, domain.ErrUserNotFound) {
+	if _, err := repo.FindByEmail(ctx, other); !errors.Is(
+		err,
+		domain.ErrUserNotFound,
+	) {
 		t.Errorf("FindByEmail(other) err = %v", err)
 	}
 }
@@ -38,7 +45,8 @@ func TestMemoryUserRepository(t *testing.T) {
 func TestRandomIDGenerator(t *testing.T) {
 	g := infrastructure.RandomIDGenerator{}
 	a, b := g.New(), g.New()
-	if a == b || !strings.HasPrefix(a.String(), "usr_") || len(a) != len("usr_")+16 {
+	if a == b || !strings.HasPrefix(a.String(), "usr_") ||
+		len(a) != len("usr_")+16 {
 		t.Errorf("ids = %q, %q", a, b)
 	}
 }

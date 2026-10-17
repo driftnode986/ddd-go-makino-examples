@@ -21,7 +21,10 @@ func (m Money) Add(other Money) (Money, error) {
 	if m.currency != other.currency {
 		return Money{}, fmt.Errorf("currency mismatch")
 	}
-	return Money{amount: m.amount + other.amount, currency: m.currency}, nil
+	return Money{
+		amount:   m.amount + other.amount,
+		currency: m.currency,
+	}, nil
 }
 
 // Equals は値比較のみ

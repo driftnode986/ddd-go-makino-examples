@@ -16,8 +16,10 @@ func TestPlaceOrderUseCase_EmitsOrderPlacedToOutbox(t *testing.T) {
 	uc := &application.PlaceOrderUseCase{
 		OrderRepo: repo,
 		Outbox:    outbox,
-		Clock:     application.FixedClock{At: time.Unix(1700000000, 0)},
-		Logger:    slog.Default(),
+		Clock: application.FixedClock{
+			At: time.Unix(1700000000, 0),
+		},
+		Logger: slog.Default(),
 	}
 
 	cmd := application.PlaceOrderCommand{
@@ -43,6 +45,9 @@ func TestPlaceOrderUseCase_EmitsOrderPlacedToOutbox(t *testing.T) {
 		t.Fatalf("outbox entries = %d, want 1", len(entries))
 	}
 	if entries[0].EventName != "booking.OrderPlaced" {
-		t.Errorf("event name = %s, want booking.OrderPlaced", entries[0].EventName)
+		t.Errorf(
+			"event name = %s, want booking.OrderPlaced",
+			entries[0].EventName,
+		)
 	}
 }

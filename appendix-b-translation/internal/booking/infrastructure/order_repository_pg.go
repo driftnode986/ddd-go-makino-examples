@@ -24,7 +24,10 @@ func NewOrderRepositoryPG(db *pgxpool.Pool) *OrderRepositoryPG {
 	return &OrderRepositoryPG{queries: sqlcgen.New(db)}
 }
 
-func (r *OrderRepositoryPG) Add(ctx context.Context, o *domain.Order) error {
+func (r *OrderRepositoryPG) Add(
+	ctx context.Context,
+	o *domain.Order,
+) error {
 	items, err := json.Marshal(o.Items())
 	if err != nil {
 		return fmt.Errorf("marshal items: %w", err)
@@ -34,11 +37,17 @@ func (r *OrderRepositoryPG) Add(ctx context.Context, o *domain.Order) error {
 		CustomerID: string(o.CustomerID()),
 		Status:     string(o.Status()),
 		Items:      items,
-		PlacedAt:   pgtype.Timestamptz{Time: o.PlacedAt(), Valid: true},
+		PlacedAt: pgtype.Timestamptz{
+			Time:  o.PlacedAt(),
+			Valid: true,
+		},
 	})
 }
 
-func (r *OrderRepositoryPG) FindByID(ctx context.Context, id domain.OrderID) (*domain.Order, error) {
+func (r *OrderRepositoryPG) FindByID(
+	ctx context.Context,
+	id domain.OrderID,
+) (*domain.Order, error) {
 	row, err := r.q(ctx).GetOrderByID(ctx, id.String())
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, domain.ErrOrderNotFound
@@ -50,8 +59,13 @@ func (r *OrderRepositoryPG) FindByID(ctx context.Context, id domain.OrderID) (*d
 	if err := json.Unmarshal(row.Items, &items); err != nil {
 		return nil, fmt.Errorf("unmarshal items: %w", err)
 	}
-	return domain.ReconstructOrder(domain.OrderID(row.ID), domain.CustomerID(row.CustomerID),
-		items, domain.OrderStatus(row.Status), row.PlacedAt.Time), nil
+	return domain.ReconstructOrder(
+		domain.OrderID(row.ID),
+		domain.CustomerID(row.CustomerID),
+		items,
+		domain.OrderStatus(row.Status),
+		row.PlacedAt.Time,
+	), nil
 }
 
 func (r *OrderRepositoryPG) q(ctx context.Context) *sqlcgen.Queries {

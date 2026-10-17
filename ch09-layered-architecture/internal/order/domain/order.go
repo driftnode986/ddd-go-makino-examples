@@ -38,7 +38,11 @@ func (o *Order) Items() []OrderItem {
 	return append([]OrderItem(nil), o.items...)
 }
 
-func (o *Order) AddItem(productID ProductID, quantity int, unitPrice Money) error {
+func (o *Order) AddItem(
+	productID ProductID,
+	quantity int,
+	unitPrice Money,
+) error {
 	if o.status != StatusDraft {
 		return ErrCannotModify
 	}

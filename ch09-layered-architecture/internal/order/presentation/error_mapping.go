@@ -15,10 +15,15 @@ type errorResponse struct {
 	Message string `json:"message"`
 }
 
-func writeError(w http.ResponseWriter, status int, code, message string) {
+func writeError(
+	w http.ResponseWriter,
+	status int,
+	code, message string,
+) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(errorResponse{Code: code, Message: message})
+	_ = json.NewEncoder(w).
+		Encode(errorResponse{Code: code, Message: message})
 }
 
 func writeJSON(w http.ResponseWriter, status int, body any) {

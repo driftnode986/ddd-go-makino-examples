@@ -12,7 +12,10 @@ import (
 
 // bookLessonExecutor は handler が使うユースケースの契約 (テストで差し替える)。
 type bookLessonExecutor interface {
-	Execute(ctx context.Context, in application.BookLessonInput) error
+	Execute(
+		ctx context.Context,
+		in application.BookLessonInput,
+	) error
 }
 
 // Handler は予約 API の HTTP ハンドラ。
@@ -28,7 +31,11 @@ func NewHandler(useCase bookLessonExecutor) *Handler {
 // ServeHTTP は POST /bookings を handleCreateBooking に渡す。
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		http.Error(
+			w,
+			"method not allowed",
+			http.StatusMethodNotAllowed,
+		)
 		return
 	}
 	h.handleCreateBooking(w, r)

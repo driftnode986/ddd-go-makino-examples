@@ -25,17 +25,29 @@ func main() {
 	placeOrder := application.NewPlaceOrderUseCase(
 		orderRepo, pricing, clock, logger,
 	)
-	listOrders := &application.ListOrdersByCustomerHandler{Orders: orderRepo}
+	listOrders := &application.ListOrdersByCustomerHandler{
+		Orders: orderRepo,
+	}
 
 	_ = placeOrder
 	_ = listOrders
 
 	mux := http.NewServeMux()
-	// mux.HandleFunc("POST /orders", makePlaceOrderHandler(placeOrder))
-	// mux.HandleFunc("GET /orders", makeListOrdersHandler(listOrders))
+	// mux.HandleFunc(
+	// 	"POST /orders",
+	// 	makePlaceOrderHandler(placeOrder),
+	// )
+	// mux.HandleFunc(
+	// 	"GET /orders",
+	// 	makeListOrdersHandler(listOrders),
+	// )
 
 	srv := &http.Server{Addr: ":8080", Handler: mux}
-	logger.InfoContext(ctx, "starting server", slog.String("addr", srv.Addr))
+	logger.InfoContext(
+		ctx,
+		"starting server",
+		slog.String("addr", srv.Addr),
+	)
 	_ = srv.ListenAndServe()
 }
 

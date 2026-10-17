@@ -8,7 +8,8 @@ import (
 	"github.com/driftnode986/ddd-go-makino-examples/ch10-bounded-context/notification/internal/notification/events"
 )
 
-// Booking BC の outbox が書く JSON（infrastructure/outbox_memory.go の marshalEvent）を
+// Booking BC の outbox が書く JSON
+// （infrastructure/outbox_memory.go の marshalEvent）を
 // Notification BC の型で読めることを確かめる。
 func TestOrderPlaced_DecodesPublishedPayload(t *testing.T) {
 	payload := `{"order_id":"ord_001","customer_id":"cus_001",` +

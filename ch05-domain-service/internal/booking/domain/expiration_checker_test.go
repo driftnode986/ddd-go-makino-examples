@@ -8,7 +8,10 @@ import (
 )
 
 // newTestBookingScheduledAt は scheduled に予約日時を置いた、確定前の予約を作る。
-func newTestBookingScheduledAt(t *testing.T, scheduled time.Time) *domain.Booking {
+func newTestBookingScheduledAt(
+	t *testing.T,
+	scheduled time.Time,
+) *domain.Booking {
 	t.Helper()
 	return newTestBookingAt(t, "10:00", "11:00", scheduled)
 }
@@ -25,12 +28,18 @@ func TestExpirationChecker_IsExpired(t *testing.T) {
 	}{
 		{"before scheduled", scheduled.Add(-1 * time.Hour), false},
 		{"just at scheduled", scheduled, false},
-		{"within grace period", scheduled.Add(20 * time.Minute), false},
+		{
+			"within grace period",
+			scheduled.Add(20 * time.Minute),
+			false,
+		},
 		{"past grace period", scheduled.Add(31 * time.Minute), true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			checker := domain.NewExpirationChecker(domain.FixedClock{T: tt.now})
+			checker := domain.NewExpirationChecker(
+				domain.FixedClock{T: tt.now},
+			)
 			if got := checker.IsExpired(booking); got != tt.want {
 				t.Errorf("IsExpired: want=%v got=%v", tt.want, got)
 			}
@@ -49,11 +58,17 @@ func TestExpirationChecker_IsExpired_Boundaries(t *testing.T) {
 		now  time.Time
 		want bool
 	}{
-		{"at grace deadline", scheduled.Add(30 * time.Minute), false},
+		{
+			"at grace deadline",
+			scheduled.Add(30 * time.Minute),
+			false,
+		},
 		{"far past", scheduled.Add(24 * time.Hour), true},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
-			checker := domain.NewExpirationChecker(domain.FixedClock{T: tt.now})
+			checker := domain.NewExpirationChecker(
+				domain.FixedClock{T: tt.now},
+			)
 			if got := checker.IsExpired(booking); got != tt.want {
 				t.Errorf("IsExpired: want=%v got=%v", tt.want, got)
 			}

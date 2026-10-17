@@ -13,7 +13,13 @@ import (
 func TestLessonRepository_SaveFindList(t *testing.T) {
 	ctx := context.Background()
 	repo := memory.NewLessonRepository()
-	l, err := domain.NewLesson("Yoga", 10, 2000, time.Now(), "trainer-1")
+	l, err := domain.NewLesson(
+		"Yoga",
+		10,
+		2000,
+		time.Now(),
+		"trainer-1",
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +34,13 @@ func TestLessonRepository_SaveFindList(t *testing.T) {
 	if err != nil || len(all) != 1 {
 		t.Errorf("List = %d, %v", len(all), err)
 	}
-	if _, err := repo.FindByID(ctx, domain.NewLessonID()); !errors.Is(err, domain.ErrLessonNotFound) {
+	if _, err := repo.FindByID(
+		ctx,
+		domain.NewLessonID(),
+	); !errors.Is(
+		err,
+		domain.ErrLessonNotFound,
+	) {
 		t.Errorf("err = %v, want ErrLessonNotFound", err)
 	}
 }

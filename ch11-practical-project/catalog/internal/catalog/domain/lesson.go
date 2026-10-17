@@ -9,7 +9,9 @@ import (
 
 type LessonID struct{ value string }
 
-func NewLessonID() LessonID { return LessonID{value: uuid.NewString()} }
+func NewLessonID() LessonID {
+	return LessonID{value: uuid.NewString()}
+}
 
 func LessonIDFrom(s string) (LessonID, error) {
 	if _, err := uuid.Parse(s); err != nil {

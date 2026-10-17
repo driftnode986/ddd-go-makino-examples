@@ -11,7 +11,8 @@ import (
 type txKey struct{}
 
 // WithTx は context にトランザクションを乗せる。
-// ユースケース層が pool.BeginTx で開始したトランザクションをここで運ぶ。
+// ユースケース層が pool.BeginTx で開始したトランザクションを
+// ここで運ぶ。
 func WithTx(ctx context.Context, tx pgx.Tx) context.Context {
 	return context.WithValue(ctx, txKey{}, tx)
 }
@@ -21,8 +22,11 @@ func extractTx(ctx context.Context) (pgx.Tx, bool) {
 	return tx, ok
 }
 
-// queries は context にトランザクションが乗っていれば tx、なければ pool を使う。
-func (r *PostgresBookingRepository) queries(ctx context.Context) *sqlcgen.Queries {
+// queries は context にトランザクションが乗っていれば tx、
+// なければ pool を使う。
+func (r *PostgresBookingRepository) queries(
+	ctx context.Context,
+) *sqlcgen.Queries {
 	if tx, ok := extractTx(ctx); ok {
 		return sqlcgen.New(tx)
 	}

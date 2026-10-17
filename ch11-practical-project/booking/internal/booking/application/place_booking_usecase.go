@@ -24,24 +24,43 @@ type PlaceBookingUseCase struct {
 	now         func() time.Time
 }
 
-func NewPlaceBookingUseCase(repo domain.BookingRepository,
-	lessonQuery LessonQueryPort, now func() time.Time) *PlaceBookingUseCase {
-	return &PlaceBookingUseCase{repo: repo, lessonQuery: lessonQuery, now: now}
+func NewPlaceBookingUseCase(
+	repo domain.BookingRepository,
+	lessonQuery LessonQueryPort,
+	now func() time.Time,
+) *PlaceBookingUseCase {
+	return &PlaceBookingUseCase{
+		repo:        repo,
+		lessonQuery: lessonQuery,
+		now:         now,
+	}
 }
 
 func (u *PlaceBookingUseCase) Execute(ctx context.Context,
 	in PlaceBookingInput) (PlaceBookingOutput, error) {
 	memberID, err := domain.MemberIDFrom(in.MemberID)
 	if err != nil {
-		return PlaceBookingOutput{}, fmt.Errorf("invalid input: %w", err)
+		return PlaceBookingOutput{}, fmt.Errorf(
+			"invalid input: %w",
+			err,
+		)
 	}
 	lessonID, err := domain.LessonIDFrom(in.LessonID)
 	if err != nil {
-		return PlaceBookingOutput{}, fmt.Errorf("invalid input: %w", err)
+		return PlaceBookingOutput{}, fmt.Errorf(
+			"invalid input: %w",
+			err,
+		)
 	}
 
-	if _, err := u.lessonQuery.FindLessonView(ctx, in.LessonID); err != nil {
-		return PlaceBookingOutput{}, fmt.Errorf("lesson not available: %w", err)
+	if _, err := u.lessonQuery.FindLessonView(
+		ctx,
+		in.LessonID,
+	); err != nil {
+		return PlaceBookingOutput{}, fmt.Errorf(
+			"lesson not available: %w",
+			err,
+		)
 	}
 
 	b := domain.NewBooking(memberID, lessonID, u.now())

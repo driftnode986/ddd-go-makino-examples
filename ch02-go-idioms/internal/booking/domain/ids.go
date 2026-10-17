@@ -2,7 +2,8 @@ package domain
 
 import shared "github.com/driftnode986/ddd-go-makino-examples/ch02-go-idioms/internal/shared/domain"
 
-// BookingID は 2.10 節の型安全な ID (internal/shared/domain) をそのまま使う。
+// BookingID は 2.10 節の型安全な ID (internal/shared/domain) を
+// そのまま使う。
 type BookingID = shared.BookingID
 
 // MemberID は会員の ID。本章では文字列で受け取る。

@@ -36,10 +36,17 @@ func TestPlaceOrderUseCase_HappyPath(t *testing.T) {
 	ctx := context.Background()
 	orders := infrastructure.NewInMemoryOrderRepository()
 	pricing := fakePricing{unit: 1000}
-	clock := fakeClock{now: time.Date(2026, 6, 1, 10, 0, 0, 0, time.UTC)}
+	clock := fakeClock{
+		now: time.Date(2026, 6, 1, 10, 0, 0, 0, time.UTC),
+	}
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-	uc := application.NewPlaceOrderUseCase(orders, pricing, clock, logger)
+	uc := application.NewPlaceOrderUseCase(
+		orders,
+		pricing,
+		clock,
+		logger,
+	)
 
 	result, err := uc.Execute(ctx, application.PlaceOrderCommand{
 		CustomerID: "cust_001",

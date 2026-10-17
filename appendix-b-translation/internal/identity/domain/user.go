@@ -13,11 +13,21 @@ type User struct {
 	createdAt time.Time
 }
 
-func NewUser(id UserID, email Email, name string, now time.Time) (*User, error) {
+func NewUser(
+	id UserID,
+	email Email,
+	name string,
+	now time.Time,
+) (*User, error) {
 	if name == "" {
 		return nil, errors.New("name required")
 	}
-	return &User{id: id, email: email, name: name, createdAt: now}, nil
+	return &User{
+		id:        id,
+		email:     email,
+		name:      name,
+		createdAt: now,
+	}, nil
 }
 
 func (u *User) Rename(newName string) error {
@@ -31,8 +41,18 @@ func (u *User) Rename(newName string) error {
 // #endregion
 
 // ReconstructUser は保存済みの値から User を組み立て直す（リポジトリが使う）。
-func ReconstructUser(id UserID, email Email, name string, createdAt time.Time) *User {
-	return &User{id: id, email: email, name: name, createdAt: createdAt}
+func ReconstructUser(
+	id UserID,
+	email Email,
+	name string,
+	createdAt time.Time,
+) *User {
+	return &User{
+		id:        id,
+		email:     email,
+		name:      name,
+		createdAt: createdAt,
+	}
 }
 
 func (u *User) ID() UserID           { return u.id }

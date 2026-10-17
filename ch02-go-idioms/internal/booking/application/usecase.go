@@ -19,6 +19,8 @@ type BookLessonUseCase struct {
 }
 
 // NewBookLessonUseCase はリポジトリを受け取ってユースケースを作る。
-func NewBookLessonUseCase(repo domain.BookingRepository) *BookLessonUseCase {
+func NewBookLessonUseCase(
+	repo domain.BookingRepository,
+) *BookLessonUseCase {
 	return &BookLessonUseCase{repo: repo}
 }

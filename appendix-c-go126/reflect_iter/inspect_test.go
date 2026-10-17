@@ -18,11 +18,14 @@ type badValueObject struct {
 }
 
 func TestAssertAllFieldsUnexported(t *testing.T) {
-	// Reference fields to satisfy staticcheck (the reflect helper reads them dynamically).
+	// Reference fields to satisfy staticcheck
+	// (the reflect helper reads them dynamically).
 	_ = goodValueObject{value: "v", count: 1}
 	_ = badValueObject{Value: "v", count: 1}
 
-	if err := reflect_iter.AssertAllFieldsUnexported(goodValueObject{}); err != nil {
+	if err := reflect_iter.AssertAllFieldsUnexported(
+		goodValueObject{},
+	); err != nil {
 		t.Errorf("unexpected error on good struct: %v", err)
 	}
 	err := reflect_iter.AssertAllFieldsUnexported(badValueObject{})

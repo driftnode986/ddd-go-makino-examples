@@ -25,11 +25,15 @@ func mapDomainError(err error) error {
 	switch {
 	case errors.Is(err, domain.ErrInvalidQuantity):
 		return &ApplicationError{
-			Code: "INVALID_INPUT", Message: "数量が正しくありません", Cause: err,
+			Code:    "INVALID_INPUT",
+			Message: "数量が正しくありません",
+			Cause:   err,
 		}
 	case errors.Is(err, domain.ErrCannotModify):
 		return &ApplicationError{
-			Code: "CONFLICT", Message: "注文は確定済みのため変更できません", Cause: err,
+			Code:    "CONFLICT",
+			Message: "注文は確定済みのため変更できません",
+			Cause:   err,
 		}
 	case errors.Is(err, domain.ErrNotFound):
 		return &ApplicationError{

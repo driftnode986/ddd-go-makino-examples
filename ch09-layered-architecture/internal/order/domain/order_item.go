@@ -7,7 +7,11 @@ type OrderItem struct {
 	unitPrice Money
 }
 
-func NewOrderItem(productID ProductID, quantity int, unitPrice Money) (OrderItem, error) {
+func NewOrderItem(
+	productID ProductID,
+	quantity int,
+	unitPrice Money,
+) (OrderItem, error) {
 	if quantity <= 0 {
 		return OrderItem{}, ErrInvalidQuantity
 	}
@@ -21,4 +25,7 @@ func NewOrderItem(productID ProductID, quantity int, unitPrice Money) (OrderItem
 func (i OrderItem) ProductID() ProductID { return i.productID }
 func (i OrderItem) Quantity() int        { return i.quantity }
 func (i OrderItem) UnitPrice() Money     { return i.unitPrice }
-func (i OrderItem) Subtotal() Money      { return i.unitPrice.MulInt(i.quantity) }
+
+func (i OrderItem) Subtotal() Money {
+	return i.unitPrice.MulInt(i.quantity)
+}

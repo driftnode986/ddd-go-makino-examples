@@ -31,8 +31,12 @@ func TestNewEmail_RejectsInvalidFormat(t *testing.T) {
 				t.Fatalf("NewEmail(%q): wantErr=%v, got err=%v",
 					tt.input, tt.wantErr, err)
 			}
-			if err != nil && !errors.Is(err, domain.ErrInvalidEmail) {
-				t.Fatalf("err should wrap ErrInvalidEmail, got %v", err)
+			if err != nil &&
+				!errors.Is(err, domain.ErrInvalidEmail) {
+				t.Fatalf(
+					"err should wrap ErrInvalidEmail, got %v",
+					err,
+				)
 			}
 		})
 	}
@@ -50,7 +54,11 @@ func TestEmail_Equals_IsCaseInsensitiveOnDomain(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !a.Equals(b) {
-		t.Fatalf("domains differ only in case, want equal: a=%q b=%q", a, b)
+		t.Fatalf(
+			"domains differ only in case, want equal: a=%q b=%q",
+			a,
+			b,
+		)
 	}
 }
 

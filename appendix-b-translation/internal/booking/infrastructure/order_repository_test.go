@@ -25,8 +25,9 @@ func startPostgres(t *testing.T, schema string) *pgxpool.Pool {
 		postgres.WithUsername("test"),
 		postgres.WithPassword("test"),
 		testcontainers.WithWaitStrategy(
-			wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).
+			wait.ForLog(
+				"database system is ready to accept connections",
+			).WithOccurrence(2).
 				WithStartupTimeout(30*time.Second),
 		),
 	)
@@ -63,8 +64,10 @@ func newOrder(t *testing.T) *domain.Order {
 
 func TestOrderRepositories(t *testing.T) {
 	repos := map[string]domain.OrderRepository{
-		"memory":   infra.NewInMemoryOrderRepository(),
-		"postgres": infra.NewOrderRepositoryPG(startPostgres(t, db.BookingSchema)),
+		"memory": infra.NewInMemoryOrderRepository(),
+		"postgres": infra.NewOrderRepositoryPG(
+			startPostgres(t, db.BookingSchema),
+		),
 	}
 	for name, repo := range repos {
 		t.Run(name, func(t *testing.T) {
@@ -80,11 +83,24 @@ func TestOrderRepositories(t *testing.T) {
 			if err != nil {
 				t.Fatalf("FindByID: %v", err)
 			}
-			if diff := cmp.Diff(o, got, cmp.AllowUnexported(domain.Order{})); diff != "" {
+			if diff := cmp.Diff(
+				o,
+				got,
+				cmp.AllowUnexported(domain.Order{}),
+			); diff != "" {
 				t.Errorf("order mismatch (-want +got):\n%s", diff)
 			}
-			if _, err := repo.FindByID(ctx, "ord_missing"); !errors.Is(err, domain.ErrOrderNotFound) {
-				t.Errorf("missing: err = %v, want ErrOrderNotFound", err)
+			if _, err := repo.FindByID(
+				ctx,
+				"ord_missing",
+			); !errors.Is(
+				err,
+				domain.ErrOrderNotFound,
+			) {
+				t.Errorf(
+					"missing: err = %v, want ErrOrderNotFound",
+					err,
+				)
 			}
 		})
 	}

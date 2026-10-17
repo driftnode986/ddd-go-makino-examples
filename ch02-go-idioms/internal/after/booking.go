@@ -17,9 +17,15 @@ const (
 
 var (
 	ErrBookingIDRequired = errors.New("booking id is required")
-	ErrCannotConfirm     = errors.New("booking cannot be confirmed in current state")
-	ErrCannotCancel      = errors.New("booking cannot be cancelled in current state")
-	ErrCannotComplete    = errors.New("booking cannot be completed in current state")
+	ErrCannotConfirm     = errors.New(
+		"booking cannot be confirmed in current state",
+	)
+	ErrCannotCancel = errors.New(
+		"booking cannot be cancelled in current state",
+	)
+	ErrCannotComplete = errors.New(
+		"booking cannot be completed in current state",
+	)
 )
 
 // Booking は予約エンティティ。
@@ -35,7 +41,11 @@ func NewBooking(id, memberID string) (*Booking, error) {
 	if id == "" {
 		return nil, ErrBookingIDRequired
 	}
-	return &Booking{id: id, memberID: memberID, status: StatusPending}, nil
+	return &Booking{
+		id:       id,
+		memberID: memberID,
+		status:   StatusPending,
+	}, nil
 }
 
 // Confirm は予約を確定する。確定前の予約だけが確定できる。

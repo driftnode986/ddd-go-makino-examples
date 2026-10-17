@@ -10,4 +10,6 @@ type OrderPlaced struct {
 	OrderID OrderID
 }
 
-func (OrderPlaced) EventName() string { return "booking.OrderPlaced" }
+func (OrderPlaced) EventName() string {
+	return "booking.OrderPlaced"
+}

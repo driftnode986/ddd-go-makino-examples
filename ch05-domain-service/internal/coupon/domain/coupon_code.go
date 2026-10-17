@@ -16,7 +16,10 @@ var ErrInvalidCouponCode = errors.New("invalid coupon code")
 // NewCouponCode はクーポンコードを生成する。
 func NewCouponCode(s string) (CouponCode, error) {
 	if len(s) != 8 {
-		return CouponCode{}, fmt.Errorf("%w: must be 8 characters", ErrInvalidCouponCode)
+		return CouponCode{}, fmt.Errorf(
+			"%w: must be 8 characters",
+			ErrInvalidCouponCode,
+		)
 	}
 	return CouponCode{value: s}, nil
 }
@@ -25,4 +28,8 @@ func NewCouponCode(s string) (CouponCode, error) {
 func (c CouponCode) String() string { return c.value }
 
 // Equals は同値比較。
-func (c CouponCode) Equals(other CouponCode) bool { return c.value == other.value }
+func (c CouponCode) Equals(
+	other CouponCode,
+) bool {
+	return c.value == other.value
+}

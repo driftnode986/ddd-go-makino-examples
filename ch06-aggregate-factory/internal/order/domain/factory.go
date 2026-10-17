@@ -40,7 +40,9 @@ func NewOrderFactory(idGen IDGenerator, clock Clock) *OrderFactory {
 }
 
 // Create は ID 生成と検証を一括で行い、Order を返す。
-func (f *OrderFactory) Create(customerID CustomerID) (*Order, error) {
+func (f *OrderFactory) Create(
+	customerID CustomerID,
+) (*Order, error) {
 	if customerID.IsZero() {
 		return nil, errors.New("customerID required")
 	}
@@ -102,7 +104,8 @@ func (o *Order) validate() error {
 
 // #region reconstruct-order
 // ReconstructOrder は永続化層から集約を復元するためのファクトリ。
-// 入力検証はスキップし、DB に既に存在する状態をそのままメモリに復元する。
+// 入力検証はスキップし、
+// DB に既に存在する状態をそのままメモリに復元する。
 // リポジトリ層からのみ呼ぶ前提。
 func ReconstructOrder(
 	id OrderID,

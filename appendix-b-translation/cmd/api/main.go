@@ -22,7 +22,11 @@ func main() {
 	clock := system.NewClock()
 	orders := infra.NewOrderRepositoryPG(db)
 	pricing := domain.NewPricingService(10)
-	placeOrder := application.NewPlaceOrderUseCase(orders, pricing, clock)
+	placeOrder := application.NewPlaceOrderUseCase(
+		orders,
+		pricing,
+		clock,
+	)
 	// ...HTTP ハンドラの組み立てに続く
 	// #endregion
 	handler := presentation.NewOrderHandler(placeOrder, orders)
@@ -41,7 +45,10 @@ func main() {
 func mustOpenDB() *pgxpool.Pool {
 	dsn := os.Getenv("DATABASE_URL")
 	if dsn == "" {
-		log.Fatal("DATABASE_URL is not set (例: postgres://user:pass@localhost:5432/db)")
+		log.Fatal(
+			"DATABASE_URL is not set " +
+				"(例: postgres://user:pass@localhost:5432/db)",
+		)
 	}
 	pool, err := pgxpool.New(context.Background(), dsn)
 	if err != nil {

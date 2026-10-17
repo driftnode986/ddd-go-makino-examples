@@ -27,7 +27,9 @@ type PlaceOrderResponse struct {
 // #endregion
 
 // #region to-application-items
-func toApplicationItems(reqs []PlaceOrderItemRequest) []application.OrderItemInput {
+func toApplicationItems(
+	reqs []PlaceOrderItemRequest,
+) []application.OrderItemInput {
 	out := make([]application.OrderItemInput, 0, len(reqs))
 	for _, r := range reqs {
 		out = append(out, application.OrderItemInput{

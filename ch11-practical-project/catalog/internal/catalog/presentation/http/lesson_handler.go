@@ -14,7 +14,9 @@ type LessonHandler struct {
 	query *application.LessonQuery
 }
 
-func NewLessonHandler(query *application.LessonQuery) *LessonHandler {
+func NewLessonHandler(
+	query *application.LessonQuery,
+) *LessonHandler {
 	return &LessonHandler{query: query}
 }
 

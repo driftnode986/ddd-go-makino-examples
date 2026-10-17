@@ -71,7 +71,8 @@ func main() {
 	serverErr := make(chan error, 1)
 	go func() {
 		logger.Info("server starting", slog.String("addr", srv.Addr))
-		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err := srv.ListenAndServe(); err != nil &&
+			!errors.Is(err, http.ErrServerClosed) {
 			serverErr <- err
 		}
 	}()
@@ -83,12 +84,18 @@ func main() {
 	// #region shutdown
 	select {
 	case sig := <-sigCh:
-		logger.Info("shutdown signal received", slog.String("signal", sig.String()))
+		logger.Info(
+			"shutdown signal received",
+			slog.String("signal", sig.String()),
+		)
 	case err := <-serverErr:
 		logger.Error("server failed", slog.Any("err", err))
 	}
 
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	shutdownCtx, cancel := context.WithTimeout(
+		context.Background(),
+		10*time.Second,
+	)
 	defer cancel()
 	if err := srv.Shutdown(shutdownCtx); err != nil {
 		logger.Error("shutdown error", slog.Any("err", err))

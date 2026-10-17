@@ -14,7 +14,10 @@ type Clock interface {
 
 // TxManager は fn を 1 つのトランザクションの中で実行する。
 type TxManager interface {
-	RunInTx(ctx context.Context, fn func(ctx context.Context) error) error
+	RunInTx(
+		ctx context.Context,
+		fn func(ctx context.Context) error,
+	) error
 }
 
 // PlaceOrderCommand は注文のユースケースの入力。

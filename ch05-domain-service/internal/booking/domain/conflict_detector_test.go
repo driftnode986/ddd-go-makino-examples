@@ -15,7 +15,9 @@ type fakeBookingFinder struct {
 }
 
 func (f *fakeBookingFinder) FindByTrainerAndPeriod(
-	ctx context.Context, trainerID domain.TrainerID, from, to domain.Hour,
+	ctx context.Context,
+	trainerID domain.TrainerID,
+	from, to domain.Hour,
 ) ([]*domain.Booking, error) {
 	var hits []*domain.Booking
 	for _, b := range f.bookings {
@@ -54,10 +56,19 @@ func newTestTrainerID(t *testing.T) domain.TrainerID {
 // newTestBooking は newTestTrainerID のトレーナーの、from から to までの予約を作る。
 func newTestBooking(t *testing.T, from, to string) *domain.Booking {
 	t.Helper()
-	return newTestBookingAt(t, from, to, time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC))
+	return newTestBookingAt(
+		t,
+		from,
+		to,
+		time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC),
+	)
 }
 
-func newTestBookingAt(t *testing.T, from, to string, scheduledAt time.Time) *domain.Booking {
+func newTestBookingAt(
+	t *testing.T,
+	from, to string,
+	scheduledAt time.Time,
+) *domain.Booking {
 	t.Helper()
 	id, err := domain.NewID[domain.BookingTag]("booking01")
 	if err != nil {
@@ -68,10 +79,15 @@ func newTestBookingAt(t *testing.T, from, to string, scheduledAt time.Time) *dom
 		t.Fatalf("NewID: %v", err)
 	}
 	b, err := domain.NewBooking(
-		id, memberID, newTestTrainerID(t),
-		parseHour(t, from), parseHour(t, to),
+		id,
+		memberID,
+		newTestTrainerID(t),
+		parseHour(t, from),
+		parseHour(t, to),
 		scheduledAt,
-		domain.FixedClock{T: time.Date(2026, 5, 23, 0, 0, 0, 0, time.UTC)},
+		domain.FixedClock{
+			T: time.Date(2026, 5, 23, 0, 0, 0, 0, time.UTC),
+		},
 	)
 	if err != nil {
 		t.Fatalf("NewBooking: %v", err)
@@ -84,7 +100,9 @@ func TestConflictDetector_Detect(t *testing.T) {
 	ctx := context.Background()
 	trainerID := newTestTrainerID(t)
 	existing := newTestBooking(t, "10:00", "11:00")
-	finder := &fakeBookingFinder{bookings: []*domain.Booking{existing}}
+	finder := &fakeBookingFinder{
+		bookings: []*domain.Booking{existing},
+	}
 	detector := domain.NewConflictDetector(finder)
 
 	tests := []struct {
@@ -95,12 +113,22 @@ func TestConflictDetector_Detect(t *testing.T) {
 	}{
 		{"no overlap before", "08:00", "09:00", nil},
 		{"no overlap after", "11:00", "12:00", nil},
-		{"partial overlap start", "09:30", "10:30", domain.ErrBookingConflict},
+		{
+			"partial overlap start",
+			"09:30",
+			"10:30",
+			domain.ErrBookingConflict,
+		},
 		{"contained", "10:15", "10:45", domain.ErrBookingConflict},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := detector.Detect(ctx, trainerID, parseHour(t, tt.from), parseHour(t, tt.to))
+			err := detector.Detect(
+				ctx,
+				trainerID,
+				parseHour(t, tt.from),
+				parseHour(t, tt.to),
+			)
 			if !errors.Is(err, tt.want) {
 				t.Errorf("Detect: want=%v got=%v", tt.want, err)
 			}
@@ -115,7 +143,9 @@ func TestConflictDetector_Detect_Boundaries(t *testing.T) {
 	ctx := context.Background()
 	trainerID := newTestTrainerID(t)
 	existing := newTestBooking(t, "10:00", "11:00")
-	detector := domain.NewConflictDetector(&fakeBookingFinder{bookings: []*domain.Booking{existing}})
+	detector := domain.NewConflictDetector(
+		&fakeBookingFinder{bookings: []*domain.Booking{existing}},
+	)
 
 	tests := []struct {
 		name string
@@ -124,13 +154,28 @@ func TestConflictDetector_Detect_Boundaries(t *testing.T) {
 		want error
 	}{
 		{"adjacent end", "09:00", "10:00", nil},
-		{"partial overlap end", "10:30", "11:30", domain.ErrBookingConflict},
+		{
+			"partial overlap end",
+			"10:30",
+			"11:30",
+			domain.ErrBookingConflict,
+		},
 		{"identical", "10:00", "11:00", domain.ErrBookingConflict},
-		{"invalid period", "11:00", "10:00", domain.ErrInvalidPeriod},
+		{
+			"invalid period",
+			"11:00",
+			"10:00",
+			domain.ErrInvalidPeriod,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := detector.Detect(ctx, trainerID, parseHour(t, tt.from), parseHour(t, tt.to))
+			err := detector.Detect(
+				ctx,
+				trainerID,
+				parseHour(t, tt.from),
+				parseHour(t, tt.to),
+			)
 			if !errors.Is(err, tt.want) {
 				t.Errorf("Detect: want=%v got=%v", tt.want, err)
 			}
@@ -145,8 +190,15 @@ func TestConflictDetector_Detect_OtherTrainer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	detector := domain.NewConflictDetector(&fakeBookingFinder{bookings: []*domain.Booking{existing}})
-	if err := detector.Detect(context.Background(), other, parseHour(t, "10:00"), parseHour(t, "11:00")); err != nil {
+	detector := domain.NewConflictDetector(
+		&fakeBookingFinder{bookings: []*domain.Booking{existing}},
+	)
+	if err := detector.Detect(
+		context.Background(),
+		other,
+		parseHour(t, "10:00"),
+		parseHour(t, "11:00"),
+	); err != nil {
 		t.Errorf("Detect for another trainer: want=nil got=%v", err)
 	}
 }
@@ -160,7 +212,12 @@ func TestConflictDetector_IgnoresCancelled(t *testing.T) {
 	finder := &fakeBookingFinder{bookings: nil}
 	detector := domain.NewConflictDetector(finder)
 
-	if err := detector.Detect(ctx, trainerID, parseHour(t, "10:00"), parseHour(t, "11:00")); err != nil {
+	if err := detector.Detect(
+		ctx,
+		trainerID,
+		parseHour(t, "10:00"),
+		parseHour(t, "11:00"),
+	); err != nil {
 		t.Errorf("Detect on empty: want=nil got=%v", err)
 	}
 }

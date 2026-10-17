@@ -1,0 +1,24 @@
+# golangci-lint v2 の設定（repo 全体で共通。各 go.mod のディレクトリで `golangci-lint run ./...`）
+# 本の紙面（PB）はコードが1行69桁までしか入らないため、lll で1行の長さを揃える。
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - lll
+  settings:
+    lll:
+      line-length: 69
+      tab-width: 4
+  exclusions:
+    generated: strict
+    paths:
+      - sqlcgen/
+
+formatters:
+  enable:
+    - gofmt
+  exclusions:
+    generated: strict
+    paths:
+      - sqlcgen/

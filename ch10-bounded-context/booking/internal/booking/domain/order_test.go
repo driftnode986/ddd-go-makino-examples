@@ -66,10 +66,19 @@ func TestOrderPlaced_SnapshotsOrder(t *testing.T) {
 	e := domain.NewOrderPlaced(o, at)
 
 	if e.OrderID() != o.ID() || e.AggregateID() != o.ID().String() {
-		t.Errorf("order id = %v / %s, want %v", e.OrderID(), e.AggregateID(), o.ID())
+		t.Errorf(
+			"order id = %v / %s, want %v",
+			e.OrderID(),
+			e.AggregateID(),
+			o.ID(),
+		)
 	}
 	if e.CustomerID() != customerID || e.TotalAmount() != 3000 {
-		t.Errorf("customer = %v, total = %d", e.CustomerID(), e.TotalAmount())
+		t.Errorf(
+			"customer = %v, total = %d",
+			e.CustomerID(),
+			e.TotalAmount(),
+		)
 	}
 	if !e.OccurredAt().Equal(at) {
 		t.Errorf("occurredAt = %v, want %v", e.OccurredAt(), at)

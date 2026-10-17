@@ -35,7 +35,10 @@ func (m Money) Add(other Money) (Money, error) {
 		return Money{}, fmt.Errorf("%w: %s vs %s",
 			ErrCurrencyMismatch, m.currency, other.currency)
 	}
-	return Money{amount: m.amount + other.amount, currency: m.currency}, nil
+	return Money{
+		amount:   m.amount + other.amount,
+		currency: m.currency,
+	}, nil
 }
 
 func (m Money) MulInt(n int) Money {

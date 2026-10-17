@@ -24,7 +24,10 @@ func NewPlaceOrderUseCase(
 	logger *slog.Logger,
 ) *PlaceOrderUseCase {
 	return &PlaceOrderUseCase{
-		orders: orders, pricing: pricing, clock: clock, logger: logger,
+		orders:  orders,
+		pricing: pricing,
+		clock:   clock,
+		logger:  logger,
 	}
 }
 
@@ -37,20 +40,33 @@ func (uc *PlaceOrderUseCase) Execute(
 ) (PlaceOrderResult, error) {
 	customerID, err := domain.NewCustomerID(cmd.CustomerID)
 	if err != nil {
-		return PlaceOrderResult{}, fmt.Errorf("invalid customer id: %w", err)
+		return PlaceOrderResult{}, fmt.Errorf(
+			"invalid customer id: %w",
+			err,
+		)
 	}
 
 	o := domain.NewOrder(customerID, uc.clock.Now())
 	for _, item := range cmd.Items {
 		productID, err := domain.NewProductID(item.ProductID)
 		if err != nil {
-			return PlaceOrderResult{}, fmt.Errorf("invalid product id: %w", err)
+			return PlaceOrderResult{}, fmt.Errorf(
+				"invalid product id: %w",
+				err,
+			)
 		}
 		unitPrice, err := uc.pricing.UnitPrice(ctx, productID)
 		if err != nil {
-			return PlaceOrderResult{}, fmt.Errorf("fetch unit price: %w", err)
+			return PlaceOrderResult{}, fmt.Errorf(
+				"fetch unit price: %w",
+				err,
+			)
 		}
-		if err := o.AddItem(productID, item.Quantity, unitPrice); err != nil {
+		if err := o.AddItem(
+			productID,
+			item.Quantity,
+			unitPrice,
+		); err != nil {
 			return PlaceOrderResult{}, mapDomainError(err)
 		}
 	}

@@ -28,10 +28,17 @@ var ErrCurrencyMismatch = errors.New("currency mismatch")
 // NewMoney は Money を生成する。
 func NewMoney(amount int64, currency Currency) (Money, error) {
 	if amount < 0 {
-		return Money{}, fmt.Errorf("%w: amount must be non-negative", ErrInvalidMoney)
+		return Money{}, fmt.Errorf(
+			"%w: amount must be non-negative",
+			ErrInvalidMoney,
+		)
 	}
 	if currency != JPY && currency != USD {
-		return Money{}, fmt.Errorf("%w: unsupported currency %q", ErrInvalidMoney, currency)
+		return Money{}, fmt.Errorf(
+			"%w: unsupported currency %q",
+			ErrInvalidMoney,
+			currency,
+		)
 	}
 	return Money{amount: amount, currency: currency}, nil
 }
@@ -52,7 +59,10 @@ func (m Money) Add(other Money) (Money, error) {
 	if m.currency != other.currency {
 		return Money{}, ErrCurrencyMismatch
 	}
-	return Money{amount: m.amount + other.amount, currency: m.currency}, nil
+	return Money{
+		amount:   m.amount + other.amount,
+		currency: m.currency,
+	}, nil
 }
 
 // Subtract は同じ通貨同士の減算。
@@ -61,9 +71,15 @@ func (m Money) Subtract(other Money) (Money, error) {
 		return Money{}, ErrCurrencyMismatch
 	}
 	if m.amount < other.amount {
-		return Money{}, fmt.Errorf("%w: result would be negative", ErrInvalidMoney)
+		return Money{}, fmt.Errorf(
+			"%w: result would be negative",
+			ErrInvalidMoney,
+		)
 	}
-	return Money{amount: m.amount - other.amount, currency: m.currency}, nil
+	return Money{
+		amount:   m.amount - other.amount,
+		currency: m.currency,
+	}, nil
 }
 
 // String は表示用。

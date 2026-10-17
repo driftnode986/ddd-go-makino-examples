@@ -45,10 +45,18 @@ func TestOrder_AddItemAndTotal(t *testing.T) {
 	if got := o.Total(); got.Amount() != 0 {
 		t.Errorf("Total of empty order = %d, want 0", got.Amount())
 	}
-	if err := o.AddItem(mustProduct(t, "prod_001"), 2, domain.MustMoney(1000, "JPY")); err != nil {
+	if err := o.AddItem(
+		mustProduct(t, "prod_001"),
+		2,
+		domain.MustMoney(1000, "JPY"),
+	); err != nil {
 		t.Fatalf("AddItem: %v", err)
 	}
-	if err := o.AddItem(mustProduct(t, "prod_002"), 3, domain.MustMoney(500, "JPY")); err != nil {
+	if err := o.AddItem(
+		mustProduct(t, "prod_002"),
+		3,
+		domain.MustMoney(500, "JPY"),
+	); err != nil {
 		t.Fatalf("AddItem: %v", err)
 	}
 	if got := o.Total().Amount(); got != 3500 {
@@ -61,7 +69,11 @@ func TestOrder_AddItemAndTotal(t *testing.T) {
 
 func TestOrder_AddItem_InvalidQuantity(t *testing.T) {
 	o := domain.NewOrder(mustCustomer(t), time.Time{})
-	err := o.AddItem(mustProduct(t, "prod_001"), 0, domain.MustMoney(1000, "JPY"))
+	err := o.AddItem(
+		mustProduct(t, "prod_001"),
+		0,
+		domain.MustMoney(1000, "JPY"),
+	)
 	if !errors.Is(err, domain.ErrInvalidQuantity) {
 		t.Errorf("got %v, want ErrInvalidQuantity", err)
 	}
@@ -75,26 +87,43 @@ func TestOrder_Confirm_ThenCannotModify(t *testing.T) {
 	if err := o.Confirm(); !errors.Is(err, domain.ErrCannotModify) {
 		t.Errorf("Confirm twice: got %v, want ErrCannotModify", err)
 	}
-	err := o.AddItem(mustProduct(t, "prod_001"), 1, domain.MustMoney(1000, "JPY"))
+	err := o.AddItem(
+		mustProduct(t, "prod_001"),
+		1,
+		domain.MustMoney(1000, "JPY"),
+	)
 	if !errors.Is(err, domain.ErrCannotModify) {
-		t.Errorf("AddItem after Confirm: got %v, want ErrCannotModify", err)
+		t.Errorf(
+			"AddItem after Confirm: got %v, want ErrCannotModify",
+			err,
+		)
 	}
 }
 
 func TestNewIDs_RejectEmpty(t *testing.T) {
-	if _, err := domain.NewCustomerID(""); !errors.Is(err, domain.ErrInvalidID) {
+	if _, err := domain.NewCustomerID(""); !errors.Is(
+		err,
+		domain.ErrInvalidID,
+	) {
 		t.Errorf("NewCustomerID: got %v", err)
 	}
-	if _, err := domain.NewProductID(""); !errors.Is(err, domain.ErrInvalidID) {
+	if _, err := domain.NewProductID(""); !errors.Is(
+		err,
+		domain.ErrInvalidID,
+	) {
 		t.Errorf("NewProductID: got %v", err)
 	}
-	if _, err := domain.NewOrderID(""); !errors.Is(err, domain.ErrInvalidID) {
+	if _, err := domain.NewOrderID(""); !errors.Is(
+		err,
+		domain.ErrInvalidID,
+	) {
 		t.Errorf("NewOrderID: got %v", err)
 	}
 }
 
 func TestMoney_Add_CurrencyMismatch(t *testing.T) {
-	_, err := domain.MustMoney(100, "JPY").Add(domain.MustMoney(1, "USD"))
+	_, err := domain.MustMoney(100, "JPY").
+		Add(domain.MustMoney(1, "USD"))
 	if !errors.Is(err, domain.ErrCurrencyMismatch) {
 		t.Errorf("got %v, want ErrCurrencyMismatch", err)
 	}

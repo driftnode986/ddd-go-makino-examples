@@ -25,7 +25,11 @@ func NewID[T any](s string) (ID[T], error) {
 func (id ID[T]) String() string { return id.value }
 
 // Equals は同じ T 型同士の比較。
-func (id ID[T]) Equals(other ID[T]) bool { return id.value == other.value }
+func (id ID[T]) Equals(
+	other ID[T],
+) bool {
+	return id.value == other.value
+}
 
 // IsZero はゼロ値かどうかを判定する。
 func (id ID[T]) IsZero() bool { return id.value == "" }

@@ -19,7 +19,9 @@ type ListBookingsQuery struct {
 	repo domain.BookingRepository
 }
 
-func NewListBookingsQuery(repo domain.BookingRepository) *ListBookingsQuery {
+func NewListBookingsQuery(
+	repo domain.BookingRepository,
+) *ListBookingsQuery {
 	return &ListBookingsQuery{repo: repo}
 }
 

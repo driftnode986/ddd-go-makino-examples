@@ -27,7 +27,8 @@ func TestNewUserAndRename(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if u.ID() != "usr_1" || u.Name() != "Taro" || !u.CreatedAt().Equal(now) {
+	if u.ID() != "usr_1" || u.Name() != "Taro" ||
+		!u.CreatedAt().Equal(now) {
 		t.Errorf("user = %+v", u)
 	}
 	if err := u.Rename("Jiro"); err != nil || u.Name() != "Jiro" {
@@ -36,7 +37,12 @@ func TestNewUserAndRename(t *testing.T) {
 	if err := u.Rename(""); err == nil {
 		t.Error("Rename(\"\"): want error, got nil")
 	}
-	if _, err := domain.NewUser("usr_2", email, "", now); err == nil {
+	if _, err := domain.NewUser(
+		"usr_2",
+		email,
+		"",
+		now,
+	); err == nil {
 		t.Error("NewUser with empty name: want error, got nil")
 	}
 }

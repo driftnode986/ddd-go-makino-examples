@@ -4,14 +4,15 @@ package money
 import "fmt"
 
 // Adder は「自分自身と加算できる」型の制約です。
-// 制約の中で定義対象の型自身を参照することが Go 1.26 で許可されました。
+// 制約の中で定義対象の型自身を参照することが
+// Go 1.26 で許可されました。
 type Adder[A Adder[A]] interface {
 	Add(A) A
 }
 
 // Currency は通貨を区別するための phantom type です。
-// 値を持たない struct を JPY / USD ごとに用意し、Money[JPY] と Money[USD]
-// を別の型として扱わせます。
+// 値を持たない struct を JPY / USD ごとに用意し、
+// Money[JPY] と Money[USD] を別の型として扱わせます。
 type Currency interface {
 	currencyCode() string
 }
@@ -47,7 +48,8 @@ func (m Money[C]) String() string {
 	return fmt.Sprintf("%d %s", m.amount, c.currencyCode())
 }
 
-// 自己参照制約に Money[JPY] が適合することをコンパイル時に確認します。
+// 自己参照制約に Money[JPY] が適合することを
+// コンパイル時に確認します。
 var _ Adder[Money[JPY]] = Money[JPY]{}
 
 // #endregion

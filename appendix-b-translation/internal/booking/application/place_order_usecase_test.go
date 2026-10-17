@@ -19,7 +19,9 @@ import (
 // #region saves-order
 func TestPlaceOrderUseCase_SavesOrder(t *testing.T) {
 	orders := infra.NewInMemoryOrderRepository()
-	clock := test.NewFixedClock(time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC))
+	clock := test.NewFixedClock(
+		time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+	)
 	pricing := domain.NewPricingService(10)
 	uc := application.NewPlaceOrderUseCase(orders, pricing, clock)
 	ctx := context.Background()
@@ -35,7 +37,11 @@ func TestPlaceOrderUseCase_SavesOrder(t *testing.T) {
 		t.Fatalf("order not saved: %v", err)
 	}
 	want := buildExpectedOrder(res.OrderID, cmd, clock.Now())
-	if diff := cmp.Diff(want, got, cmp.AllowUnexported(domain.Order{})); diff != "" {
+	if diff := cmp.Diff(
+		want,
+		got,
+		cmp.AllowUnexported(domain.Order{}),
+	); diff != "" {
 		t.Errorf("order mismatch (-want +got):\n%s", diff)
 	}
 }

@@ -22,10 +22,19 @@ func TestNewLesson_Validates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := domain.NewLesson(tt.lesson, tt.capacity, tt.price,
-				time.Now(), "trainer-1")
+			_, err := domain.NewLesson(
+				tt.lesson,
+				tt.capacity,
+				tt.price,
+				time.Now(),
+				"trainer-1",
+			)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("wantErr = %v, got err = %v", tt.wantErr, err)
+				t.Errorf(
+					"wantErr = %v, got err = %v",
+					tt.wantErr,
+					err,
+				)
 			}
 		})
 	}

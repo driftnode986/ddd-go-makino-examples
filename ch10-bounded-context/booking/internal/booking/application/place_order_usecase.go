@@ -25,7 +25,9 @@ func (uc *PlaceOrderUseCase) Execute(
 	customerID, err := domain.NewCustomerID(cmd.CustomerID)
 	if err != nil {
 		return PlaceOrderResult{}, &ApplicationError{
-			Code: "INVALID_INPUT", Message: "invalid customer id", Cause: err,
+			Code:    "INVALID_INPUT",
+			Message: "invalid customer id",
+			Cause:   err,
 		}
 	}
 
@@ -34,14 +36,23 @@ func (uc *PlaceOrderUseCase) Execute(
 		pid, err := domain.NewProductID(item.ProductID)
 		if err != nil {
 			return PlaceOrderResult{}, &ApplicationError{
-				Code: "INVALID_INPUT", Message: "invalid product id", Cause: err,
+				Code:    "INVALID_INPUT",
+				Message: "invalid product id",
+				Cause:   err,
 			}
 		}
 		unitPrice, err := domain.NewMoney(item.UnitPrice, "JPY")
 		if err != nil {
-			return PlaceOrderResult{}, fmt.Errorf("unit price: %w", err)
+			return PlaceOrderResult{}, fmt.Errorf(
+				"unit price: %w",
+				err,
+			)
 		}
-		if err := o.AddItem(pid, item.Quantity, unitPrice); err != nil {
+		if err := o.AddItem(
+			pid,
+			item.Quantity,
+			unitPrice,
+		); err != nil {
 			return PlaceOrderResult{}, mapDomainError(err)
 		}
 	}
@@ -60,7 +71,10 @@ func (uc *PlaceOrderUseCase) Execute(
 		return PlaceOrderResult{}, fmt.Errorf("save order: %w", err)
 	}
 	if err := uc.Outbox.Append(ctx, events); err != nil {
-		return PlaceOrderResult{}, fmt.Errorf("append outbox: %w", err)
+		return PlaceOrderResult{}, fmt.Errorf(
+			"append outbox: %w",
+			err,
+		)
 	}
 
 	uc.Logger.InfoContext(ctx, "order placed",

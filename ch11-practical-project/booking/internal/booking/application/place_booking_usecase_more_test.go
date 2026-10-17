@@ -16,13 +16,18 @@ func TestPlaceBookingUseCase_SavesBooking(t *testing.T) {
 	repo := memory.NewBookingRepository()
 	memberID := uuid.NewString()
 	stub := &stubLessonQuery{view: dto.LessonView{Name: "Yoga"}}
-	now := func() time.Time { return time.Date(2026, 5, 23, 10, 0, 0, 0, time.UTC) }
+	now := func() time.Time {
+		return time.Date(2026, 5, 23, 10, 0, 0, 0, time.UTC)
+	}
 	uc := application.NewPlaceBookingUseCase(repo, stub, now)
 
-	out, err := uc.Execute(context.Background(), application.PlaceBookingInput{
-		MemberID: memberID,
-		LessonID: uuid.NewString(),
-	})
+	out, err := uc.Execute(
+		context.Background(),
+		application.PlaceBookingInput{
+			MemberID: memberID,
+			LessonID: uuid.NewString(),
+		},
+	)
 	if err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}
@@ -30,7 +35,8 @@ func TestPlaceBookingUseCase_SavesBooking(t *testing.T) {
 		t.Fatal("BookingID is empty")
 	}
 
-	views, err := application.NewListBookingsQuery(repo).ByMember(context.Background(), memberID)
+	views, err := application.NewListBookingsQuery(repo).
+		ByMember(context.Background(), memberID)
 	if err != nil {
 		t.Fatalf("ByMember() error = %v", err)
 	}
@@ -41,23 +47,37 @@ func TestPlaceBookingUseCase_SavesBooking(t *testing.T) {
 
 func TestPlaceBookingUseCase_LessonNotAvailable(t *testing.T) {
 	stub := &stubLessonQuery{err: errors.New("lesson not found")}
-	uc := application.NewPlaceBookingUseCase(memory.NewBookingRepository(), stub, time.Now)
+	uc := application.NewPlaceBookingUseCase(
+		memory.NewBookingRepository(),
+		stub,
+		time.Now,
+	)
 
-	_, err := uc.Execute(context.Background(), application.PlaceBookingInput{
-		MemberID: uuid.NewString(),
-		LessonID: uuid.NewString(),
-	})
+	_, err := uc.Execute(
+		context.Background(),
+		application.PlaceBookingInput{
+			MemberID: uuid.NewString(),
+			LessonID: uuid.NewString(),
+		},
+	)
 	if err == nil {
 		t.Fatal("Execute() expected error, got nil")
 	}
 }
 
 func TestPlaceBookingUseCase_InvalidMemberID(t *testing.T) {
-	uc := application.NewPlaceBookingUseCase(memory.NewBookingRepository(), &stubLessonQuery{}, time.Now)
-	_, err := uc.Execute(context.Background(), application.PlaceBookingInput{
-		MemberID: "not-uuid",
-		LessonID: uuid.NewString(),
-	})
+	uc := application.NewPlaceBookingUseCase(
+		memory.NewBookingRepository(),
+		&stubLessonQuery{},
+		time.Now,
+	)
+	_, err := uc.Execute(
+		context.Background(),
+		application.PlaceBookingInput{
+			MemberID: "not-uuid",
+			LessonID: uuid.NewString(),
+		},
+	)
 	if err == nil {
 		t.Fatal("Execute() expected error, got nil")
 	}

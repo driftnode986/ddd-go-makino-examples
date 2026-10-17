@@ -12,7 +12,9 @@ type MemberHandler struct {
 	registerUC *application.RegisterMemberUseCase
 }
 
-func NewMemberHandler(uc *application.RegisterMemberUseCase) *MemberHandler {
+func NewMemberHandler(
+	uc *application.RegisterMemberUseCase,
+) *MemberHandler {
 	return &MemberHandler{registerUC: uc}
 }
 
@@ -20,7 +22,10 @@ func (h *MemberHandler) Mount(r chi.Router) {
 	r.Post("/members", h.register)
 }
 
-func (h *MemberHandler) register(w http.ResponseWriter, r *http.Request) {
+func (h *MemberHandler) register(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	var req struct {
 		Email string `json:"email"`
 		Name  string `json:"name"`
@@ -29,10 +34,13 @@ func (h *MemberHandler) register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid json", http.StatusBadRequest)
 		return
 	}
-	out, err := h.registerUC.Execute(r.Context(), application.RegisterMemberInput{
-		Email: req.Email,
-		Name:  req.Name,
-	})
+	out, err := h.registerUC.Execute(
+		r.Context(),
+		application.RegisterMemberInput{
+			Email: req.Email,
+			Name:  req.Name,
+		},
+	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

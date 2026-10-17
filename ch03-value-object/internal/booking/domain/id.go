@@ -26,8 +26,13 @@ func NewID[T any](s string) (ID[T], error) {
 // String は内部値を返す (fmt.Stringer)。
 func (id ID[T]) String() string { return id.value }
 
-// Equals は同じ T 型同士の比較。異なる T の ID は型エラーで弾かれる。
-func (id ID[T]) Equals(other ID[T]) bool { return id.value == other.value }
+// Equals は同じ T 型同士の比較。
+// 異なる T の ID は型エラーで弾かれる。
+func (id ID[T]) Equals(
+	other ID[T],
+) bool {
+	return id.value == other.value
+}
 
 // #endregion
 

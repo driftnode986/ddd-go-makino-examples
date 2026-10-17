@@ -15,7 +15,10 @@ type CustomerID struct {
 
 func NewCustomerID(s string) (CustomerID, error) {
 	if s == "" {
-		return CustomerID{}, fmt.Errorf("customer id: %w", ErrInvalidID)
+		return CustomerID{}, fmt.Errorf(
+			"customer id: %w",
+			ErrInvalidID,
+		)
 	}
 	return CustomerID{value: s}, nil
 }
@@ -28,7 +31,10 @@ type ProductID struct {
 
 func NewProductID(s string) (ProductID, error) {
 	if s == "" {
-		return ProductID{}, fmt.Errorf("product id: %w", ErrInvalidID)
+		return ProductID{}, fmt.Errorf(
+			"product id: %w",
+			ErrInvalidID,
+		)
 	}
 	return ProductID{value: s}, nil
 }

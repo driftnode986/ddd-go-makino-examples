@@ -17,7 +17,10 @@ var ErrInvalidDiscountRate = errors.New("invalid discount rate")
 // NewDiscountRate は割引率を生成する。
 func NewDiscountRate(v float64) (DiscountRate, error) {
 	if v < 0 || v > 1 {
-		return DiscountRate{}, fmt.Errorf("%w: must be in [0, 1]", ErrInvalidDiscountRate)
+		return DiscountRate{}, fmt.Errorf(
+			"%w: must be in [0, 1]",
+			ErrInvalidDiscountRate,
+		)
 	}
 	return DiscountRate{value: v}, nil
 }
@@ -28,9 +31,13 @@ func (d DiscountRate) Value() float64 { return d.value }
 // #endregion
 
 // #region calculate
-// CalculateDiscountedPrice は割引適用後の価格を計算するドメインサービス。
+// CalculateDiscountedPrice は割引適用後の価格を計算する
+// ドメインサービス。
 // 依存ゼロの純粋計算なので関数で書く。
-func CalculateDiscountedPrice(original Money, rate DiscountRate) (Money, error) {
+func CalculateDiscountedPrice(
+	original Money,
+	rate DiscountRate,
+) (Money, error) {
 	if rate.value < 0 || rate.value > 1 {
 		return Money{}, ErrInvalidDiscountRate
 	}

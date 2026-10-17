@@ -8,8 +8,9 @@ import (
 	"unicode"
 )
 
-// AssertAllFieldsUnexported は構造体のすべてのフィールドが非公開 (lower case 始まり)
-// であることを確認するテストヘルパーです。
+// AssertAllFieldsUnexported は構造体のすべてのフィールドが
+// 非公開 (lower case 始まり) であることを確認する
+// テストヘルパーです。
 func AssertAllFieldsUnexported(v any) error {
 	t := reflect.TypeOf(v)
 	if t.Kind() == reflect.Pointer {
@@ -25,7 +26,10 @@ func AssertAllFieldsUnexported(v any) error {
 		}
 	}
 	if len(exported) > 0 {
-		return fmt.Errorf("exported fields found: %s", strings.Join(exported, ", "))
+		return fmt.Errorf(
+			"exported fields found: %s",
+			strings.Join(exported, ", "),
+		)
 	}
 	return nil
 }

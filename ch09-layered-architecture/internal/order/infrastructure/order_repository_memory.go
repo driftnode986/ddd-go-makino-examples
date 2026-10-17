@@ -13,10 +13,15 @@ type MemoryOrderRepository struct {
 }
 
 func NewMemoryOrderRepository() *MemoryOrderRepository {
-	return &MemoryOrderRepository{orders: map[domain.OrderID]*domain.Order{}}
+	return &MemoryOrderRepository{
+		orders: map[domain.OrderID]*domain.Order{},
+	}
 }
 
-func (r *MemoryOrderRepository) Add(ctx context.Context, o *domain.Order) error {
+func (r *MemoryOrderRepository) Add(
+	ctx context.Context,
+	o *domain.Order,
+) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if _, exists := r.orders[o.ID()]; exists {
@@ -26,7 +31,10 @@ func (r *MemoryOrderRepository) Add(ctx context.Context, o *domain.Order) error 
 	return nil
 }
 
-func (r *MemoryOrderRepository) Save(ctx context.Context, o *domain.Order) error {
+func (r *MemoryOrderRepository) Save(
+	ctx context.Context,
+	o *domain.Order,
+) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if _, ok := r.orders[o.ID()]; !ok {

@@ -6,7 +6,8 @@ import (
 	"net/mail"
 )
 
-// Email は値オブジェクト。フィールドは非公開で、コンストラクタ経由でのみ生成される
+// Email は値オブジェクト。
+// フィールドは非公開で、コンストラクタ経由でのみ生成される
 type Email struct {
 	value string
 }

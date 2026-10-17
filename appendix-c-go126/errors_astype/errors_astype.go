@@ -28,7 +28,8 @@ func (e *NotFoundError) Error() string {
 // #endregion
 
 // #region map-status
-// MapStatus は Go 1.26 の errors.AsType[T] でエラーを HTTP ステータスに対応付けます。
+// MapStatus は Go 1.26 の errors.AsType[T] で
+// エラーを HTTP ステータスに対応付けます。
 func MapStatus(err error) int {
 	if _, ok := errors.AsType[*ValidationError](err); ok {
 		return http.StatusBadRequest

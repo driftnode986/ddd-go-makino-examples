@@ -7,7 +7,11 @@ import (
 )
 
 // LessonQueryPort は Catalog BC への参照ポートです。
-// Booking BC は catalog/internal/... を import せず、shared/dto を介して連携します。
+// Booking BC は catalog/internal/... を import せず、
+// shared/dto を介して連携します。
 type LessonQueryPort interface {
-	FindLessonView(ctx context.Context, lessonID string) (dto.LessonView, error)
+	FindLessonView(
+		ctx context.Context,
+		lessonID string,
+	) (dto.LessonView, error)
 }

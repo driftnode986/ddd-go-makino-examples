@@ -29,15 +29,22 @@ func TestPlaceBookingUseCase_Success(t *testing.T) {
 	repo := memory.NewBookingRepository()
 	lessonID := uuid.NewString()
 	memberID := uuid.NewString()
-	stub := &stubLessonQuery{view: dto.LessonView{ID: lessonID, Name: "Yoga"}}
-	now := func() time.Time { return time.Date(2026, 5, 23, 10, 0, 0, 0, time.UTC) }
+	stub := &stubLessonQuery{
+		view: dto.LessonView{ID: lessonID, Name: "Yoga"},
+	}
+	now := func() time.Time {
+		return time.Date(2026, 5, 23, 10, 0, 0, 0, time.UTC)
+	}
 
 	uc := application.NewPlaceBookingUseCase(repo, stub, now)
 
-	out, err := uc.Execute(context.Background(), application.PlaceBookingInput{
-		MemberID: memberID,
-		LessonID: lessonID,
-	})
+	out, err := uc.Execute(
+		context.Background(),
+		application.PlaceBookingInput{
+			MemberID: memberID,
+			LessonID: lessonID,
+		},
+	)
 	if err != nil {
 		t.Fatalf("Execute() error = %v", err)
 	}

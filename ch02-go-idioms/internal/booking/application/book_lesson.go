@@ -12,8 +12,15 @@ import (
 // #endregion
 
 // #region book-lesson-execute
-func (u *BookLessonUseCase) Execute(ctx context.Context, in BookLessonInput) error {
-	booking, err := domain.NewBooking(in.MemberID, in.LessonID, in.ScheduledAt)
+func (u *BookLessonUseCase) Execute(
+	ctx context.Context,
+	in BookLessonInput,
+) error {
+	booking, err := domain.NewBooking(
+		in.MemberID,
+		in.LessonID,
+		in.ScheduledAt,
+	)
 	if err != nil {
 		return fmt.Errorf("create booking: %w", err)
 	}

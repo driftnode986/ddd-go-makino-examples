@@ -33,17 +33,27 @@ type Order struct {
 
 // ドメインエラー。
 var (
-	ErrCannotModifyConfirmed = errors.New("cannot modify confirmed order")
-	ErrInvalidQuantity       = errors.New("quantity must be positive")
-	ErrEmptyOrder            = errors.New("cannot confirm empty order")
-	ErrItemNotFound          = errors.New("item not found in order")
+	ErrCannotModifyConfirmed = errors.New(
+		"cannot modify confirmed order",
+	)
+	ErrInvalidQuantity = errors.New(
+		"quantity must be positive",
+	)
+	ErrEmptyOrder = errors.New(
+		"cannot confirm empty order",
+	)
+	ErrItemNotFound = errors.New("item not found in order")
 )
 
 // #endregion
 
 // #region order-commands
 // AddItem は明細行を追加する。draft 状態でのみ可能。
-func (o *Order) AddItem(productID ProductID, quantity int, unitPrice Money) error {
+func (o *Order) AddItem(
+	productID ProductID,
+	quantity int,
+	unitPrice Money,
+) error {
 	if o.status != StatusDraft {
 		return ErrCannotModifyConfirmed
 	}

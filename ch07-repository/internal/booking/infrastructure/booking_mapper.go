@@ -24,15 +24,27 @@ func toBookingRow(b *domain.Booking) bookingRow {
 func toBookingDomain(r bookingRow) (*domain.Booking, error) {
 	id, err := domain.ParseBookingID(r.ID)
 	if err != nil {
-		return nil, fmt.Errorf("invalid booking id %q: %w", r.ID, err)
+		return nil, fmt.Errorf(
+			"invalid booking id %q: %w",
+			r.ID,
+			err,
+		)
 	}
 	memberID, err := domain.ParseMemberID(r.MemberID)
 	if err != nil {
-		return nil, fmt.Errorf("invalid member id %q: %w", r.MemberID, err)
+		return nil, fmt.Errorf(
+			"invalid member id %q: %w",
+			r.MemberID,
+			err,
+		)
 	}
 	lessonID, err := domain.ParseLessonID(r.LessonID)
 	if err != nil {
-		return nil, fmt.Errorf("invalid lesson id %q: %w", r.LessonID, err)
+		return nil, fmt.Errorf(
+			"invalid lesson id %q: %w",
+			r.LessonID,
+			err,
+		)
 	}
 	status := domain.BookingStatus(r.Status)
 	return domain.ReconstructBooking(

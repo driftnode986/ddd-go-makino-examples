@@ -37,7 +37,10 @@ func TestPricingService_CalculateFinalPrice(t *testing.T) {
 	})
 	t.Run("expired coupon", func(t *testing.T) {
 		coupon := pricing.NewCoupon(yen(t, 500), now.Add(-time.Hour))
-		if _, err := svc.CalculateFinalPrice(yen(t, 3000), coupon); err == nil {
+		if _, err := svc.CalculateFinalPrice(
+			yen(t, 3000),
+			coupon,
+		); err == nil {
 			t.Fatal("want error for expired coupon")
 		}
 	})
@@ -52,7 +55,10 @@ func TestPricingService_CalculateFinalPrice(t *testing.T) {
 
 func TestMoney_Subtract_CurrencyMismatch(t *testing.T) {
 	usd, _ := pricing.NewMoney(10, "USD")
-	if _, err := yen(t, 100).Subtract(usd); !errors.Is(err, pricing.ErrCurrencyMismatch) {
+	if _, err := yen(t, 100).Subtract(usd); !errors.Is(
+		err,
+		pricing.ErrCurrencyMismatch,
+	) {
 		t.Fatalf("want ErrCurrencyMismatch, got %v", err)
 	}
 }

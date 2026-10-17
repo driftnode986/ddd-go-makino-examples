@@ -14,7 +14,11 @@ func TestMapDomainError(t *testing.T) {
 		in       error
 		wantCode string // 空なら ApplicationError にならず、そのまま返る
 	}{
-		{"invalid quantity", domain.ErrInvalidQuantity, "INVALID_QUANTITY"},
+		{
+			"invalid quantity",
+			domain.ErrInvalidQuantity,
+			"INVALID_QUANTITY",
+		},
 		{"cannot modify", domain.ErrCannotModify, "ORDER_LOCKED"},
 		{"unmapped", other, ""},
 	}
@@ -28,7 +32,8 @@ func TestMapDomainError(t *testing.T) {
 				}
 				return
 			}
-			if !errors.As(got, &appErr) || appErr.Code != tt.wantCode {
+			if !errors.As(got, &appErr) ||
+				appErr.Code != tt.wantCode {
 				t.Errorf("got %v, want code %s", got, tt.wantCode)
 			}
 			if !errors.Is(got, tt.in) {

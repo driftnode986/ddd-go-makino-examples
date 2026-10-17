@@ -1,5 +1,6 @@
 // Package application は 2.3 節の「errors.Is / errors.As で判別する」版のユースケース。
-// 2.12 節で log/slog を使う形に書き換えた完成形は ch02-go-idioms/internal/booking/application にある。
+// 2.12 節で log/slog を使う形に書き換えた完成形は
+// ch02-go-idioms/internal/booking/application にある。
 package application
 
 import (
@@ -21,6 +22,8 @@ type BookLessonUseCase struct {
 }
 
 // NewBookLessonUseCase はリポジトリを受け取ってユースケースを作る。
-func NewBookLessonUseCase(repo domain.BookingRepository) *BookLessonUseCase {
+func NewBookLessonUseCase(
+	repo domain.BookingRepository,
+) *BookLessonUseCase {
 	return &BookLessonUseCase{repo: repo}
 }

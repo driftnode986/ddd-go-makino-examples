@@ -30,12 +30,16 @@ func NewBookingBuilder() *BookingBuilder {
 // #endregion
 
 // #region builder-methods
-func (b *BookingBuilder) WithStatus(s domain.BookingStatus) *BookingBuilder {
+func (b *BookingBuilder) WithStatus(
+	s domain.BookingStatus,
+) *BookingBuilder {
 	b.status = s
 	return b
 }
 
-func (b *BookingBuilder) WithMember(id domain.MemberID) *BookingBuilder {
+func (b *BookingBuilder) WithMember(
+	id domain.MemberID,
+) *BookingBuilder {
 	b.memberID = id
 	return b
 }

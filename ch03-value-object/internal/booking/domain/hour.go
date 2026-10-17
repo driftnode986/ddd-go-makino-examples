@@ -7,13 +7,16 @@ import (
 )
 
 // Hour は予約の開始時刻を表す値オブジェクト。
-// 「営業時間内 (9 時から 21 時)」「分単位なし」の業務ルールを内包する。
+// 「営業時間内 (9 時から 21 時)」「分単位なし」の
+// 業務ルールを内包する。
 type Hour struct {
 	t time.Time
 }
 
 // ErrOutOfBusinessHours は営業時間外の時刻を表すドメインエラー。
-var ErrOutOfBusinessHours = errors.New("hour must be between 9 and 21")
+var ErrOutOfBusinessHours = errors.New(
+	"hour must be between 9 and 21",
+)
 
 // ErrHourHasMinutes は分単位を含む時刻を表すドメインエラー。
 var ErrHourHasMinutes = errors.New("hour must be on the hour")

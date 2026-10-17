@@ -15,7 +15,10 @@ import (
 // fakeTx は fn をそのまま呼び、呼ばれた回数を数える。
 type fakeTx struct{ calls int }
 
-func (f *fakeTx) RunInTx(ctx context.Context, fn func(ctx context.Context) error) error {
+func (f *fakeTx) RunInTx(
+	ctx context.Context,
+	fn func(ctx context.Context) error,
+) error {
 	f.calls++
 	return fn(ctx)
 }
@@ -28,11 +31,21 @@ func TestRegisterUserUseCase_AddsUserInTx(t *testing.T) {
 	ctx := context.Background()
 	tx := &fakeTx{}
 	users := infrastructure.NewMemoryUserRepository()
-	clock := test.NewFixedClock(time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC))
-	uc := application.NewRegisterUserUseCase(tx, users, clock, fixedID("usr_1"))
+	clock := test.NewFixedClock(
+		time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+	)
+	uc := application.NewRegisterUserUseCase(
+		tx,
+		users,
+		clock,
+		fixedID("usr_1"),
+	)
 	email, _ := domain.NewEmail("taro@example.com")
 
-	id, err := uc.Execute(ctx, application.RegisterUserCommand{Email: email, Name: "Taro"})
+	id, err := uc.Execute(
+		ctx,
+		application.RegisterUserCommand{Email: email, Name: "Taro"},
+	)
 	if err != nil {
 		t.Fatalf("Execute: %v", err)
 	}
@@ -49,17 +62,34 @@ func TestRegisterUserUseCase_ReturnsErrors(t *testing.T) {
 	ctx := context.Background()
 	users := infrastructure.NewMemoryUserRepository()
 	clock := test.NewFixedClock(time.Now())
-	uc := application.NewRegisterUserUseCase(&fakeTx{}, users, clock, fixedID("usr_1"))
+	uc := application.NewRegisterUserUseCase(
+		&fakeTx{},
+		users,
+		clock,
+		fixedID("usr_1"),
+	)
 	email, _ := domain.NewEmail("taro@example.com")
 
-	if _, err := uc.Execute(ctx, application.RegisterUserCommand{Email: email}); err == nil {
+	if _, err := uc.Execute(
+		ctx,
+		application.RegisterUserCommand{Email: email},
+	); err == nil {
 		t.Error("empty name: want error, got nil")
 	}
-	if _, err := uc.Execute(ctx, application.RegisterUserCommand{Email: email, Name: "Taro"}); err != nil {
+	if _, err := uc.Execute(
+		ctx,
+		application.RegisterUserCommand{Email: email, Name: "Taro"},
+	); err != nil {
 		t.Fatal(err)
 	}
-	_, err := uc.Execute(ctx, application.RegisterUserCommand{Email: email, Name: "Taro"})
+	_, err := uc.Execute(
+		ctx,
+		application.RegisterUserCommand{Email: email, Name: "Taro"},
+	)
 	if !errors.Is(err, infrastructure.ErrDuplicateUser) {
-		t.Errorf("same id twice: err = %v, want ErrDuplicateUser", err)
+		t.Errorf(
+			"same id twice: err = %v, want ErrDuplicateUser",
+			err,
+		)
 	}
 }

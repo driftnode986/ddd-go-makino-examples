@@ -24,16 +24,22 @@ func TestListBookingsByMember_HTTP(t *testing.T) {
 	srv := setupTestServer(t)
 	memberID := uuid.NewString()
 	for range 2 {
-		body := `{"member_id":"` + memberID + `","lesson_id":"` + uuid.NewString() + `"}`
-		res, err := http.Post(srv.URL+"/booking/bookings", "application/json",
-			strings.NewReader(body))
+		body := `{"member_id":"` + memberID +
+			`","lesson_id":"` + uuid.NewString() + `"}`
+		res, err := http.Post(
+			srv.URL+"/booking/bookings",
+			"application/json",
+			strings.NewReader(body),
+		)
 		if err != nil {
 			t.Fatal(err)
 		}
 		_ = res.Body.Close()
 	}
 
-	res, err := http.Get(srv.URL + "/booking/members/" + memberID + "/bookings")
+	res, err := http.Get(
+		srv.URL + "/booking/members/" + memberID + "/bookings",
+	)
 	if err != nil {
 		t.Fatal(err)
 	}

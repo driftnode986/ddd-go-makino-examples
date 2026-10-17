@@ -20,7 +20,11 @@ func TestNewEmail_Validates(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := domain.NewEmail(tt.input)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("wantErr = %v, got err = %v", tt.wantErr, err)
+				t.Errorf(
+					"wantErr = %v, got err = %v",
+					tt.wantErr,
+					err,
+				)
 			}
 		})
 	}

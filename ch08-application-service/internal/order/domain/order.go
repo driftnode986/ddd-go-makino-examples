@@ -21,17 +21,28 @@ type OrderItem struct {
 	unitPrice Money
 }
 
-func NewOrderItem(productID ProductID, quantity int, unitPrice Money) (OrderItem, error) {
+func NewOrderItem(
+	productID ProductID,
+	quantity int,
+	unitPrice Money,
+) (OrderItem, error) {
 	if quantity <= 0 {
 		return OrderItem{}, ErrInvalidQuantity
 	}
-	return OrderItem{productID: productID, quantity: quantity, unitPrice: unitPrice}, nil
+	return OrderItem{
+		productID: productID,
+		quantity:  quantity,
+		unitPrice: unitPrice,
+	}, nil
 }
 
 func (i OrderItem) ProductID() ProductID { return i.productID }
 func (i OrderItem) Quantity() int        { return i.quantity }
 func (i OrderItem) UnitPrice() Money     { return i.unitPrice }
-func (i OrderItem) Subtotal() Money      { return i.unitPrice.MulInt(i.quantity) }
+
+func (i OrderItem) Subtotal() Money {
+	return i.unitPrice.MulInt(i.quantity)
+}
 
 type Order struct {
 	id         OrderID
@@ -60,9 +71,14 @@ func (o *Order) ID() OrderID            { return o.id }
 func (o *Order) CustomerID() CustomerID { return o.customerID }
 func (o *Order) Status() OrderStatus    { return o.status }
 func (o *Order) PlacedAt() time.Time    { return o.placedAt }
-func (o *Order) Items() []OrderItem     { return slices.Clone(o.items) }
 
-func (o *Order) AddItem(productID ProductID, quantity int, unitPrice Money) error {
+func (o *Order) Items() []OrderItem { return slices.Clone(o.items) }
+
+func (o *Order) AddItem(
+	productID ProductID,
+	quantity int,
+	unitPrice Money,
+) error {
 	if o.status != StatusDraft {
 		return ErrCannotModify
 	}

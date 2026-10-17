@@ -6,6 +6,10 @@ import "time"
 // FixedClock は常に同じ時刻を返す。
 type FixedClock struct{ at time.Time }
 
-func NewFixedClock(at time.Time) *FixedClock { return &FixedClock{at: at} }
+func NewFixedClock(
+	at time.Time,
+) *FixedClock {
+	return &FixedClock{at: at}
+}
 
 func (c *FixedClock) Now() time.Time { return c.at }

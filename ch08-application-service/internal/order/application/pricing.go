@@ -9,5 +9,8 @@ import (
 // PricingPort はアプリケーション層から呼ぶ pricing ドメインサービスの port。
 // 実装は infrastructure/stub_pricing.go または別 BC の adapter で行う。
 type PricingPort interface {
-	UnitPrice(ctx context.Context, productID domain.ProductID) (domain.Money, error)
+	UnitPrice(
+		ctx context.Context,
+		productID domain.ProductID,
+	) (domain.Money, error)
 }

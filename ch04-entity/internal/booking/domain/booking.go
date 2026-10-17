@@ -41,19 +41,28 @@ type Booking struct {
 // #region errors
 var (
 	// ErrCannotConfirm は確認できない状態遷移を表す。
-	ErrCannotConfirm = errors.New("cannot confirm booking from this state")
+	ErrCannotConfirm = errors.New(
+		"cannot confirm booking from this state",
+	)
 	// ErrCannotCancel はキャンセル不可な状態遷移を表す。
-	ErrCannotCancel = errors.New("cannot cancel booking from this state")
+	ErrCannotCancel = errors.New(
+		"cannot cancel booking from this state",
+	)
 	// ErrCannotComplete は完了できない状態遷移を表す。
-	ErrCannotComplete = errors.New("cannot complete booking from this state")
+	ErrCannotComplete = errors.New(
+		"cannot complete booking from this state",
+	)
 	// ErrScheduledInPast は過去日時の予約を表す。
-	ErrScheduledInPast = errors.New("scheduled time must be in the future")
+	ErrScheduledInPast = errors.New(
+		"scheduled time must be in the future",
+	)
 )
 
 // #endregion
 
 // #region new-booking
-// NewBooking はファクトリ関数。生成時に不変条件 (時刻が未来) を検証する。
+// NewBooking はファクトリ関数。
+// 生成時に不変条件 (時刻が未来) を検証する。
 // clock は now を返す関数で、テスト時に差し替える。
 func NewBooking(
 	id BookingID,

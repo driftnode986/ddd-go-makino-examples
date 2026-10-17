@@ -14,14 +14,22 @@ func TestNewID_GeneratesDistinctUUIDs(t *testing.T) {
 		t.Fatalf("two generated IDs should differ: %s", a)
 	}
 	if _, err := uuid.Parse(a.String()); err != nil {
-		t.Fatalf("String() should be a UUID: %q (%v)", a.String(), err)
+		t.Fatalf(
+			"String() should be a UUID: %q (%v)",
+			a.String(),
+			err,
+		)
 	}
 }
 
 func TestNewBookingID_IsUUID(t *testing.T) {
 	id := domain.NewBookingID()
 	if _, err := uuid.Parse(id.String()); err != nil {
-		t.Fatalf("String() should be a UUID: %q (%v)", id.String(), err)
+		t.Fatalf(
+			"String() should be a UUID: %q (%v)",
+			id.String(),
+			err,
+		)
 	}
 }
 

@@ -13,12 +13,19 @@ type BookingID struct {
 
 func NewBookingID(s string) (BookingID, error) {
 	if s == "" {
-		return BookingID{}, fmt.Errorf("booking id: %w", ErrInvalidID)
+		return BookingID{}, fmt.Errorf(
+			"booking id: %w",
+			ErrInvalidID,
+		)
 	}
 	return BookingID{value: s}, nil
 }
 
-func ParseBookingID(s string) (BookingID, error) { return NewBookingID(s) }
+func ParseBookingID(
+	s string,
+) (BookingID, error) {
+	return NewBookingID(s)
+}
 
 func (id BookingID) String() string { return id.value }
 
@@ -33,7 +40,11 @@ func NewMemberID(s string) (MemberID, error) {
 	return MemberID{value: s}, nil
 }
 
-func ParseMemberID(s string) (MemberID, error) { return NewMemberID(s) }
+func ParseMemberID(
+	s string,
+) (MemberID, error) {
+	return NewMemberID(s)
+}
 
 func (id MemberID) String() string { return id.value }
 
@@ -48,6 +59,10 @@ func NewLessonID(s string) (LessonID, error) {
 	return LessonID{value: s}, nil
 }
 
-func ParseLessonID(s string) (LessonID, error) { return NewLessonID(s) }
+func ParseLessonID(
+	s string,
+) (LessonID, error) {
+	return NewLessonID(s)
+}
 
 func (id LessonID) String() string { return id.value }

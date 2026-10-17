@@ -24,7 +24,11 @@ func sum[A money.Adder[A]](first A, rest ...A) A {
 }
 
 func TestAdderConstraint(t *testing.T) {
-	got := sum(money.NewMoney[money.USD](1), money.NewMoney[money.USD](2), money.NewMoney[money.USD](3))
+	got := sum(
+		money.NewMoney[money.USD](1),
+		money.NewMoney[money.USD](2),
+		money.NewMoney[money.USD](3),
+	)
 	if got.String() != "6 USD" {
 		t.Errorf("got %q, want %q", got.String(), "6 USD")
 	}

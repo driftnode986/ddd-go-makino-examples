@@ -44,6 +44,7 @@ func TestPhantomType_PreventsTypeConfusion(t *testing.T) {
 	}
 
 	// 内部値が偶然一致しても、phantom type が違えば別物として扱える
-	// (Equals は同じ T のみ受け付けるため、bid を uid.Equals に渡そうとすると compile error)
+	// (Equals は同じ T のみ受け付けるため、
+	// bid を uid.Equals に渡そうとすると compile error)
 	_ = bid
 }

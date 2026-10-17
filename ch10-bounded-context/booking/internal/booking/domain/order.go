@@ -19,7 +19,11 @@ type OrderItem struct {
 	unitPrice Money
 }
 
-func NewOrderItem(productID ProductID, quantity int, unitPrice Money) (OrderItem, error) {
+func NewOrderItem(
+	productID ProductID,
+	quantity int,
+	unitPrice Money,
+) (OrderItem, error) {
 	if quantity <= 0 {
 		return OrderItem{}, ErrInvalidQuantity
 	}
@@ -33,7 +37,10 @@ func NewOrderItem(productID ProductID, quantity int, unitPrice Money) (OrderItem
 func (i OrderItem) ProductID() ProductID { return i.productID }
 func (i OrderItem) Quantity() int        { return i.quantity }
 func (i OrderItem) UnitPrice() Money     { return i.unitPrice }
-func (i OrderItem) Subtotal() Money      { return i.unitPrice.MulInt(i.quantity) }
+
+func (i OrderItem) Subtotal() Money {
+	return i.unitPrice.MulInt(i.quantity)
+}
 
 // #region order-events
 type Order struct {
@@ -55,7 +62,8 @@ func (o *Order) Confirm(now time.Time) error {
 	return nil
 }
 
-// PullEvents は蓄積したイベントを取り出し、内部スライスをクリアする。
+// PullEvents は蓄積したイベントを取り出し、
+// 内部スライスをクリアする。
 func (o *Order) PullEvents() []DomainEvent {
 	events := o.pendingEvents
 	o.pendingEvents = nil
@@ -77,9 +85,14 @@ func (o *Order) ID() OrderID            { return o.id }
 func (o *Order) CustomerID() CustomerID { return o.customerID }
 func (o *Order) Status() OrderStatus    { return o.status }
 func (o *Order) PlacedAt() time.Time    { return o.placedAt }
-func (o *Order) Items() []OrderItem     { return slices.Clone(o.items) }
 
-func (o *Order) AddItem(productID ProductID, quantity int, unitPrice Money) error {
+func (o *Order) Items() []OrderItem { return slices.Clone(o.items) }
+
+func (o *Order) AddItem(
+	productID ProductID,
+	quantity int,
+	unitPrice Money,
+) error {
 	if o.status != StatusDraft {
 		return ErrCannotModify
 	}

@@ -44,7 +44,9 @@ func (q *Queries) GetBookingByID(ctx context.Context, id string) (Booking, error
 }
 
 const insertBooking = `-- name: InsertBooking :exec
-INSERT INTO bookings (id, member_id, lesson_id, status, scheduled_at, version)
+INSERT INTO bookings (
+    id, member_id, lesson_id, status, scheduled_at, version
+)
 VALUES ($1, $2, $3, $4, $5, $6)
 `
 
@@ -71,7 +73,9 @@ func (q *Queries) InsertBooking(ctx context.Context, arg InsertBookingParams) er
 
 const updateBookingWithVersion = `-- name: UpdateBookingWithVersion :execrows
 UPDATE bookings
-SET status = $1, scheduled_at = $2, version = $3
+SET status = $1,
+    scheduled_at = $2,
+    version = $3
 WHERE id = $4 AND version = $5
 `
 

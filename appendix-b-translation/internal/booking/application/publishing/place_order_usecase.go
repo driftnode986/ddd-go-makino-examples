@@ -18,22 +18,41 @@ type PlaceOrderUseCase struct {
 	clock  application.Clock
 }
 
-func NewPlaceOrderUseCase(txMgr application.TxManager, orders domain.OrderRepository,
-	events domain.EventPublisher, clock application.Clock) *PlaceOrderUseCase {
-	return &PlaceOrderUseCase{txMgr: txMgr, orders: orders, events: events, clock: clock}
+func NewPlaceOrderUseCase(
+	txMgr application.TxManager,
+	orders domain.OrderRepository,
+	events domain.EventPublisher,
+	clock application.Clock,
+) *PlaceOrderUseCase {
+	return &PlaceOrderUseCase{
+		txMgr:  txMgr,
+		orders: orders,
+		events: events,
+		clock:  clock,
+	}
 }
 
 // #region execute
-func (uc *PlaceOrderUseCase) Execute(ctx context.Context, cmd PlaceOrderCommand) error {
+func (uc *PlaceOrderUseCase) Execute(
+	ctx context.Context,
+	cmd PlaceOrderCommand,
+) error {
 	return uc.txMgr.RunInTx(ctx, func(ctx context.Context) error {
-		order, err := domain.PlaceOrder(cmd.Items, cmd.CustomerID, uc.clock.Now())
+		order, err := domain.PlaceOrder(
+			cmd.Items,
+			cmd.CustomerID,
+			uc.clock.Now(),
+		)
 		if err != nil {
 			return err
 		}
 		if err := uc.orders.Add(ctx, order); err != nil {
 			return err
 		}
-		return uc.events.Publish(ctx, domain.OrderPlaced{OrderID: order.ID()})
+		return uc.events.Publish(
+			ctx,
+			domain.OrderPlaced{OrderID: order.ID()},
+		)
 	})
 }
 

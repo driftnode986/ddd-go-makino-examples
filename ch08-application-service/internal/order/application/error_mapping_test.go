@@ -31,13 +31,21 @@ func TestPlaceOrderUseCase_InvalidQuantity(t *testing.T) {
 		t.Fatalf("expected *ApplicationError, got %T (%v)", err, err)
 	}
 	if appErr.Code != "INVALID_QUANTITY" {
-		t.Errorf("Code = %q, want %q", appErr.Code, "INVALID_QUANTITY")
+		t.Errorf(
+			"Code = %q, want %q",
+			appErr.Code,
+			"INVALID_QUANTITY",
+		)
 	}
 	// Unwrap で原因のドメインエラーまでたどれる
 	if !errors.Is(err, domain.ErrInvalidQuantity) {
-		t.Errorf("errors.Is(err, ErrInvalidQuantity) = false: %v", err)
+		t.Errorf(
+			"errors.Is(err, ErrInvalidQuantity) = false: %v",
+			err,
+		)
 	}
-	if got, want := appErr.Error(), "INVALID_QUANTITY: 数量が正しくありません"; got != want {
+	if got, want := appErr.Error(),
+		"INVALID_QUANTITY: 数量が正しくありません"; got != want {
 		t.Errorf("Error() = %q, want %q", got, want)
 	}
 }

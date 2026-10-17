@@ -38,20 +38,37 @@ func newHandler(m *stubMailer) *application.OrderPlacedHandler {
 
 func TestHandleOrderPlaced_SendsMail(t *testing.T) {
 	mailer := &stubMailer{}
-	e := events.OrderPlaced{OrderID: "ord_001", CustomerID: "cus_001", TotalAmount: 3000}
-	if err := newHandler(mailer).Handle(context.Background(), e); err != nil {
+	e := events.OrderPlaced{
+		OrderID:     "ord_001",
+		CustomerID:  "cus_001",
+		TotalAmount: 3000,
+	}
+	if err := newHandler(mailer).Handle(
+		context.Background(),
+		e,
+	); err != nil {
 		t.Fatal(err)
 	}
-	if mailer.sendCount != 1 || !strings.Contains(mailer.lastBody, "ord_001") {
-		t.Errorf("sendCount = %d, body = %q", mailer.sendCount, mailer.lastBody)
+	if mailer.sendCount != 1 ||
+		!strings.Contains(mailer.lastBody, "ord_001") {
+		t.Errorf(
+			"sendCount = %d, body = %q",
+			mailer.sendCount,
+			mailer.lastBody,
+		)
 	}
 }
 
-func TestHandleWithIdempotency_DoesNotMarkWhenSendFails(t *testing.T) {
+func TestHandleWithIdempotency_DoesNotMarkWhenSendFails(
+	t *testing.T,
+) {
 	mailer := &stubMailer{err: errors.New("smtp down")}
 	h := newHandler(mailer)
 	ctx := context.Background()
-	e := events.OrderPlaced{OrderID: "ord_001", CustomerID: "cus_001"}
+	e := events.OrderPlaced{
+		OrderID:    "ord_001",
+		CustomerID: "cus_001",
+	}
 
 	if err := h.HandleWithIdempotency(ctx, 7, e); err == nil {
 		t.Fatal("want error when mail fails, got nil")
@@ -61,7 +78,9 @@ func TestHandleWithIdempotency_DoesNotMarkWhenSendFails(t *testing.T) {
 		t.Fatal(err)
 	}
 	if processed {
-		t.Error("event must not be marked processed when sending failed")
+		t.Error(
+			"event must not be marked processed when sending failed",
+		)
 	}
 
 	mailer.err = nil
@@ -69,6 +88,9 @@ func TestHandleWithIdempotency_DoesNotMarkWhenSendFails(t *testing.T) {
 		t.Fatalf("retry: %v", err)
 	}
 	if mailer.sendCount != 1 {
-		t.Errorf("sendCount after retry = %d, want 1", mailer.sendCount)
+		t.Errorf(
+			"sendCount after retry = %d, want 1",
+			mailer.sendCount,
+		)
 	}
 }

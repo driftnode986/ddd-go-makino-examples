@@ -33,8 +33,9 @@ func TestPostgresBookingRepository_AddAndFind(t *testing.T) {
 		postgres.WithUsername("test"),
 		postgres.WithPassword("test"),
 		testcontainers.WithWaitStrategy(
-			wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).
+			wait.ForLog(
+				"database system is ready to accept connections",
+			).WithOccurrence(2).
 				WithStartupTimeout(30*time.Second),
 		),
 	)
@@ -46,7 +47,10 @@ func TestPostgresBookingRepository_AddAndFind(t *testing.T) {
 	// #endregion
 
 	// #region postgres-test-connect
-	connStr, err := pgContainer.ConnectionString(ctx, "sslmode=disable")
+	connStr, err := pgContainer.ConnectionString(
+		ctx,
+		"sslmode=disable",
+	)
 	if err != nil {
 		t.Fatalf("ConnectionString: %v", err)
 	}

@@ -14,7 +14,13 @@ func TestRegisterMemberUseCase(t *testing.T) {
 	repo := memory.NewMemberRepository()
 	uc := application.NewRegisterMemberUseCase(repo)
 
-	out, err := uc.Execute(ctx, application.RegisterMemberInput{Email: "hanako@example.com", Name: "Hanako"})
+	out, err := uc.Execute(
+		ctx,
+		application.RegisterMemberInput{
+			Email: "hanako@example.com",
+			Name:  "Hanako",
+		},
+	)
 	if err != nil {
 		t.Fatalf("Execute: %v", err)
 	}

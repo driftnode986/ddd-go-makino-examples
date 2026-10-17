@@ -1,7 +1,8 @@
 package application
 
 // PlaceOrderCommand はユースケースの入力 DTO。
-// Presentation 層が HTTP リクエストや gRPC リクエストから組み立てて渡す。
+// Presentation 層が HTTP リクエストや gRPC リクエストから
+// 組み立てて渡す。
 type PlaceOrderCommand struct {
 	CustomerID string
 	Items      []OrderItemRequest

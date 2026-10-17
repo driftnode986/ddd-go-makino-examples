@@ -10,7 +10,10 @@ import (
 // DTO は公開フィールドなので、JSON から検証なしでそのまま値が入る
 func TestRegisterUserRequest_DecodesJSON(t *testing.T) {
 	var req bookinghttp.RegisterUserRequest
-	if err := json.Unmarshal([]byte(`{"email":"not-an-email"}`), &req); err != nil {
+	if err := json.Unmarshal(
+		[]byte(`{"email":"not-an-email"}`),
+		&req,
+	); err != nil {
 		t.Fatal(err)
 	}
 	if req.Email != "not-an-email" {

@@ -13,10 +13,15 @@ type MemberRepository struct {
 }
 
 func NewMemberRepository() *MemberRepository {
-	return &MemberRepository{members: map[domain.MemberID]*domain.Member{}}
+	return &MemberRepository{
+		members: map[domain.MemberID]*domain.Member{},
+	}
 }
 
-func (r *MemberRepository) Save(_ context.Context, m *domain.Member) error {
+func (r *MemberRepository) Save(
+	_ context.Context,
+	m *domain.Member,
+) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.members[m.ID()] = m

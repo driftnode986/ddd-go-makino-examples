@@ -15,13 +15,18 @@ type MemoryUserRepository struct {
 }
 
 func NewMemoryUserRepository() *MemoryUserRepository {
-	return &MemoryUserRepository{users: map[domain.UserID]*domain.User{}}
+	return &MemoryUserRepository{
+		users: map[domain.UserID]*domain.User{},
+	}
 }
 
 // ErrDuplicateUser は同じ ID の会員を 2 回 Add したときのエラー。
 var ErrDuplicateUser = errors.New("user already exists")
 
-func (r *MemoryUserRepository) Add(_ context.Context, u *domain.User) error {
+func (r *MemoryUserRepository) Add(
+	_ context.Context,
+	u *domain.User,
+) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if _, ok := r.users[u.ID()]; ok {
@@ -31,7 +36,10 @@ func (r *MemoryUserRepository) Add(_ context.Context, u *domain.User) error {
 	return nil
 }
 
-func (r *MemoryUserRepository) Save(_ context.Context, u *domain.User) error {
+func (r *MemoryUserRepository) Save(
+	_ context.Context,
+	u *domain.User,
+) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if _, ok := r.users[u.ID()]; !ok {
@@ -41,7 +49,10 @@ func (r *MemoryUserRepository) Save(_ context.Context, u *domain.User) error {
 	return nil
 }
 
-func (r *MemoryUserRepository) FindByID(_ context.Context, id domain.UserID) (*domain.User, error) {
+func (r *MemoryUserRepository) FindByID(
+	_ context.Context,
+	id domain.UserID,
+) (*domain.User, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	u, ok := r.users[id]
@@ -51,7 +62,10 @@ func (r *MemoryUserRepository) FindByID(_ context.Context, id domain.UserID) (*d
 	return u, nil
 }
 
-func (r *MemoryUserRepository) FindByEmail(_ context.Context, email domain.Email) (*domain.User, error) {
+func (r *MemoryUserRepository) FindByEmail(
+	_ context.Context,
+	email domain.Email,
+) (*domain.User, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	for _, u := range r.users {

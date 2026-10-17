@@ -13,13 +13,17 @@ import (
 func TestRequestIDMiddleware_GeneratesNewID(t *testing.T) {
 	called := false
 	var capturedID string
-	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		called = true
-		if id, ok := presentation.RequestIDFromContext(r.Context()); ok {
-			capturedID = id
-		}
-		w.WriteHeader(http.StatusOK)
-	})
+	next := http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			called = true
+			if id, ok := presentation.RequestIDFromContext(
+				r.Context(),
+			); ok {
+				capturedID = id
+			}
+			w.WriteHeader(http.StatusOK)
+		},
+	)
 
 	handler := presentation.RequestIDMiddleware(next)
 
@@ -38,17 +42,25 @@ func TestRequestIDMiddleware_GeneratesNewID(t *testing.T) {
 		t.Fatal("X-Request-ID response header is empty")
 	}
 	if respID != capturedID {
-		t.Errorf("header id = %q, context id = %q", respID, capturedID)
+		t.Errorf(
+			"header id = %q, context id = %q",
+			respID,
+			capturedID,
+		)
 	}
 }
 
 func TestRequestIDMiddleware_PreservesExistingID(t *testing.T) {
 	var capturedID string
-	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if id, ok := presentation.RequestIDFromContext(r.Context()); ok {
-			capturedID = id
-		}
-	})
+	next := http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			if id, ok := presentation.RequestIDFromContext(
+				r.Context(),
+			); ok {
+				capturedID = id
+			}
+		},
+	)
 
 	handler := presentation.RequestIDMiddleware(next)
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -66,9 +78,11 @@ func TestRequestIDMiddleware_PreservesExistingID(t *testing.T) {
 }
 
 func TestRecoveryMiddleware_RecoversFromPanic(t *testing.T) {
-	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		panic("intentional panic for test")
-	})
+	next := http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			panic("intentional panic for test")
+		},
+	)
 
 	logger := slog.New(slog.NewTextHandler(&strings.Builder{}, nil))
 	handler := presentation.RecoveryMiddleware(logger)(next)
@@ -85,6 +99,10 @@ func TestRecoveryMiddleware_RecoversFromPanic(t *testing.T) {
 	handler.ServeHTTP(rec, req)
 
 	if rec.Code != http.StatusInternalServerError {
-		t.Errorf("status = %d, want %d", rec.Code, http.StatusInternalServerError)
+		t.Errorf(
+			"status = %d, want %d",
+			rec.Code,
+			http.StatusInternalServerError,
+		)
 	}
 }

@@ -31,10 +31,18 @@ func TestPlaceOrderHandler_Success(t *testing.T) {
 	body := `{
         "customer_id": "cus_001",
         "items": [
-            {"product_id": "prod_001", "quantity": 2, "unit_price": 1500}
+            {
+                "product_id": "prod_001",
+                "quantity": 2,
+                "unit_price": 1500
+            }
         ]
     }`
-	req := httptest.NewRequest(http.MethodPost, "/orders", strings.NewReader(body))
+	req := httptest.NewRequest(
+		http.MethodPost,
+		"/orders",
+		strings.NewReader(body),
+	)
 	rec := httptest.NewRecorder()
 
 	handler.ServeHTTP(rec, req)
@@ -77,7 +85,11 @@ func TestPlaceOrderHandler_InvalidJSON(t *testing.T) {
 	handler.ServeHTTP(rec, req)
 
 	if rec.Code != http.StatusBadRequest {
-		t.Fatalf("status = %d, want %d", rec.Code, http.StatusBadRequest)
+		t.Fatalf(
+			"status = %d, want %d",
+			rec.Code,
+			http.StatusBadRequest,
+		)
 	}
 
 	var resp struct {
@@ -97,9 +109,16 @@ func TestPlaceOrderHandler_InvalidJSON(t *testing.T) {
 func TestGetOrderHandler_NotFound(t *testing.T) {
 	repo := infrastructure.NewMemoryOrderRepository()
 	query := &application.GetOrderQueryHandler{OrderRepo: repo}
-	handler := presentation.MakeGetOrderHandler(query, slog.Default())
+	handler := presentation.MakeGetOrderHandler(
+		query,
+		slog.Default(),
+	)
 
-	req := httptest.NewRequest(http.MethodGet, "/orders/ord_missing", nil)
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/orders/ord_missing",
+		nil,
+	)
 	req.SetPathValue("id", "ord_missing")
 	rec := httptest.NewRecorder()
 

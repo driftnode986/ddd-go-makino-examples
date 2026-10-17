@@ -1,12 +1,31 @@
-run:
-  timeout: 5m
+# ch11 の3つの BC（go.work）で使う golangci-lint v2 の設定。
+# repo 直下の .golangci.yml と同じ lll（1行69桁）に、この章で使ってきた linter を足す。
+version: "2"
 
 linters:
+  default: none
   enable:
     - errcheck
     - govet
+    - ineffassign
+    - lll
     - staticcheck
     - unused
-    - ineffassign
+  settings:
+    lll:
+      line-length: 69
+      tab-width: 4
+  exclusions:
+    generated: strict
+    rules:
+      # テストの defer res.Body.Close() は戻り値を見ない（標準の書き方）
+      - path: _test\.go
+        linters:
+          - errcheck
+
+formatters:
+  enable:
     - gofmt
     - goimports
+  exclusions:
+    generated: strict

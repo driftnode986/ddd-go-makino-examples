@@ -9,7 +9,10 @@ import (
 )
 
 // helper: テスト用の Booking を組み立てる。
-func newTestBooking(t *testing.T, clock func() time.Time) *domain.Booking {
+func newTestBooking(
+	t *testing.T,
+	clock func() time.Time,
+) *domain.Booking {
 	t.Helper()
 	bid, _ := domain.NewID[domain.BookingTag]("book-0001")
 	mid, _ := domain.NewID[domain.MemberTag]("memb-0001")
@@ -56,7 +59,10 @@ func TestBooking_Confirm_PendingToConfirmed(t *testing.T) {
 		t.Fatalf("after Confirm: want confirmed, got %v", got)
 	}
 	if b.Version() != 2 {
-		t.Fatalf("version after Confirm: want 2, got %d", b.Version())
+		t.Fatalf(
+			"version after Confirm: want 2, got %d",
+			b.Version(),
+		)
 	}
 }
 
@@ -68,8 +74,14 @@ func TestBooking_Confirm_RejectsFromCancelled(t *testing.T) {
 	if err := b.Cancel(clock); err != nil {
 		t.Fatal(err)
 	}
-	if err := b.Confirm(clock); !errors.Is(err, domain.ErrCannotConfirm) {
-		t.Fatalf("Confirm from cancelled: want ErrCannotConfirm, got %v", err)
+	if err := b.Confirm(clock); !errors.Is(
+		err,
+		domain.ErrCannotConfirm,
+	) {
+		t.Fatalf(
+			"Confirm from cancelled: want ErrCannotConfirm, got %v",
+			err,
+		)
 	}
 }
 
@@ -128,8 +140,14 @@ func TestBooking_Complete_OnlyFromConfirmed(t *testing.T) {
 	clock := fixedClock(now)
 	b := newTestBooking(t, clock)
 
-	if err := b.Complete(clock); !errors.Is(err, domain.ErrCannotComplete) {
-		t.Fatalf("Complete from pending: want ErrCannotComplete, got %v", err)
+	if err := b.Complete(clock); !errors.Is(
+		err,
+		domain.ErrCannotComplete,
+	) {
+		t.Fatalf(
+			"Complete from pending: want ErrCannotComplete, got %v",
+			err,
+		)
 	}
 	if err := b.Confirm(clock); err != nil {
 		t.Fatal(err)
