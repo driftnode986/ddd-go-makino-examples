@@ -53,13 +53,17 @@ func newTestOrder(t *testing.T) *domain.Order {
 	return o
 }
 
+// #region test-add-item-only-in-draft
 func TestOrder_AddItem_OnlyInDraft(t *testing.T) {
 	clock := domain.FixedClock{T: time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)}
 	o := newTestOrder(t)
 
+	// draft 状態で追加できる
 	if err := o.AddItem(productID(t, "prd00001"), 2, jpy(t, 1000)); err != nil {
 		t.Fatalf("AddItem in draft: %v", err)
 	}
+
+	// 確定後は追加できない
 	if err := o.Confirm(clock); err != nil {
 		t.Fatalf("Confirm: %v", err)
 	}
@@ -68,6 +72,8 @@ func TestOrder_AddItem_OnlyInDraft(t *testing.T) {
 		t.Errorf("AddItem in confirmed: want ErrCannotModifyConfirmed got %v", err)
 	}
 }
+
+// #endregion
 
 func TestOrder_AddItem_RejectsInvalidQuantity(t *testing.T) {
 	o := newTestOrder(t)
@@ -97,6 +103,7 @@ func TestOrder_RemoveItem(t *testing.T) {
 	}
 }
 
+// #region test-items-returns-copy
 func TestOrder_Items_ReturnsCopy(t *testing.T) {
 	o := newTestOrder(t)
 	if err := o.AddItem(productID(t, "prd00001"), 2, jpy(t, 1000)); err != nil {
@@ -104,7 +111,8 @@ func TestOrder_Items_ReturnsCopy(t *testing.T) {
 	}
 
 	items := o.Items()
-	items[0] = domain.OrderItem{}
+	// 取得したスライスを変更しても、集約内部は変わらない
+	items[0] = domain.OrderItem{} // ゼロ値で潰す
 
 	again := o.Items()
 	if again[0].Quantity() != 2 {
@@ -112,6 +120,9 @@ func TestOrder_Items_ReturnsCopy(t *testing.T) {
 	}
 }
 
+// #endregion
+
+// #region test-confirm-rejects-empty
 func TestOrder_Confirm_RejectsEmpty(t *testing.T) {
 	clock := domain.FixedClock{T: time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)}
 	o := newTestOrder(t)
@@ -120,6 +131,8 @@ func TestOrder_Confirm_RejectsEmpty(t *testing.T) {
 		t.Errorf("Confirm empty: want ErrEmptyOrder got %v", err)
 	}
 }
+
+// #endregion
 
 func TestOrder_TotalAmount(t *testing.T) {
 	o := newTestOrder(t)

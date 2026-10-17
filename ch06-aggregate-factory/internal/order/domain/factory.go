@@ -1,3 +1,4 @@
+// #region new-order
 package domain
 
 import (
@@ -6,7 +7,7 @@ import (
 	"time"
 )
 
-// NewOrder はファクトリ関数 (依存ゼロ版)。
+// NewOrder はファクトリ関数。依存ゼロのケース。
 func NewOrder(id OrderID, customerID CustomerID) (*Order, error) {
 	if id.IsZero() || customerID.IsZero() {
 		return nil, errors.New("id, customerID required")
@@ -19,12 +20,15 @@ func NewOrder(id OrderID, customerID CustomerID) (*Order, error) {
 	}, nil
 }
 
+// #endregion
+
+// #region order-factory
 // IDGenerator は OrderID を新規生成する依存。
 type IDGenerator interface {
 	NewOrderID() OrderID
 }
 
-// OrderFactory はファクトリ構造体 (依存あり版)。
+// OrderFactory はファクトリ構造体。依存 (ID 生成、Clock) を持つ。
 type OrderFactory struct {
 	idGen IDGenerator
 	clock Clock
@@ -35,7 +39,7 @@ func NewOrderFactory(idGen IDGenerator, clock Clock) *OrderFactory {
 	return &OrderFactory{idGen: idGen, clock: clock}
 }
 
-// Create は ID 生成と検証を一括で行い Order を返す。
+// Create は ID 生成と検証を一括で行い、Order を返す。
 func (f *OrderFactory) Create(customerID CustomerID) (*Order, error) {
 	if customerID.IsZero() {
 		return nil, errors.New("customerID required")
@@ -48,19 +52,25 @@ func (f *OrderFactory) Create(customerID CustomerID) (*Order, error) {
 	}, nil
 }
 
+// #endregion
+
+// #region order-options
 // OrderOption は Order 生成時の追加設定。
 type OrderOption func(*Order)
 
-// WithNotes は備考を追加するオプション。
+// WithNotes は注文に備考を追加するオプション。
 func WithNotes(notes string) OrderOption {
 	return func(o *Order) { o.notes = notes }
 }
 
-// WithDiscountRate は割引率を適用するオプション。
+// WithDiscountRate は注文に割引率を適用するオプション。
 func WithDiscountRate(rate DiscountRate) OrderOption {
 	return func(o *Order) { o.discountRate = rate }
 }
 
+// #endregion
+
+// #region new-order-with-options
 // NewOrderWithOptions は Option 関数を受け取って Order を生成する。
 func NewOrderWithOptions(
 	id OrderID, customerID CustomerID, opts ...OrderOption,
@@ -88,8 +98,12 @@ func (o *Order) validate() error {
 	return nil
 }
 
-// ReconstructOrder は永続化層から集約を復元するファクトリ。
-// 検証はスキップする。リポジトリ層からのみ呼ぶ前提。
+// #endregion
+
+// #region reconstruct-order
+// ReconstructOrder は永続化層から集約を復元するためのファクトリ。
+// 入力検証はスキップし、DB に既に存在する状態をそのままメモリに復元する。
+// リポジトリ層からのみ呼ぶ前提。
 func ReconstructOrder(
 	id OrderID,
 	customerID CustomerID,
@@ -105,3 +119,5 @@ func ReconstructOrder(
 		placedAt:   placedAt,
 	}
 }
+
+// #endregion

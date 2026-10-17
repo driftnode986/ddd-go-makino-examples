@@ -1,6 +1,9 @@
+// #region order-item
 package domain
 
-import "errors"
+import (
+	"errors"
+)
 
 // OrderItem は注文明細行 (集約内部の値オブジェクト)。
 type OrderItem struct {
@@ -26,6 +29,9 @@ func NewOrderItem(productID ProductID, quantity int, unitPrice Money) (OrderItem
 	return OrderItem{productID: productID, quantity: quantity, unitPrice: unitPrice}, nil
 }
 
+// #endregion
+
+// #region order-item-methods
 // ProductID は商品 ID。
 func (i OrderItem) ProductID() ProductID { return i.productID }
 
@@ -35,7 +41,7 @@ func (i OrderItem) Quantity() int { return i.quantity }
 // UnitPrice は単価。
 func (i OrderItem) UnitPrice() Money { return i.unitPrice }
 
-// Subtotal は小計。
+// Subtotal は小計 (unitPrice * quantity)。
 func (i OrderItem) Subtotal() Money {
 	return Money{
 		amount:   i.unitPrice.Amount() * int64(i.quantity),
@@ -43,9 +49,11 @@ func (i OrderItem) Subtotal() Money {
 	}
 }
 
-// Equals は同値比較。
+// Equals は同値比較 (値オブジェクトとしての等価性)。
 func (i OrderItem) Equals(other OrderItem) bool {
 	return i.productID.Equals(other.productID) &&
 		i.quantity == other.quantity &&
 		i.unitPrice.Equals(other.unitPrice)
 }
+
+// #endregion

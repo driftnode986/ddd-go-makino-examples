@@ -1,3 +1,4 @@
+// #region order-status
 package domain
 
 import (
@@ -16,15 +17,18 @@ const (
 	StatusCancelled OrderStatus = "cancelled"
 )
 
-// Order は注文集約のルート。
+// #endregion
+
+// #region order-struct
+// Order は注文集約のルート。OrderItem を内部に持つ。
 type Order struct {
 	id           OrderID
-	customerID   CustomerID
-	items        []OrderItem
+	customerID   CustomerID  // 別集約は ID で参照する
+	items        []OrderItem // 集約内部の値オブジェクトコレクション
 	status       OrderStatus
 	placedAt     time.Time
-	notes        string
-	discountRate DiscountRate
+	notes        string       // WithNotes で設定する
+	discountRate DiscountRate // WithDiscountRate で設定する
 }
 
 // ドメインエラー。
@@ -35,6 +39,9 @@ var (
 	ErrItemNotFound          = errors.New("item not found in order")
 )
 
+// #endregion
+
+// #region order-commands
 // AddItem は明細行を追加する。draft 状態でのみ可能。
 func (o *Order) AddItem(productID ProductID, quantity int, unitPrice Money) error {
 	if o.status != StatusDraft {
@@ -65,7 +72,10 @@ func (o *Order) RemoveItem(productID ProductID) error {
 	return ErrItemNotFound
 }
 
-// Confirm は注文を確定する。
+// #endregion
+
+// #region order-confirm
+// Confirm は注文を確定する。明細が 1 件以上ある状態でのみ可能。
 func (o *Order) Confirm(clock Clock) error {
 	if o.status != StatusDraft {
 		return ErrCannotModifyConfirmed
@@ -78,32 +88,23 @@ func (o *Order) Confirm(clock Clock) error {
 	return nil
 }
 
-// Items は明細行の読み取り専用ビュー (defensive copy)。
+// #endregion
+
+// #region order-queries
+// Items は明細行の読み取り専用ビュー。内部スライスのコピーを返す。
 func (o Order) Items() []OrderItem {
 	return slices.Clone(o.items)
 }
 
-// 状態取得。
-
-// ID は OrderID を返す。
-func (o Order) ID() OrderID { return o.id }
-
-// CustomerID は CustomerID を返す。
-func (o Order) CustomerID() CustomerID { return o.customerID }
-
-// Status は OrderStatus を返す。
-func (o Order) Status() OrderStatus { return o.status }
-
-// PlacedAt は確定日時を返す。
-func (o Order) PlacedAt() time.Time { return o.placedAt }
-
-// Notes は備考を返す。
-func (o Order) Notes() string { return o.notes }
-
-// DiscountRate は割引率を返す。
+// 状態取得 (値レシーバ、読み取り専用)。
+func (o Order) ID() OrderID                { return o.id }
+func (o Order) CustomerID() CustomerID     { return o.customerID }
+func (o Order) Status() OrderStatus        { return o.status }
+func (o Order) PlacedAt() time.Time        { return o.placedAt }
+func (o Order) Notes() string              { return o.notes }
 func (o Order) DiscountRate() DiscountRate { return o.discountRate }
 
-// TotalAmount は明細の合計金額。
+// TotalAmount は明細の合計金額。集約内部から計算される派生値。
 func (o Order) TotalAmount() (Money, error) {
 	if len(o.items) == 0 {
 		return Money{}, nil
@@ -118,3 +119,5 @@ func (o Order) TotalAmount() (Money, error) {
 	}
 	return total, nil
 }
+
+// #endregion

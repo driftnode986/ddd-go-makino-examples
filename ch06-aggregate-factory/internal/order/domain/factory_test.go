@@ -36,6 +36,7 @@ func TestOrderFactory_Create(t *testing.T) {
 	}
 }
 
+// #region test-with-options
 func TestNewOrderWithOptions_AppliesOptions(t *testing.T) {
 	id := orderID(t, "order001")
 	customer := customerID(t, "cust0001")
@@ -58,6 +59,8 @@ func TestNewOrderWithOptions_AppliesOptions(t *testing.T) {
 		t.Errorf("DiscountRate: want=0.1 got=%v", o.DiscountRate().Value())
 	}
 }
+
+// #endregion
 
 func TestNewOrderWithOptions_ValidatesAfterOptions(t *testing.T) {
 	_, err := domain.NewOrderWithOptions(domain.OrderID{}, customerID(t, "cust0001"),
