@@ -22,8 +22,8 @@ func MakePlaceOrderHandler(
 			writeError(w, http.StatusBadRequest,
 				"INVALID_JSON", "request body is not valid JSON")
 			return
-			// #endregion
 		}
+		// #endregion
 
 		// #region place-order-execute
 		cmd := application.PlaceOrderCommand{
@@ -73,6 +73,7 @@ func MakeGetOrderHandler(
 
 // #endregion
 
+// #region list-orders-handler
 // MakeListOrdersHandler は GET /orders のハンドラを生成する。
 func MakeListOrdersHandler(
 	query *application.ListOrdersByCustomerHandler,
@@ -81,12 +82,9 @@ func MakeListOrdersHandler(
 	return func(w http.ResponseWriter, r *http.Request) {
 		customerID := r.URL.Query().Get("customer_id")
 		if customerID == "" {
-			writeError(
-				w,
-				http.StatusBadRequest,
+			writeError(w, http.StatusBadRequest,
 				"MISSING_CUSTOMER_ID",
-				"customer_id query parameter is required",
-			)
+				"customer_id query parameter is required")
 			return
 		}
 
@@ -104,3 +102,5 @@ func MakeListOrdersHandler(
 		writeJSON(w, http.StatusOK, result)
 	}
 }
+
+// #endregion
