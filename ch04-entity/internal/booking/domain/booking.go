@@ -1,3 +1,4 @@
+// #region status
 package domain
 
 import (
@@ -19,6 +20,9 @@ const (
 	StatusCancelled Status = "cancelled"
 )
 
+// #endregion
+
+// #region booking-type
 // Booking は予約エンティティ。ID で識別され、ライフサイクルを持つ。
 type Booking struct {
 	id          BookingID
@@ -31,7 +35,10 @@ type Booking struct {
 	updatedAt   time.Time
 }
 
+// #endregion
+
 // ドメインエラー (センチネル)。
+// #region errors
 var (
 	// ErrCannotConfirm は確認できない状態遷移を表す。
 	ErrCannotConfirm = errors.New("cannot confirm booking from this state")
@@ -43,6 +50,9 @@ var (
 	ErrScheduledInPast = errors.New("scheduled time must be in the future")
 )
 
+// #endregion
+
+// #region new-booking
 // NewBooking はファクトリ関数。生成時に不変条件 (時刻が未来) を検証する。
 // clock は now を返す関数で、テスト時に差し替える。
 func NewBooking(
@@ -71,6 +81,9 @@ func NewBooking(
 	}, nil
 }
 
+// #endregion
+
+// #region confirm-cancel
 // Confirm は予約を確定する。pending → confirmed のみ許容。
 func (b *Booking) Confirm(clock func() time.Time) error {
 	if b.status != StatusPending {
@@ -93,6 +106,9 @@ func (b *Booking) Cancel(clock func() time.Time) error {
 	return nil
 }
 
+// #endregion
+
+// #region complete
 // Complete は予約レッスンの完了を記録する。confirmed のみ。
 func (b *Booking) Complete(clock func() time.Time) error {
 	if b.status != StatusConfirmed {
@@ -104,10 +120,21 @@ func (b *Booking) Complete(clock func() time.Time) error {
 	return nil
 }
 
+// #endregion
+
+// #region accessors
 // 状態取得 (値レシーバ、読み取り専用)。
 
 // ID は予約 ID を返す。
 func (b Booking) ID() BookingID { return b.id }
+
+// Status は現在の状態を返す。
+func (b Booking) Status() Status { return b.status }
+
+// Version は楽観的ロック用の版番号を返す。
+func (b Booking) Version() int64 { return b.version }
+
+// #endregion
 
 // MemberID は予約者の Member ID を返す。
 func (b Booking) MemberID() MemberID { return b.memberID }
@@ -117,12 +144,6 @@ func (b Booking) LessonID() LessonID { return b.lessonID }
 
 // ScheduledAt は予約日時を返す。
 func (b Booking) ScheduledAt() time.Time { return b.scheduledAt }
-
-// Status は現在の状態を返す。
-func (b Booking) Status() Status { return b.status }
-
-// Version は楽観的ロック用の版番号を返す。
-func (b Booking) Version() int64 { return b.version }
 
 // CreatedAt は作成日時を返す。
 func (b Booking) CreatedAt() time.Time { return b.createdAt }

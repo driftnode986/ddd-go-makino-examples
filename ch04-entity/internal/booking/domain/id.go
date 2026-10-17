@@ -1,3 +1,4 @@
+// #region id-type
 package domain
 
 import (
@@ -21,6 +22,9 @@ func NewID[T any](s string) (ID[T], error) {
 	return ID[T]{value: s}, nil
 }
 
+// #endregion
+
+// #region id-methods
 // String は内部値を返す。
 func (id ID[T]) String() string { return id.value }
 
@@ -30,10 +34,13 @@ func (id ID[T]) Equals(other ID[T]) bool { return id.value == other.value }
 // IsZero はゼロ値かどうかを判定する。
 func (id ID[T]) IsZero() bool { return id.value == "" }
 
+// #endregion
+
 // 以下、ドメイン用語を phantom type のマーカー型として宣言する。
 // マーカー型名には bookingTag のように小文字始まりまたは Tag サフィックスを使い、
 // エンティティ本体 (Booking, Member, Lesson) と名前衝突を避ける。
 
+// #region id-markers
 // BookingTag は Booking エンティティ用のマーカー型。
 type BookingTag struct{}
 
@@ -49,3 +56,5 @@ type (
 	MemberID  = ID[MemberTag]
 	LessonID  = ID[LessonTag]
 )
+
+// #endregion

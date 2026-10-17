@@ -73,6 +73,7 @@ func TestBooking_Confirm_RejectsFromCancelled(t *testing.T) {
 	}
 }
 
+// #region cancel-table
 func TestBooking_Cancel_FromPendingOrConfirmed(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -100,6 +101,8 @@ func TestBooking_Cancel_FromPendingOrConfirmed(t *testing.T) {
 			domain.ErrCannotCancel,
 		},
 	}
+	// #endregion
+	// #region cancel-run
 	now := time.Date(2026, 6, 1, 12, 0, 0, 0, time.UTC)
 	clock := fixedClock(now)
 	for _, tt := range tests {
@@ -117,6 +120,8 @@ func TestBooking_Cancel_FromPendingOrConfirmed(t *testing.T) {
 		})
 	}
 }
+
+// #endregion
 
 func TestBooking_Complete_OnlyFromConfirmed(t *testing.T) {
 	now := time.Date(2026, 6, 1, 12, 0, 0, 0, time.UTC)
@@ -137,6 +142,7 @@ func TestBooking_Complete_OnlyFromConfirmed(t *testing.T) {
 	}
 }
 
+// #region identity
 func TestBooking_IdentityIsByID(t *testing.T) {
 	now := time.Date(2026, 6, 1, 12, 0, 0, 0, time.UTC)
 	clock := fixedClock(now)
@@ -159,3 +165,5 @@ func TestBooking_IdentityIsByID(t *testing.T) {
 		t.Errorf("identity must be preserved across state changes")
 	}
 }
+
+// #endregion
