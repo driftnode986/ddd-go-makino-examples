@@ -1,3 +1,4 @@
+// #region detector
 package domain
 
 import (
@@ -5,17 +6,17 @@ import (
 	"errors"
 )
 
-// ErrBookingConflict は予約時間衝突を表すドメインエラー。
+// ErrBookingConflict は予約時間の衝突を表すドメインエラー。
 var ErrBookingConflict = errors.New("booking conflicts with existing reservation")
-
-// BookingFinder は時間帯検索の interface (リポジトリの一部を切り出した小さい interface)。
-type BookingFinder interface {
-	FindByTrainerAndPeriod(ctx context.Context, trainerID TrainerID, from, to Hour) ([]*Booking, error)
-}
 
 // ConflictDetector は同じトレーナーの予約時間衝突を検出するドメインサービス。
 type ConflictDetector struct {
 	bookings BookingFinder
+}
+
+// BookingFinder は時間帯検索の interface (リポジトリの一部を切り出した小さい interface)。
+type BookingFinder interface {
+	FindByTrainerAndPeriod(ctx context.Context, trainerID TrainerID, from, to Hour) ([]*Booking, error)
 }
 
 // NewConflictDetector はファクトリ関数。
@@ -23,6 +24,9 @@ func NewConflictDetector(bookings BookingFinder) *ConflictDetector {
 	return &ConflictDetector{bookings: bookings}
 }
 
+// #endregion
+
+// #region detect
 // Detect は与えられた時間帯にトレーナーの予約衝突があれば ErrBookingConflict を返す。
 func (d *ConflictDetector) Detect(
 	ctx context.Context, trainerID TrainerID, from, to Hour,
@@ -44,3 +48,5 @@ func (d *ConflictDetector) Detect(
 	}
 	return nil
 }
+
+// #endregion

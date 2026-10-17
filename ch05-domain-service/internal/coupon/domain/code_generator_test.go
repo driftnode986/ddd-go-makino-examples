@@ -6,15 +6,17 @@ import (
 	"github.com/driftnode986/ddd-go-makino-examples/ch05-domain-service/internal/coupon/domain"
 )
 
-func TestCodeGenerator_Generate_DeterministicWithFixedRandom(t *testing.T) {
+// #region generate-test
+func TestCodeGenerator_Generate(t *testing.T) {
 	gen := domain.NewCodeGenerator(domain.FixedRandom{Value: 0})
 	code := gen.Generate()
-	// FixedRandom{Value: 0}.IntN(n) は常に 0 を返す。
-	// alphabet[0] = 'A' なので、結果は "AAAAAAAA"。
+	// FixedRandom{Value: 0} なら毎回 alphabet[0] = 'A' が選ばれる
 	if code.String() != "AAAAAAAA" {
 		t.Errorf("want=AAAAAAAA got=%s", code)
 	}
 }
+
+// #endregion
 
 func TestCodeGenerator_Generate_FixedRandomSelectsOtherIndex(t *testing.T) {
 	gen := domain.NewCodeGenerator(domain.FixedRandom{Value: 2})

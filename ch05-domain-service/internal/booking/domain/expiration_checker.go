@@ -13,7 +13,7 @@ func NewExpirationChecker(clock Clock) *ExpirationChecker {
 }
 
 // IsExpired は予約が有効期限切れかを判定する。
-// 「予約日時 + 30 分」を過ぎても StatusPending のままなら失効。
+// 「予約日時の 30 分後を過ぎても確定されなかった予約は失効」というドメインルール。
 func (c *ExpirationChecker) IsExpired(b *Booking) bool {
 	if b.Status() != StatusPending {
 		return false
