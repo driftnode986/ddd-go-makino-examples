@@ -28,15 +28,14 @@ type IDGenerator interface {
 	NewOrderID() OrderID
 }
 
-// OrderFactory はファクトリ構造体。依存 (ID 生成、Clock) を持つ。
+// OrderFactory はファクトリ構造体。依存 (ID の生成) を持つ。
 type OrderFactory struct {
 	idGen IDGenerator
-	clock Clock
 }
 
 // NewOrderFactory はファクトリ構造体を生成する。
-func NewOrderFactory(idGen IDGenerator, clock Clock) *OrderFactory {
-	return &OrderFactory{idGen: idGen, clock: clock}
+func NewOrderFactory(idGen IDGenerator) *OrderFactory {
+	return &OrderFactory{idGen: idGen}
 }
 
 // Create は ID 生成と検証を一括で行い、Order を返す。

@@ -26,13 +26,16 @@ func TestNewOrder_RejectsZero(t *testing.T) {
 
 func TestOrderFactory_Create(t *testing.T) {
 	id := orderID(t, "order001")
-	factory := domain.NewOrderFactory(
-		&stubIDGen{id: id},
-		domain.FixedClock{},
-	)
-	o, err := factory.Create(customerID(t, "cust0001"))
+	factory := domain.NewOrderFactory(&stubIDGen{id: id})
+	customer := customerID(t, "cust0001")
+	o, err := factory.Create(customer)
 	if err != nil {
 		t.Fatalf("Create: %v", err)
+	}
+	if !o.CustomerID().Equals(customer) {
+		t.Errorf(
+			"CustomerID: want=%v got=%v", customer, o.CustomerID(),
+		)
 	}
 	if !o.ID().Equals(id) {
 		t.Errorf("ID: want=%v got=%v", id, o.ID())
