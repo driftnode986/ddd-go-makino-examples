@@ -56,6 +56,8 @@ var (
 	ErrScheduledInPast = errors.New(
 		"scheduled time must be in the future",
 	)
+	// ErrMissingID は予約・会員・レッスンの ID の欠けを表す。
+	ErrMissingID = errors.New("id, memberID, lessonID required")
 )
 
 // #endregion
@@ -72,7 +74,7 @@ func NewBooking(
 	clock func() time.Time,
 ) (*Booking, error) {
 	if id.IsZero() || memberID.IsZero() || lessonID.IsZero() {
-		return nil, errors.New("id, memberID, lessonID required")
+		return nil, ErrMissingID
 	}
 	now := clock()
 	if !scheduledAt.After(now) {

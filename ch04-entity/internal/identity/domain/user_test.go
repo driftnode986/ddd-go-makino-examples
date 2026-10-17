@@ -23,6 +23,38 @@ func TestNewUser_RejectsInvalidName(t *testing.T) {
 	}
 }
 
+func TestNewUser_RejectsInvalidEmail(t *testing.T) {
+	id, _ := domain.NewUserID("user-0001")
+	clock := fixedClock(time.Date(2026, 6, 1, 12, 0, 0, 0, time.UTC))
+
+	_, err := domain.NewUser(id, "alice.example.com", "Alice", clock)
+	if !errors.Is(err, domain.ErrInvalidEmail) {
+		t.Fatalf("want ErrInvalidEmail, got %v", err)
+	}
+	if errors.Is(err, domain.ErrInvalidName) {
+		t.Fatal("an email error must not be a name error")
+	}
+}
+
+func TestNewUser_RejectsInvalidUserID(t *testing.T) {
+	if _, err := domain.NewUserID("short"); !errors.Is(
+		err,
+		domain.ErrInvalidUserID,
+	) {
+		t.Fatalf("NewUserID: want ErrInvalidUserID, got %v", err)
+	}
+	clock := fixedClock(time.Date(2026, 6, 1, 12, 0, 0, 0, time.UTC))
+	_, err := domain.NewUser(
+		domain.UserID{},
+		"alice@example.com",
+		"Alice",
+		clock,
+	)
+	if !errors.Is(err, domain.ErrInvalidUserID) {
+		t.Fatalf("NewUser: want ErrInvalidUserID, got %v", err)
+	}
+}
+
 func TestUser_Rename(t *testing.T) {
 	id, _ := domain.NewUserID("user-0001")
 	now := time.Date(2026, 6, 1, 12, 0, 0, 0, time.UTC)

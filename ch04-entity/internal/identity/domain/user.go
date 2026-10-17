@@ -15,7 +15,10 @@ type UserID struct {
 // NewUserID は ID 文字列を検証して UserID を返す。
 func NewUserID(s string) (UserID, error) {
 	if len(s) < 8 {
-		return UserID{}, errors.New("user id too short")
+		return UserID{}, fmt.Errorf(
+			"%w: too short",
+			ErrInvalidUserID,
+		)
 	}
 	return UserID{value: s}, nil
 }
@@ -56,6 +59,10 @@ var (
 	)
 	// ErrInvalidName は不正な氏名を表す。
 	ErrInvalidName = errors.New("invalid name")
+	// ErrInvalidEmail は不正なメールアドレスを表す。
+	ErrInvalidEmail = errors.New("invalid email")
+	// ErrInvalidUserID は不正な (空・短すぎる) User ID を表す。
+	ErrInvalidUserID = errors.New("invalid user id")
 )
 
 // NewUser は User エンティティを生成する。
@@ -65,12 +72,12 @@ func NewUser(
 	clock func() time.Time,
 ) (*User, error) {
 	if id.IsZero() {
-		return nil, errors.New("user id required")
+		return nil, fmt.Errorf("%w: required", ErrInvalidUserID)
 	}
 	if !strings.Contains(email, "@") {
 		return nil, fmt.Errorf(
 			"%w: email must contain @",
-			ErrInvalidName,
+			ErrInvalidEmail,
 		)
 	}
 	if strings.TrimSpace(name) == "" {

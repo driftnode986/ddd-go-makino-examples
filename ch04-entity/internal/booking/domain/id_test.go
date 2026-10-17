@@ -43,7 +43,7 @@ func TestNewBooking_RejectsZeroID(t *testing.T) {
 		now.Add(time.Hour),
 		clock,
 	)
-	if err == nil {
-		t.Fatal("want error for zero BookingID")
+	if !errors.Is(err, domain.ErrMissingID) {
+		t.Fatalf("want ErrMissingID, got %v", err)
 	}
 }
