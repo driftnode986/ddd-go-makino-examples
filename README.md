@@ -2,7 +2,7 @@
 
 『[現場で使えるGo言語ドメイン駆動設計](https://www.amazon.co.jp/dp/B0H2R8N7WP)』のサンプルコード。
 
-本に載せている Go のコードは、すべてこのリポジトリのファイルから取っています（本はこのリポジトリのコードの一部を抜粋して載せます）。各章のディレクトリで `go test ./...` が通ることを確かめながら読み進めてください。
+本に載せている Go のコードは、説明のための短い断片を除き、すべてこのリポジトリのファイルから取っています（本はこのリポジトリのコードの一部を抜粋して載せます）。各章のディレクトリで `go test ./...` が通ることを確かめながら読み進めてください。
 
 ## 動作環境
 
@@ -32,21 +32,17 @@ appendix-c-go126/          付録C  Go 1.26 の新機能 (Go 1.26 が必須)
 
 ```bash
 # 単一 module の章 (第2〜9章・付録 B・付録 C)
-cd ch03-value-object
-go test ./...
-go test -race ./...
+(cd ch03-value-object && go test ./... && go test -race ./...)
 
 # PostgreSQL を使うテスト (Docker が要る)
-cd ch07-repository && go test -tags=integration ./...
-cd appendix-b-translation && go test ./...
+(cd ch07-repository && go test -tags=integration ./...)
+(cd appendix-b-translation && go test ./...)
 
 # go.work で複数 module をまとめた章 (第10章・第11章)
-cd ch10-bounded-context
-go test ./booking/... ./notification/...   # booking/db のテストは Docker が要る
+(cd ch10-bounded-context && go test ./booking/... ./notification/...)   # booking/db は Docker が要る
 
-cd ch11-practical-project
-make test       # 各 BC のディレクトリで go test ./...
-make test-db    # dbtest (GOWORK=off、Docker が要る)
+(cd ch11-practical-project && make test)      # 各 BC のディレクトリで go test ./...
+(cd ch11-practical-project && make test-db)   # dbtest (GOWORK=off、Docker が要る)
 ```
 
 `go.work` のあるディレクトリには `go.mod` が無いので、そこで `go test ./...` を実行すると失敗します。第10章のように module ごとのパターンを並べるか、BC のディレクトリに移ってから実行してください。

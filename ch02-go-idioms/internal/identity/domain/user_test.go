@@ -62,8 +62,8 @@ func TestUser_ChangeEmail(t *testing.T) {
 	}
 	if err := u.ChangeEmail(
 		mustEmail(t, "a@example.com"),
-	); err == nil {
-		t.Fatal("same email: want error")
+	); !errors.Is(err, domain.ErrSameEmail) {
+		t.Fatalf("same email: got %v, want ErrSameEmail", err)
 	}
 	if err := u.ChangeEmail(
 		mustEmail(t, "b@example.com"),

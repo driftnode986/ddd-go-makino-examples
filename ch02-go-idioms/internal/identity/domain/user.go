@@ -3,7 +3,6 @@ package domain
 
 import (
 	"errors"
-	"fmt"
 	"time"
 )
 
@@ -15,7 +14,10 @@ type User struct {
 	createdAt   time.Time
 }
 
-var ErrInvalidDisplayName = errors.New("invalid display name")
+var (
+	ErrInvalidDisplayName = errors.New("invalid display name")
+	ErrSameEmail          = errors.New("email unchanged")
+)
 
 // #endregion
 
@@ -40,7 +42,7 @@ func NewUser(
 // ビヘイビア指向の状態変更メソッド (ポインタレシーバ)
 func (u *User) ChangeEmail(newEmail Email) error {
 	if u.email.Equals(newEmail) {
-		return fmt.Errorf("new email is the same as current")
+		return ErrSameEmail
 	}
 	u.email = newEmail
 	return nil
