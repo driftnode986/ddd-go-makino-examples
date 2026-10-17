@@ -27,6 +27,7 @@ func NewPlaceOrderUseCase(
 
 // #endregion
 
+// #region place-order-execute
 // Execute は注文を作って保存し、税込みの合計を返す。
 func (uc *PlaceOrderUseCase) Execute(
 	ctx context.Context,
@@ -48,3 +49,5 @@ func (uc *PlaceOrderUseCase) Execute(
 		Total:   uc.pricing.Total(order),
 	}, nil
 }
+
+// #endregion

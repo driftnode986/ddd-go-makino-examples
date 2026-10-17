@@ -83,8 +83,15 @@ func TestPricingService_Total(t *testing.T) {
 }
 
 func TestOrderPlaced_EventName(t *testing.T) {
-	var e domain.DomainEvent = domain.OrderPlaced{OrderID: "ord_1"}
+	var e domain.DomainEvent = domain.NewOrderPlaced("ord_1")
 	if e.EventName() != "booking.OrderPlaced" {
 		t.Errorf("EventName = %q", e.EventName())
+	}
+}
+
+func TestNewOrderPlaced_KeepsOrderID(t *testing.T) {
+	e := domain.NewOrderPlaced("ord_1")
+	if e.OrderID() != "ord_1" {
+		t.Errorf("OrderID = %q, want ord_1", e.OrderID())
 	}
 }

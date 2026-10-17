@@ -51,7 +51,7 @@ func (uc *PlaceOrderUseCase) Execute(
 		}
 		return uc.events.Publish(
 			ctx,
-			domain.OrderPlaced{OrderID: order.ID()},
+			domain.NewOrderPlaced(order.ID()),
 		)
 	})
 }

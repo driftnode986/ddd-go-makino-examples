@@ -71,7 +71,7 @@ func TestPlaceOrderUseCase_PublishesOrderPlaced(t *testing.T) {
 	if !ok {
 		t.Fatalf("event = %T, want OrderPlaced", pub.events[0])
 	}
-	if _, err := orders.FindByID(ctx, placed.OrderID); err != nil {
+	if _, err := orders.FindByID(ctx, placed.OrderID()); err != nil {
 		t.Errorf("published order is not saved: %v", err)
 	}
 }

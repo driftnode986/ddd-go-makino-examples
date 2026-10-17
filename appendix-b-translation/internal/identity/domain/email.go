@@ -24,6 +24,6 @@ func NewEmail(s string) (Email, error) {
 	}, nil
 }
 
-// #endregion
-
 func (e Email) String() string { return e.local + "@" + e.domain }
+
+// #endregion
