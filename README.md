@@ -1,50 +1,55 @@
 # ddd-go-makino-examples
 
-『[現場で使える Go 言語ドメイン駆動設計](https://www.amazon.co.jp/dp/B0H2R8N7WP)』（牧野 誠 著 / Amazon Kindle）のサンプルコード。
+『[現場で使えるGo言語ドメイン駆動設計](https://www.amazon.co.jp/dp/B0H2R8N7WP)』のサンプルコード。
 
-書籍内のすべての Go コード片はこのリポジトリで動作確認できます。`go test ./...` で各章のテストが PASS することを確認しながら読み進めてください。
+本に載せている Go のコードは、すべてこのリポジトリのファイルから取っています（本はこのリポジトリのコードの一部を抜粋して載せます）。各章のディレクトリで `go test ./...` が通ることを確かめながら読み進めてください。
 
 ## 動作環境
 
-- Go 1.25.0 以上（付録 C のみ Go 1.26.0 以上）
-- PostgreSQL 16 以上（Ch07 / Ch11 の統合テストを動かす場合のみ）
-- Docker（Testcontainers / docker compose を使う場合のみ）
+- Go 1.25 以降（1.25 / 1.26 系の最新のパッチ版を使ってください。付録 C だけは Go 1.26 が必須）
+- Docker（PostgreSQL を使うテストを testcontainers で動かす場合のみ。第7章・第10章の Booking BC・第11章の `dbtest/`・付録 B）
 
 ## 構成
 
-各章は独立した Go モジュールです。章ディレクトリ単位で `go test ./...` が走ります。
+各章のディレクトリは独立した Go module です（リポジトリのルートには `go.mod` も `go.work` もありません）。章のディレクトリに移ってから実行します。
 
 ```
+ch02-go-idioms/            第2章  Go の慣習と DDD の原則
 ch03-value-object/         第3章  値オブジェクト
-ch04-entity/               第4章  エンティティと不変条件保護
+ch04-entity/               第4章  エンティティと不変条件の保護
 ch05-domain-service/       第5章  ドメインサービス
 ch06-aggregate-factory/    第6章  集約とファクトリ
 ch07-repository/           第7章  リポジトリと永続化
 ch08-application-service/  第8章  アプリケーションサービスとユースケース
 ch09-layered-architecture/ 第9章  レイヤー化アーキテクチャ
 ch10-bounded-context/      第10章 境界づけられたコンテキストとドメインイベント (go.work で 2 BC)
-ch11-practical-project/    第11章 実プロジェクト構成例 (go.work で 3 BC + shared)
-appendix-c-go126/          付録C  Go 1.26 新機能 (独立 go.mod、Go 1.26 必須)
+ch11-practical-project/    第11章 実プロジェクト構成例 (go.work で 3 BC + shared。dbtest は独立 module)
+appendix-b-translation/    付録B  Java/Kotlin から Go への翻訳ガイドの Go のコード
+appendix-c-go126/          付録C  Go 1.26 の新機能 (Go 1.26 が必須)
 ```
-
-付録 B（Java/Kotlin → Go 翻訳ガイド）は本文 Ch3-Ch11 のコードを再掲する構成のため、専用ディレクトリは用意していません。各章のコードがそのまま参考になります。
 
 ## 実行
 
 ```bash
-# 単一章 (Ch3-Ch9, 付録 C)
+# 単一 module の章 (第2〜9章・付録 B・付録 C)
 cd ch03-value-object
 go test ./...
 go test -race ./...
-go test -cover ./...
 
-# 複数 module 構成 (Ch10, Ch11)
+# PostgreSQL を使うテスト (Docker が要る)
+cd ch07-repository && go test -tags=integration ./...
+cd appendix-b-translation && go test ./...
+
+# go.work で複数 module をまとめた章 (第10章・第11章)
 cd ch10-bounded-context
-go test ./booking/... ./notification/...
+go test ./booking/... ./notification/...   # booking/db のテストは Docker が要る
 
 cd ch11-practical-project
-make test
+make test       # 各 BC のディレクトリで go test ./...
+make test-db    # dbtest (GOWORK=off、Docker が要る)
 ```
+
+`go.work` のあるディレクトリには `go.mod` が無いので、そこで `go test ./...` を実行すると失敗します。第10章のように module ごとのパターンを並べるか、BC のディレクトリに移ってから実行してください。
 
 章ごとの詳しい構成・実行方法は各ディレクトリの `README.md` を参照してください。
 
