@@ -78,6 +78,9 @@ func (uc *PlaceOrderUseCase) Execute(
 	// #endregion
 
 	// #region execute-save
+	if err := o.Confirm(); err != nil {
+		return PlaceOrderResult{}, mapDomainError(err)
+	}
 	if err := uc.orders.Add(ctx, o); err != nil {
 		return PlaceOrderResult{}, fmt.Errorf("save order: %w", err)
 	}

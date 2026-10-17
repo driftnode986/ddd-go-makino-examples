@@ -63,8 +63,16 @@ func TestPlaceOrderUseCase_HappyPath(t *testing.T) {
 	if result.Total != 5000 {
 		t.Errorf("Total = %d, want 5000", result.Total)
 	}
-	if result.OrderID == "" {
-		t.Error("OrderID is empty")
+	orderID, err := domain.NewOrderID(result.OrderID)
+	if err != nil {
+		t.Fatalf("NewOrderID: %v", err)
+	}
+	saved, err := orders.FindByID(ctx, orderID)
+	if err != nil {
+		t.Fatalf("FindByID: %v", err)
+	}
+	if saved.Status() != domain.StatusConfirmed {
+		t.Errorf("Status = %v, want confirmed", saved.Status())
 	}
 }
 

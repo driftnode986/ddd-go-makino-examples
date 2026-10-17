@@ -72,7 +72,7 @@ func TestListOrdersByCustomerHandler_ReturnsSummaries(t *testing.T) {
 	want := application.OrderSummary{
 		OrderID:  mine.OrderID,
 		Total:    2000,
-		Status:   "draft",
+		Status:   "confirmed",
 		PlacedAt: placedAt.Unix(),
 	}
 	if got[0] != want {

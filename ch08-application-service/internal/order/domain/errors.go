@@ -9,4 +9,5 @@ var (
 	ErrCannotModify    = errors.New(
 		"order cannot be modified in current state",
 	)
+	ErrEmptyOrder = errors.New("order has no items")
 )

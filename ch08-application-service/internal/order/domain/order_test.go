@@ -79,8 +79,25 @@ func TestOrder_AddItem_InvalidQuantity(t *testing.T) {
 	}
 }
 
+func TestOrder_Confirm_RejectsEmpty(t *testing.T) {
+	o := domain.NewOrder(mustCustomer(t), time.Time{})
+	if err := o.Confirm(); !errors.Is(err, domain.ErrEmptyOrder) {
+		t.Errorf("Confirm empty: got %v, want ErrEmptyOrder", err)
+	}
+	if o.Status() != domain.StatusDraft {
+		t.Errorf("Status = %v, want draft", o.Status())
+	}
+}
+
 func TestOrder_Confirm_ThenCannotModify(t *testing.T) {
 	o := domain.NewOrder(mustCustomer(t), time.Time{})
+	if err := o.AddItem(
+		mustProduct(t, "prod_001"),
+		1,
+		domain.MustMoney(1000, "JPY"),
+	); err != nil {
+		t.Fatalf("AddItem: %v", err)
+	}
 	if err := o.Confirm(); err != nil {
 		t.Fatalf("Confirm: %v", err)
 	}

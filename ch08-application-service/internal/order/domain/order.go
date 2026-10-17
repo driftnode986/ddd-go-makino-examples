@@ -94,6 +94,9 @@ func (o *Order) Confirm() error {
 	if o.status != StatusDraft {
 		return ErrCannotModify
 	}
+	if len(o.items) == 0 {
+		return ErrEmptyOrder
+	}
 	o.status = StatusConfirmed
 	return nil
 }

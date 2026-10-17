@@ -20,6 +20,7 @@ func TestMapDomainError(t *testing.T) {
 			"INVALID_QUANTITY",
 		},
 		{"cannot modify", domain.ErrCannotModify, "ORDER_LOCKED"},
+		{"empty order", domain.ErrEmptyOrder, "EMPTY_ORDER"},
 		{"unmapped", other, ""},
 	}
 	for _, tt := range tests {
