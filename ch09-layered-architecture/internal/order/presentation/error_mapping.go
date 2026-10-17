@@ -1,4 +1,4 @@
-// #region error-response
+// #region error-response-a
 package presentation
 
 import (
@@ -15,6 +15,8 @@ type errorResponse struct {
 	Message string `json:"message"`
 }
 
+// #endregion
+// #region error-response-b
 func writeError(
 	w http.ResponseWriter,
 	status int,

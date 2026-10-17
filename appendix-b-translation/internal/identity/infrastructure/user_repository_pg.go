@@ -13,7 +13,7 @@ import (
 	"github.com/driftnode986/ddd-go-makino-examples/appendix-b-translation/internal/platform/pgxtx"
 )
 
-// #region user-repository-pg
+// #region user-repository-pg-a
 type UserRepositoryPG struct {
 	queries *sqlcgen.Queries
 }
@@ -33,14 +33,16 @@ func (r *UserRepositoryPG) Add(
 	})
 }
 
+// #endregion
+// #region user-repository-pg-b
 func (r *UserRepositoryPG) Save(
 	ctx context.Context,
 	u *domain.User,
 ) error {
 	n, err := r.q(ctx).UpdateUser(ctx, sqlcgen.UpdateUserParams{
-		ID: u.ID().
-			String(),
-		Email: u.Email().String(), Name: u.Name(),
+		ID:    u.ID().String(),
+		Email: u.Email().String(),
+		Name:  u.Name(),
 	})
 	if err != nil {
 		return err

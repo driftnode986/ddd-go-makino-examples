@@ -42,7 +42,7 @@ func setupTestServer(t *testing.T) *httptest.Server {
 
 // #endregion
 
-// #region place-booking-http
+// #region place-booking-http-a
 func TestPlaceBooking_HTTP(t *testing.T) {
 	srv := setupTestServer(t)
 	body := strings.NewReader(`{
@@ -60,6 +60,8 @@ func TestPlaceBooking_HTTP(t *testing.T) {
 	}
 	defer res.Body.Close()
 
+	// #endregion
+	// #region place-booking-http-b
 	if res.StatusCode != http.StatusCreated {
 		raw, _ := io.ReadAll(res.Body)
 		t.Fatalf("status = %d, body = %s", res.StatusCode, raw)

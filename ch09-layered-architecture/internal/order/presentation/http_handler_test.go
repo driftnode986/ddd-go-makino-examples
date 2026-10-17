@@ -68,7 +68,7 @@ func TestPlaceOrderHandler_Success(t *testing.T) {
 
 // #endregion
 
-// #region place-order-invalid-json
+// #region place-order-invalid-json-a
 func TestPlaceOrderHandler_InvalidJSON(t *testing.T) {
 	repo := infrastructure.NewMemoryOrderRepository()
 	uc := &application.PlaceOrderUseCase{
@@ -92,6 +92,8 @@ func TestPlaceOrderHandler_InvalidJSON(t *testing.T) {
 		)
 	}
 
+	// #endregion
+	// #region place-order-invalid-json-b
 	var resp struct {
 		Code    string `json:"code"`
 		Message string `json:"message"`

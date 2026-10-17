@@ -1,4 +1,4 @@
-// #region user
+// #region user-a
 package domain
 
 import (
@@ -13,6 +13,8 @@ type User struct {
 	createdAt time.Time
 }
 
+// #endregion
+// #region user-b
 func NewUser(
 	id UserID,
 	email Email,

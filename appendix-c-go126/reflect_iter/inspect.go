@@ -1,4 +1,4 @@
-// #region assert-unexported
+// #region assert-unexported-a
 package reflect_iter
 
 import (
@@ -8,6 +8,8 @@ import (
 	"unicode"
 )
 
+// #endregion
+// #region assert-unexported-b
 // AssertAllFieldsUnexported は構造体のすべてのフィールドが
 // 非公開 (lower case 始まり) であることを確認する
 // テストヘルパーです。

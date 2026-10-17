@@ -95,7 +95,7 @@ func newTestBookingAt(
 	return b
 }
 
-// #region detect-test
+// #region detect-test-a
 func TestConflictDetector_Detect(t *testing.T) {
 	ctx := context.Background()
 	trainerID := newTestTrainerID(t)
@@ -121,6 +121,8 @@ func TestConflictDetector_Detect(t *testing.T) {
 		},
 		{"contained", "10:15", "10:45", domain.ErrBookingConflict},
 	}
+	// #endregion
+	// #region detect-test-b
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := detector.Detect(

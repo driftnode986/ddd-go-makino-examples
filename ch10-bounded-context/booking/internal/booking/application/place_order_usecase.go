@@ -18,7 +18,7 @@ type PlaceOrderUseCase struct {
 
 // #endregion
 
-// #region execute-items
+// #region execute-items-a
 func (uc *PlaceOrderUseCase) Execute(
 	ctx context.Context, cmd PlaceOrderCommand,
 ) (PlaceOrderResult, error) {
@@ -31,6 +31,8 @@ func (uc *PlaceOrderUseCase) Execute(
 		}
 	}
 
+	// #endregion
+	// #region execute-items-b
 	o := domain.NewOrder(customerID, uc.Clock.Now())
 	for _, item := range cmd.Items {
 		pid, err := domain.NewProductID(item.ProductID)

@@ -1,4 +1,4 @@
-// #region order-item
+// #region order-item-a
 package domain
 
 import (
@@ -15,6 +15,8 @@ type OrderItem struct {
 // ErrInvalidUnitPrice は不正な単価のドメインエラー。
 var ErrInvalidUnitPrice = errors.New("unit price must be positive")
 
+// #endregion
+// #region order-item-b
 // NewOrderItem は OrderItem を生成する。
 func NewOrderItem(
 	productID ProductID,

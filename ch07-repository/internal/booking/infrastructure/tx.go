@@ -1,3 +1,4 @@
+// #region tx-a
 package infrastructure
 
 import (
@@ -22,6 +23,8 @@ func extractTx(ctx context.Context) (pgx.Tx, bool) {
 	return tx, ok
 }
 
+// #endregion
+// #region tx-b
 // queries は context にトランザクションが乗っていれば tx、
 // なければ pool を使う。
 func (r *PostgresBookingRepository) queries(
@@ -32,3 +35,5 @@ func (r *PostgresBookingRepository) queries(
 	}
 	return sqlcgen.New(r.pool)
 }
+
+// #endregion

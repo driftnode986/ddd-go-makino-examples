@@ -1,4 +1,4 @@
-// #region register-user
+// #region register-user-a
 package application
 
 import (
@@ -14,6 +14,8 @@ type RegisterUserUseCase struct {
 	idGen IDGenerator
 }
 
+// #endregion
+// #region register-user-b
 func (uc *RegisterUserUseCase) Execute(
 	ctx context.Context,
 	cmd RegisterUserCommand,

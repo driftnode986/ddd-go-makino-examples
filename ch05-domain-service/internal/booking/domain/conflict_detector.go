@@ -1,4 +1,4 @@
-// #region detector
+// #region detector-a
 package domain
 
 import (
@@ -17,6 +17,8 @@ type ConflictDetector struct {
 	bookings BookingFinder
 }
 
+// #endregion
+// #region detector-b
 // BookingFinder は時間帯検索の interface
 // (リポジトリの一部を切り出した小さい interface)。
 type BookingFinder interface {

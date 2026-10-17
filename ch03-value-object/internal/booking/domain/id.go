@@ -1,4 +1,4 @@
-// #region id-type
+// #region id-type-a
 package domain
 
 import (
@@ -23,6 +23,8 @@ func NewID[T any](s string) (ID[T], error) {
 	return ID[T]{value: s}, nil
 }
 
+// #endregion
+// #region id-type-b
 // String は内部値を返す (fmt.Stringer)。
 func (id ID[T]) String() string { return id.value }
 

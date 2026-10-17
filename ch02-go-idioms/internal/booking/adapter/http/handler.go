@@ -12,7 +12,7 @@ import (
 
 // #endregion
 
-// #region handle-create-booking
+// #region handle-create-booking-a
 // アプリケーション層でドメインエラーを HTTP ステータスに対応させる
 func (h *Handler) handleCreateBooking(
 	w http.ResponseWriter,
@@ -24,6 +24,8 @@ func (h *Handler) handleCreateBooking(
 		return
 	}
 
+	// #endregion
+	// #region handle-create-booking-b
 	switch {
 	case errors.Is(err, identity.ErrInvalidEmail),
 		errors.Is(err, identity.ErrInvalidDisplayName):

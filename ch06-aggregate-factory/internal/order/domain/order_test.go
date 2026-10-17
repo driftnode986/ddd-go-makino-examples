@@ -56,7 +56,7 @@ func newTestOrder(t *testing.T) *domain.Order {
 	return o
 }
 
-// #region test-add-item-only-in-draft
+// #region test-add-item-only-in-draft-a
 func TestOrder_AddItem_OnlyInDraft(t *testing.T) {
 	clock := domain.FixedClock{
 		T: time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC),
@@ -72,6 +72,8 @@ func TestOrder_AddItem_OnlyInDraft(t *testing.T) {
 		t.Fatalf("AddItem in draft: %v", err)
 	}
 
+	// #endregion
+	// #region test-add-item-only-in-draft-b
 	// 確定後は追加できない
 	if err := o.Confirm(clock); err != nil {
 		t.Fatalf("Confirm: %v", err)

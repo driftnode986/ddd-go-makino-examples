@@ -1,4 +1,4 @@
-// #region usecase
+// #region usecase-a
 package application
 
 import (
@@ -17,6 +17,8 @@ type PlaceOrderUseCase struct {
 	logger  *slog.Logger
 }
 
+// #endregion
+// #region usecase-b
 func NewPlaceOrderUseCase(
 	orders domain.Repository,
 	pricing PricingPort,
@@ -33,7 +35,7 @@ func NewPlaceOrderUseCase(
 
 // #endregion
 
-// #region execute
+// #region execute-a
 // Execute は注文を確定する。1 ユースケース = 1 メソッド。
 func (uc *PlaceOrderUseCase) Execute(
 	ctx context.Context, cmd PlaceOrderCommand,
@@ -46,6 +48,8 @@ func (uc *PlaceOrderUseCase) Execute(
 		)
 	}
 
+	// #endregion
+	// #region execute-b
 	o := domain.NewOrder(customerID, uc.clock.Now())
 	for _, item := range cmd.Items {
 		productID, err := domain.NewProductID(item.ProductID)

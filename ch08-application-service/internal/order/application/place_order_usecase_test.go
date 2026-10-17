@@ -31,7 +31,7 @@ func (p fakePricing) UnitPrice(
 
 // #endregion
 
-// #region test-happy-path
+// #region test-happy-path-a
 func TestPlaceOrderUseCase_HappyPath(t *testing.T) {
 	ctx := context.Background()
 	orders := infrastructure.NewInMemoryOrderRepository()
@@ -48,6 +48,8 @@ func TestPlaceOrderUseCase_HappyPath(t *testing.T) {
 		logger,
 	)
 
+	// #endregion
+	// #region test-happy-path-b
 	result, err := uc.Execute(ctx, application.PlaceOrderCommand{
 		CustomerID: "cust_001",
 		Items: []application.OrderItemRequest{

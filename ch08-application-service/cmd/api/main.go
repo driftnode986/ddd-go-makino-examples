@@ -13,7 +13,7 @@ import (
 
 // #endregion
 
-// #region main
+// #region main-a
 func main() {
 	ctx := context.Background()
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
@@ -32,6 +32,8 @@ func main() {
 	_ = placeOrder
 	_ = listOrders
 
+	// #endregion
+	// #region main-b
 	mux := http.NewServeMux()
 	// mux.HandleFunc(
 	// 	"POST /orders",

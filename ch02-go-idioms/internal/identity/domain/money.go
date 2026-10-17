@@ -1,3 +1,4 @@
+// #region money-a
 package domain
 
 import "fmt"
@@ -16,6 +17,8 @@ func NewMoney(amount int64, currency Currency) (Money, error) {
 	return Money{amount: amount, currency: currency}, nil
 }
 
+// #endregion
+// #region money-b
 // Add は新しい Money を返す (状態変更ではない)
 func (m Money) Add(other Money) (Money, error) {
 	if m.currency != other.currency {
@@ -31,3 +34,5 @@ func (m Money) Add(other Money) (Money, error) {
 func (m Money) Equals(other Money) bool {
 	return m.amount == other.amount && m.currency == other.currency
 }
+
+// #endregion

@@ -46,7 +46,7 @@ func NewMoney(amount int64, currency Currency) (Money, error) {
 
 // #endregion
 
-// #region money-methods
+// #region money-methods-a
 // Amount は最小単位の金額を返す。
 func (m Money) Amount() int64 { return m.amount }
 
@@ -70,6 +70,8 @@ func (m Money) Add(other Money) (Money, error) {
 	}, nil
 }
 
+// #endregion
+// #region money-methods-b
 // Equals は値が完全に一致するときに真。
 func (m Money) Equals(other Money) bool {
 	return m.amount == other.amount && m.currency == other.currency

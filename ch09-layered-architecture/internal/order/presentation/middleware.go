@@ -1,4 +1,4 @@
-// #region request-id-middleware
+// #region request-id-middleware-a
 package presentation
 
 import (
@@ -15,6 +15,8 @@ type ctxKey string
 
 const requestIDKey ctxKey = "request_id"
 
+// #endregion
+// #region request-id-middleware-b
 // RequestIDMiddleware は X-Request-ID ヘッダを尊重しつつ、
 // なければ新しい ID を生成して context に乗せる。
 func RequestIDMiddleware(next http.Handler) http.Handler {
@@ -93,7 +95,7 @@ func (sw *statusWriter) WriteHeader(code int) {
 
 // #endregion
 
-// #region recovery-middleware
+// #region recovery-middleware-a
 // RecoveryMiddleware は panic を 500 に変換し、
 // スタックトレースをログに記録する。
 func RecoveryMiddleware(
@@ -102,6 +104,8 @@ func RecoveryMiddleware(
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
+				// #endregion
+				// #region recovery-middleware-b
 				defer func() {
 					if rec := recover(); rec != nil {
 						logger.ErrorContext(

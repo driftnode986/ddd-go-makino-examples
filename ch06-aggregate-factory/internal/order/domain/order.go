@@ -47,7 +47,7 @@ var (
 
 // #endregion
 
-// #region order-commands
+// #region order-commands-a
 // AddItem は明細行を追加する。draft 状態でのみ可能。
 func (o *Order) AddItem(
 	productID ProductID,
@@ -68,6 +68,8 @@ func (o *Order) AddItem(
 	return nil
 }
 
+// #endregion
+// #region order-commands-b
 // RemoveItem は明細行を削除する。draft 状態でのみ可能。
 func (o *Order) RemoveItem(productID ProductID) error {
 	if o.status != StatusDraft {

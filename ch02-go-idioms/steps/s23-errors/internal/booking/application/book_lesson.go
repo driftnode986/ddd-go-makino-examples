@@ -1,3 +1,4 @@
+// #region book-lesson-a
 package application
 
 import (
@@ -8,6 +9,8 @@ import (
 	"github.com/driftnode986/ddd-go-makino-examples/ch02-go-idioms/internal/booking/domain"
 )
 
+// #endregion
+// #region book-lesson-b
 func (u *BookLessonUseCase) Execute(
 	ctx context.Context,
 	in BookLessonInput,
@@ -31,3 +34,5 @@ func (u *BookLessonUseCase) Execute(
 	}
 	return nil
 }
+
+// #endregion

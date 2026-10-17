@@ -1,4 +1,4 @@
-// #region new-hour
+// #region new-hour-a
 package domain
 
 import (
@@ -21,6 +21,8 @@ var ErrOutOfBusinessHours = errors.New(
 // ErrHourHasMinutes は分単位を含む時刻を表すドメインエラー。
 var ErrHourHasMinutes = errors.New("hour must be on the hour")
 
+// #endregion
+// #region new-hour-b
 // NewHour は業務ルールを満たす時刻を受け取り、Hour を返す。
 func NewHour(t time.Time) (Hour, error) {
 	if t.Minute() != 0 || t.Second() != 0 || t.Nanosecond() != 0 {
