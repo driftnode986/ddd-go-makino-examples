@@ -1,3 +1,4 @@
+// #region request-id-middleware
 package presentation
 
 import (
@@ -28,6 +29,9 @@ func RequestIDMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// #endregion
+
+// #region request-id-helpers
 func RequestIDFromContext(ctx context.Context) (string, bool) {
 	id, ok := ctx.Value(requestIDKey).(string)
 	return id, ok
@@ -39,6 +43,9 @@ func newRequestID() string {
 	return hex.EncodeToString(b)
 }
 
+// #endregion
+
+// #region logging-middleware
 // LoggingMiddleware は HTTP リクエスト/レスポンスを構造化ログで記録する。
 func LoggingMiddleware(logger *slog.Logger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
@@ -60,6 +67,9 @@ func LoggingMiddleware(logger *slog.Logger) func(http.Handler) http.Handler {
 	}
 }
 
+// #endregion
+
+// #region status-writer
 // statusWriter は WriteHeader で渡されたステータスを保持する。
 type statusWriter struct {
 	http.ResponseWriter
@@ -71,6 +81,9 @@ func (sw *statusWriter) WriteHeader(code int) {
 	sw.ResponseWriter.WriteHeader(code)
 }
 
+// #endregion
+
+// #region recovery-middleware
 // RecoveryMiddleware は panic を 500 に変換し、スタックトレースをログに記録する。
 func RecoveryMiddleware(logger *slog.Logger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
@@ -89,3 +102,5 @@ func RecoveryMiddleware(logger *slog.Logger) func(http.Handler) http.Handler {
 		})
 	}
 }
+
+// #endregion

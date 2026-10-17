@@ -1,3 +1,4 @@
+// #region place-order-decode
 package presentation
 
 import (
@@ -21,8 +22,10 @@ func MakePlaceOrderHandler(
 			writeError(w, http.StatusBadRequest,
 				"INVALID_JSON", "request body is not valid JSON")
 			return
+			// #endregion
 		}
 
+		// #region place-order-execute
 		cmd := application.PlaceOrderCommand{
 			CustomerID: req.CustomerID,
 			Items:      toApplicationItems(req.Items),
@@ -41,6 +44,9 @@ func MakePlaceOrderHandler(
 	}
 }
 
+// #endregion
+
+// #region get-order-handler
 // MakeGetOrderHandler は GET /orders/{id} のハンドラを生成する。
 func MakeGetOrderHandler(
 	query *application.GetOrderQueryHandler,
@@ -64,6 +70,8 @@ func MakeGetOrderHandler(
 		writeJSON(w, http.StatusOK, result)
 	}
 }
+
+// #endregion
 
 // MakeListOrdersHandler は GET /orders のハンドラを生成する。
 func MakeListOrdersHandler(

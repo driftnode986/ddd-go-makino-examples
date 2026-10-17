@@ -51,7 +51,14 @@ func (uc *PlaceOrderUseCase) Execute(
 		}
 	}
 
-	o := domain.NewOrder(customerID, uc.Clock.Now())
+	o, err := domain.NewOrder(customerID, uc.Clock.Now())
+	if err != nil {
+		return PlaceOrderResult{}, &ApplicationError{
+			Code:    "INVALID_INPUT",
+			Message: "customer id is invalid",
+			Cause:   err,
+		}
+	}
 	for _, item := range cmd.Items {
 		productID, err := domain.NewProductID(item.ProductID)
 		if err != nil {

@@ -1,62 +1,42 @@
+// #region order
 package domain
 
 import (
-	"slices"
+	"errors"
 	"time"
 )
-
-type OrderStatus string
-
-const (
-	StatusDraft     OrderStatus = "draft"
-	StatusConfirmed OrderStatus = "confirmed"
-	StatusCancelled OrderStatus = "cancelled"
-)
-
-type OrderItem struct {
-	productID ProductID
-	quantity  int
-	unitPrice Money
-}
-
-func NewOrderItem(productID ProductID, quantity int, unitPrice Money) (OrderItem, error) {
-	if quantity <= 0 {
-		return OrderItem{}, ErrInvalidQuantity
-	}
-	return OrderItem{
-		productID: productID,
-		quantity:  quantity,
-		unitPrice: unitPrice,
-	}, nil
-}
-
-func (i OrderItem) ProductID() ProductID { return i.productID }
-func (i OrderItem) Quantity() int        { return i.quantity }
-func (i OrderItem) UnitPrice() Money     { return i.unitPrice }
-func (i OrderItem) Subtotal() Money      { return i.unitPrice.MulInt(i.quantity) }
 
 type Order struct {
 	id         OrderID
 	customerID CustomerID
 	items      []OrderItem
-	status     OrderStatus
-	placedAt   time.Time
+	status     Status
+	createdAt  time.Time
 }
 
-func NewOrder(customerID CustomerID, placedAt time.Time) *Order {
+func NewOrder(custID CustomerID, now time.Time) (*Order, error) {
+	if custID.IsZero() {
+		return nil, errors.New("customer id required")
+	}
 	return &Order{
 		id:         NewOrderID(),
-		customerID: customerID,
+		customerID: custID,
 		status:     StatusDraft,
-		placedAt:   placedAt,
-	}
+		createdAt:  now,
+	}, nil
 }
+
+// #endregion
 
 func (o *Order) ID() OrderID            { return o.id }
 func (o *Order) CustomerID() CustomerID { return o.customerID }
-func (o *Order) Status() OrderStatus    { return o.status }
-func (o *Order) PlacedAt() time.Time    { return o.placedAt }
-func (o *Order) Items() []OrderItem     { return slices.Clone(o.items) }
+func (o *Order) Status() Status         { return o.status }
+func (o *Order) CreatedAt() time.Time   { return o.createdAt }
+
+// Items は明細のコピーを返す（内部スライスを外から書き換えさせない）。
+func (o *Order) Items() []OrderItem {
+	return append([]OrderItem(nil), o.items...)
+}
 
 func (o *Order) AddItem(productID ProductID, quantity int, unitPrice Money) error {
 	if o.status != StatusDraft {

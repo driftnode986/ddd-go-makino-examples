@@ -1,3 +1,4 @@
+// #region request-dto
 package presentation
 
 import (
@@ -23,6 +24,9 @@ type PlaceOrderResponse struct {
 	Total   int64  `json:"total"`
 }
 
+// #endregion
+
+// #region to-application-items
 func toApplicationItems(reqs []PlaceOrderItemRequest) []application.OrderItemInput {
 	out := make([]application.OrderItemInput, 0, len(reqs))
 	for _, r := range reqs {
@@ -34,3 +38,5 @@ func toApplicationItems(reqs []PlaceOrderItemRequest) []application.OrderItemInp
 	}
 	return out
 }
+
+// #endregion

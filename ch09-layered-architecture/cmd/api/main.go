@@ -1,3 +1,4 @@
+// #region main-imports
 package main
 
 import (
@@ -15,6 +16,9 @@ import (
 	"github.com/driftnode986/ddd-go-makino-examples/ch09-layered-architecture/internal/order/presentation"
 )
 
+// #endregion
+
+// #region main-wiring
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout,
 		&slog.HandlerOptions{Level: slog.LevelInfo}))
@@ -34,8 +38,11 @@ func main() {
 	listOrdersQuery := &application.ListOrdersByCustomerHandler{
 		OrderRepo: orderRepo,
 	}
+	// #endregion
 
+	// #region main-routes
 	// Presentation 層: ハンドラ
+	// #region routes
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /orders",
 		presentation.MakePlaceOrderHandler(placeOrderUC, logger))
@@ -43,6 +50,7 @@ func main() {
 		presentation.MakeGetOrderHandler(getOrderQuery, logger))
 	mux.HandleFunc("GET /orders",
 		presentation.MakeListOrdersHandler(listOrdersQuery, logger))
+	// #endregion
 
 	// ミドルウェア合成
 	handler := presentation.RequestIDMiddleware(
@@ -50,7 +58,9 @@ func main() {
 			presentation.RecoveryMiddleware(logger)(mux),
 		),
 	)
+	// #endregion
 
+	// #region server
 	srv := &http.Server{
 		Addr:              ":8080",
 		Handler:           handler,
@@ -68,7 +78,9 @@ func main() {
 
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+	// #endregion
 
+	// #region shutdown
 	select {
 	case sig := <-sigCh:
 		logger.Info("shutdown signal received", slog.String("signal", sig.String()))
@@ -82,3 +94,5 @@ func main() {
 		logger.Error("shutdown error", slog.Any("err", err))
 	}
 }
+
+// #endregion

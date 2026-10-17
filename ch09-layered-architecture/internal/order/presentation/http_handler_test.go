@@ -1,3 +1,4 @@
+// #region test-imports
 package presentation_test
 
 import (
@@ -15,6 +16,9 @@ import (
 	"github.com/driftnode986/ddd-go-makino-examples/ch09-layered-architecture/internal/order/presentation"
 )
 
+// #endregion
+
+// #region place-order-success-request
 func TestPlaceOrderHandler_Success(t *testing.T) {
 	repo := infrastructure.NewMemoryOrderRepository()
 	uc := &application.PlaceOrderUseCase{
@@ -34,7 +38,9 @@ func TestPlaceOrderHandler_Success(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	handler.ServeHTTP(rec, req)
+	// #endregion
 
+	// #region place-order-success-assert
 	if rec.Code != http.StatusCreated {
 		t.Fatalf("status = %d, want %d, body=%s",
 			rec.Code, http.StatusCreated, rec.Body.String())
@@ -52,6 +58,9 @@ func TestPlaceOrderHandler_Success(t *testing.T) {
 	}
 }
 
+// #endregion
+
+// #region place-order-invalid-json
 func TestPlaceOrderHandler_InvalidJSON(t *testing.T) {
 	repo := infrastructure.NewMemoryOrderRepository()
 	uc := &application.PlaceOrderUseCase{
@@ -82,6 +91,8 @@ func TestPlaceOrderHandler_InvalidJSON(t *testing.T) {
 		t.Errorf("code = %q, want %q", resp.Code, "INVALID_JSON")
 	}
 }
+
+// #endregion
 
 func TestGetOrderHandler_NotFound(t *testing.T) {
 	repo := infrastructure.NewMemoryOrderRepository()

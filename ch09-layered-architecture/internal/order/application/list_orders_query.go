@@ -46,7 +46,7 @@ func (h *ListOrdersByCustomerHandler) Execute(
 			OrderID:  o.ID().String(),
 			Total:    o.Total().Amount(),
 			Status:   string(o.Status()),
-			PlacedAt: o.PlacedAt().Unix(),
+			PlacedAt: o.CreatedAt().Unix(),
 		})
 	}
 	return result, nil
@@ -75,6 +75,6 @@ func (h *GetOrderQueryHandler) Execute(
 		OrderID:  o.ID().String(),
 		Total:    o.Total().Amount(),
 		Status:   string(o.Status()),
-		PlacedAt: o.PlacedAt().Unix(),
+		PlacedAt: o.CreatedAt().Unix(),
 	}, nil
 }

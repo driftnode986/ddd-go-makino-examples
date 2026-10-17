@@ -1,3 +1,4 @@
+// #region error-response
 package presentation
 
 import (
@@ -26,6 +27,9 @@ func writeJSON(w http.ResponseWriter, status int, body any) {
 	_ = json.NewEncoder(w).Encode(body)
 }
 
+// #endregion
+
+// #region write-application-error
 func writeApplicationError(
 	w http.ResponseWriter,
 	logger *slog.Logger,
@@ -53,6 +57,9 @@ func writeApplicationError(
 		"INTERNAL_ERROR", "internal server error")
 }
 
+// #endregion
+
+// #region map-code
 func mapApplicationCodeToHTTP(code string) int {
 	switch code {
 	case "INVALID_INPUT":
@@ -69,3 +76,5 @@ func mapApplicationCodeToHTTP(code string) int {
 		return http.StatusInternalServerError
 	}
 }
+
+// #endregion
