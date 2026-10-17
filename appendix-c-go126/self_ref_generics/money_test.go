@@ -9,9 +9,24 @@ import (
 func TestMoneyAdd_SameCurrency(t *testing.T) {
 	a := money.NewMoney[money.JPY](1000)
 	b := money.NewMoney[money.JPY](500)
-	got := a.Add(b)
-	if got.Amount() != 1500 {
-		t.Errorf("got %d, want 1500", got.Amount())
+	if got := a.Add(b).String(); got != "1500 JPY" {
+		t.Errorf("got %q, want %q", got, "1500 JPY")
+	}
+}
+
+// sum は Adder 制約を満たす型なら何でも足し合わせる。
+func sum[A money.Adder[A]](first A, rest ...A) A {
+	total := first
+	for _, v := range rest {
+		total = total.Add(v)
+	}
+	return total
+}
+
+func TestAdderConstraint(t *testing.T) {
+	got := sum(money.NewMoney[money.USD](1), money.NewMoney[money.USD](2), money.NewMoney[money.USD](3))
+	if got.String() != "6 USD" {
+		t.Errorf("got %q, want %q", got.String(), "6 USD")
 	}
 }
 

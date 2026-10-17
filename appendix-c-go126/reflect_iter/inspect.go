@@ -1,4 +1,4 @@
-// Package reflect_iter demonstrates Go 1.26 reflect.Type.Fields() iterator.
+// #region assert-unexported
 package reflect_iter
 
 import (
@@ -8,7 +8,8 @@ import (
 	"unicode"
 )
 
-// AssertAllFieldsUnexported reports an error if any struct field is exported.
+// AssertAllFieldsUnexported は構造体のすべてのフィールドが非公開 (lower case 始まり)
+// であることを確認するテストヘルパーです。
 func AssertAllFieldsUnexported(v any) error {
 	t := reflect.TypeOf(v)
 	if t.Kind() == reflect.Pointer {
@@ -29,9 +30,14 @@ func AssertAllFieldsUnexported(v any) error {
 	return nil
 }
 
+// #endregion
+
+// #region is-exported
 func isExported(name string) bool {
 	if name == "" {
 		return false
 	}
 	return unicode.IsUpper(rune(name[0]))
 }
+
+// #endregion

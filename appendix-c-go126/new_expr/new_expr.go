@@ -1,4 +1,3 @@
-// Package new_expr demonstrates Go 1.26 new(expr) syntax for optional fields.
 package new_expr
 
 import (
@@ -8,7 +7,7 @@ import (
 
 type Person struct {
 	Name string `json:"name"`
-	// Age is the calculated value when born is set, otherwise omitted from JSON.
+	// Age は生年月日があれば値、なければ nil で JSON に出さない。
 	Age *int `json:"age,omitempty"`
 }
 
@@ -16,7 +15,7 @@ func yearsSince(t time.Time) int {
 	return int(time.Since(t).Hours() / (365.25 * 24))
 }
 
-// PersonJSON uses Go 1.26 new(expr) to initialize an optional pointer field in one line.
+// PersonJSON は Go 1.26 の new(expr) で Optional フィールドを 1 行で初期化します。
 func PersonJSON(name string, born time.Time) ([]byte, error) {
 	p := Person{
 		Name: name,

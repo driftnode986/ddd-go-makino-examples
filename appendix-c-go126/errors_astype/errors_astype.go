@@ -1,4 +1,4 @@
-// Package errors_astype demonstrates Go 1.26's errors.AsType[T].
+// #region error-types
 package errors_astype
 
 import (
@@ -25,7 +25,10 @@ func (e *NotFoundError) Error() string {
 	return fmt.Sprintf("not found: %s id=%s", e.Resource, e.ID)
 }
 
-// MapStatus uses Go 1.26 errors.AsType[T] to map domain errors to HTTP status.
+// #endregion
+
+// #region map-status
+// MapStatus は Go 1.26 の errors.AsType[T] でエラーを HTTP ステータスに対応付けます。
 func MapStatus(err error) int {
 	if _, ok := errors.AsType[*ValidationError](err); ok {
 		return http.StatusBadRequest
@@ -35,3 +38,5 @@ func MapStatus(err error) int {
 	}
 	return http.StatusInternalServerError
 }
+
+// #endregion
