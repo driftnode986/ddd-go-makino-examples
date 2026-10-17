@@ -1,3 +1,4 @@
+// #region money-type
 package domain
 
 import (
@@ -27,6 +28,9 @@ var ErrCurrencyMismatch = errors.New("currency mismatch")
 // ErrNegativeAmount は負の金額を表すドメインエラー。
 var ErrNegativeAmount = errors.New("amount must not be negative")
 
+// #endregion
+
+// #region new-money
 // NewMoney は最小単位の整数と通貨を受け取り、Money を返す。
 func NewMoney(amount int64, currency Currency) (Money, error) {
 	if amount < 0 {
@@ -38,6 +42,9 @@ func NewMoney(amount int64, currency Currency) (Money, error) {
 	return Money{amount: amount, currency: currency}, nil
 }
 
+// #endregion
+
+// #region money-methods
 // Amount は最小単位の金額を返す。
 func (m Money) Amount() int64 { return m.amount }
 
@@ -48,7 +55,9 @@ func (m Money) Currency() Currency { return m.currency }
 // 受け手は変更されない (不変性)。
 func (m Money) Add(other Money) (Money, error) {
 	if m.currency != other.currency {
-		return Money{}, fmt.Errorf("%w: %s vs %s", ErrCurrencyMismatch, m.currency, other.currency)
+		return Money{}, fmt.Errorf(
+			"%w: %s vs %s", ErrCurrencyMismatch, m.currency, other.currency,
+		)
 	}
 	return Money{amount: m.amount + other.amount, currency: m.currency}, nil
 }
@@ -62,3 +71,5 @@ func (m Money) Equals(other Money) bool {
 func (m Money) String() string {
 	return fmt.Sprintf("%d %s", m.amount, m.currency)
 }
+
+// #endregion

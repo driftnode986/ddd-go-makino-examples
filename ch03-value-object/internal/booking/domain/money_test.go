@@ -24,6 +24,7 @@ func TestMoney_Add_RequiresSameCurrency(t *testing.T) {
 	}
 }
 
+// #region immutability
 func TestMoney_Add_PreservesImmutability(t *testing.T) {
 	a, _ := domain.NewMoney(1000, domain.JPY)
 	b, _ := domain.NewMoney(500, domain.JPY)
@@ -43,6 +44,8 @@ func TestMoney_Add_PreservesImmutability(t *testing.T) {
 		t.Errorf("b was mutated: want 500, got %d", b.Amount())
 	}
 }
+
+// #endregion
 
 func TestMoney_Equals(t *testing.T) {
 	a, _ := domain.NewMoney(1000, domain.JPY)

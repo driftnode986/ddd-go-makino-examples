@@ -1,3 +1,4 @@
+// #region new-hour
 package domain
 
 import (
@@ -29,6 +30,9 @@ func NewHour(t time.Time) (Hour, error) {
 	return Hour{t: t}, nil
 }
 
+// #endregion
+
+// #region hour-methods
 // Time は内部の time.Time を返す (Persistence Model 変換用)。
 func (h Hour) Time() time.Time { return h.t }
 
@@ -37,3 +41,5 @@ func (h Hour) Time() time.Time { return h.t }
 func (h Hour) IsInThePast(clock func() time.Time) bool {
 	return h.t.Before(clock())
 }
+
+// #endregion

@@ -1,3 +1,4 @@
+// #region test-imports
 package domain_test
 
 import (
@@ -7,6 +8,9 @@ import (
 	"github.com/driftnode986/ddd-go-makino-examples/ch03-value-object/internal/booking/domain"
 )
 
+// #endregion
+
+// #region test-new-email
 func TestNewEmail_RejectsInvalidFormat(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -24,7 +28,8 @@ func TestNewEmail_RejectsInvalidFormat(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := domain.NewEmail(tt.input)
 			if (err != nil) != tt.wantErr {
-				t.Fatalf("NewEmail(%q): wantErr=%v, got err=%v", tt.input, tt.wantErr, err)
+				t.Fatalf("NewEmail(%q): wantErr=%v, got err=%v",
+					tt.input, tt.wantErr, err)
 			}
 			if err != nil && !errors.Is(err, domain.ErrInvalidEmail) {
 				t.Fatalf("err should wrap ErrInvalidEmail, got %v", err)
@@ -32,6 +37,8 @@ func TestNewEmail_RejectsInvalidFormat(t *testing.T) {
 		})
 	}
 }
+
+// #endregion
 
 func TestEmail_Equals_IsCaseInsensitiveOnDomain(t *testing.T) {
 	a, err := domain.NewEmail("Alice@Example.com")

@@ -1,3 +1,4 @@
+// #region email-type
 package domain
 
 import (
@@ -16,6 +17,9 @@ type Email struct {
 // ErrInvalidEmail は不正なメール形式を表すセンチネルエラー。
 var ErrInvalidEmail = errors.New("invalid email")
 
+// #endregion
+
+// #region new-email
 // NewEmail は RFC 5322 に従ってメールアドレスを検証し、Email を返す。
 func NewEmail(s string) (Email, error) {
 	addr, err := mail.ParseAddress(s)
@@ -32,6 +36,9 @@ func NewEmail(s string) (Email, error) {
 	}, nil
 }
 
+// #endregion
+
+// #region email-methods
 // String は表示用文字列を返す (fmt.Stringer)。
 func (e Email) String() string {
 	if e.local == "" && e.domain == "" {
@@ -49,3 +56,5 @@ func (e Email) Equals(other Email) bool {
 func (e Email) Domain() string {
 	return e.domain
 }
+
+// #endregion
