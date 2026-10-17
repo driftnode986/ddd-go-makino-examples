@@ -1,4 +1,3 @@
-// catalog/internal/catalog/application/lesson_query.go
 package application
 
 import (

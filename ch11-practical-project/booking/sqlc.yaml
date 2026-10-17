@@ -1,0 +1,11 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "internal/booking/infrastructure/postgres/queries.sql"
+    schema:  "internal/booking/infrastructure/postgres/migrations"
+    gen:
+      go:
+        package: "sqlc"
+        out:     "internal/booking/infrastructure/postgres/sqlc"
+        sql_package: "pgx/v5"
+        emit_pointers_for_null_types: true

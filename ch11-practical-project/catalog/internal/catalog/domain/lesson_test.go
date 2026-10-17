@@ -1,4 +1,3 @@
-// catalog/internal/catalog/domain/lesson_test.go
 package domain_test
 
 import (

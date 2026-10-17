@@ -1,4 +1,3 @@
-// shared/dto/lesson_view.go
 package dto
 
 import "time"

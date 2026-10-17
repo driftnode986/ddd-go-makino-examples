@@ -1,4 +1,3 @@
-// internal/booking/presentation/http/booking_handler.go
 package http
 
 import (

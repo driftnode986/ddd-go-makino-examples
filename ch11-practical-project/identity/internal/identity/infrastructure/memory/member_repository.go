@@ -1,4 +1,3 @@
-// identity/internal/identity/infrastructure/memory/member_repository.go
 package memory
 
 import (

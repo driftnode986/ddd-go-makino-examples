@@ -1,4 +1,3 @@
-// catalog/internal/catalog/presentation/http/lesson_handler.go
 package http
 
 import (

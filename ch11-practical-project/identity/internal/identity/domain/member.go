@@ -1,4 +1,3 @@
-// identity/internal/identity/domain/member.go
 package domain
 
 import (

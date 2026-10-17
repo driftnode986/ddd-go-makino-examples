@@ -1,4 +1,3 @@
-// catalog/internal/catalog/domain/lesson.go
 package domain
 
 import (

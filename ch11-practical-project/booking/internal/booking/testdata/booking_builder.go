@@ -1,4 +1,4 @@
-// internal/booking/testdata/booking_builder.go
+// #region builder
 package testdata
 
 import (
@@ -27,6 +27,9 @@ func NewBookingBuilder() *BookingBuilder {
 	}
 }
 
+// #endregion
+
+// #region builder-methods
 func (b *BookingBuilder) WithStatus(s domain.BookingStatus) *BookingBuilder {
 	b.status = s
 	return b
@@ -41,3 +44,5 @@ func (b *BookingBuilder) Build() *domain.Booking {
 	return domain.RestoreBooking(b.id, b.memberID, b.lessonID,
 		b.status, b.version, b.createdAt)
 }
+
+// #endregion

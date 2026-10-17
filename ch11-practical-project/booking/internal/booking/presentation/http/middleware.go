@@ -1,4 +1,3 @@
-// internal/booking/presentation/http/middleware.go
 package http
 
 import (

@@ -1,4 +1,3 @@
-// internal/booking/infrastructure/memory/booking_repository.go
 package memory
 
 import (

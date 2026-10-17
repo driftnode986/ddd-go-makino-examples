@@ -1,4 +1,3 @@
-// internal/booking/application/list_bookings_query.go
 package application
 
 import (

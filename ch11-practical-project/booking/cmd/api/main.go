@@ -1,4 +1,4 @@
-// booking/cmd/api/main.go
+// #region main-imports
 package main
 
 import (
@@ -24,6 +24,9 @@ func (stubLessonQuery) FindLessonView(_ context.Context,
 	return dto.LessonView{ID: id, Name: "Sample Lesson"}, nil
 }
 
+// #endregion
+
+// #region main-wiring
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
@@ -38,7 +41,9 @@ func main() {
 		Handler:           router,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
+	// #endregion
 
+	// #region main-shutdown
 	go func() {
 		logger.Info("booking BC listening", "addr", srv.Addr)
 		if err := srv.ListenAndServe(); err != nil &&
@@ -58,5 +63,6 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		logger.Error("shutdown failed", "err", err)
 	}
-	logger.Info("stopped")
 }
+
+// #endregion

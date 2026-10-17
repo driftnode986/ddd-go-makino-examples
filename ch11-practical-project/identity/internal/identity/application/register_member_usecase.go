@@ -1,4 +1,3 @@
-// identity/internal/identity/application/register_member_usecase.go
 package application
 
 import (

@@ -1,4 +1,3 @@
-// catalog/cmd/api/main.go
 package main
 
 import (

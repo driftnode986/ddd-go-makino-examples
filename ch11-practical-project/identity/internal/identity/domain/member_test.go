@@ -1,4 +1,3 @@
-// identity/internal/identity/domain/member_test.go
 package domain_test
 
 import (

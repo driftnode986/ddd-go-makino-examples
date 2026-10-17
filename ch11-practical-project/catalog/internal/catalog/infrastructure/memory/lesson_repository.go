@@ -1,4 +1,3 @@
-// catalog/internal/catalog/infrastructure/memory/lesson_repository.go
 package memory
 
 import (

@@ -1,4 +1,3 @@
-// internal/booking/domain/id.go
 package domain
 
 import (

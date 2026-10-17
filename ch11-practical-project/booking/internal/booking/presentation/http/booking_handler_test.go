@@ -1,9 +1,7 @@
-// internal/booking/presentation/http/booking_handler_test.go
+// #region test-imports
 package http_test
 
 import (
-	"bytes"
-	"context"
 	"encoding/json"
 	"io"
 	"log/slog"
@@ -20,13 +18,9 @@ import (
 	"github.com/google/uuid"
 )
 
-type stubLessonQuery struct{ view dto.LessonView }
+// #endregion
 
-func (s *stubLessonQuery) FindLessonView(_ context.Context,
-	_ string) (dto.LessonView, error) {
-	return s.view, nil
-}
-
+// #region setup-server
 func setupTestServer(t *testing.T) *httptest.Server {
 	t.Helper()
 	repo := memory.NewBookingRepository()
@@ -42,12 +36,15 @@ func setupTestServer(t *testing.T) *httptest.Server {
 	return srv
 }
 
+// #endregion
+
+// #region place-booking-http
 func TestPlaceBooking_HTTP(t *testing.T) {
 	srv := setupTestServer(t)
 	body := strings.NewReader(`{
-		"member_id": "` + uuid.NewString() + `",
-		"lesson_id": "` + uuid.NewString() + `"
-	}`)
+        "member_id": "` + uuid.NewString() + `",
+        "lesson_id": "` + uuid.NewString() + `"
+    }`)
 
 	res, err := http.Post(srv.URL+"/booking/bookings", "application/json", body)
 	if err != nil {
@@ -72,9 +69,11 @@ func TestPlaceBooking_HTTP(t *testing.T) {
 	}
 }
 
+// #endregion
+
 func TestPlaceBooking_HTTP_InvalidInput(t *testing.T) {
 	srv := setupTestServer(t)
-	body := bytes.NewBufferString(`{"member_id":"not-uuid","lesson_id":"not-uuid"}`)
+	body := strings.NewReader(`{"member_id":"not-uuid","lesson_id":"not-uuid"}`)
 
 	res, err := http.Post(srv.URL+"/booking/bookings", "application/json", body)
 	if err != nil {

@@ -1,4 +1,3 @@
-// internal/booking/domain/repository.go
 package domain
 
 import (

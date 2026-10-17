@@ -1,4 +1,3 @@
-// identity/internal/identity/presentation/http/member_handler.go
 package http
 
 import (

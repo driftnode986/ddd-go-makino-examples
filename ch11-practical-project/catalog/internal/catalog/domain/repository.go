@@ -1,4 +1,3 @@
-// catalog/internal/catalog/domain/repository.go
 package domain
 
 import (

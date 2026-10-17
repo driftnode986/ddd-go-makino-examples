@@ -1,4 +1,3 @@
-// internal/booking/presentation/http/router.go
 package http
 
 import (

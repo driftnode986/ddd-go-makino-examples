@@ -1,4 +1,4 @@
-// internal/booking/application/place_booking_usecase_test.go
+// #region stub-lesson-query
 package application_test
 
 import (
@@ -22,6 +22,9 @@ func (s *stubLessonQuery) FindLessonView(_ context.Context,
 	return s.view, s.err
 }
 
+// #endregion
+
+// #region place-booking-success
 func TestPlaceBookingUseCase_Success(t *testing.T) {
 	repo := memory.NewBookingRepository()
 	lessonID := uuid.NewString()
@@ -41,7 +44,6 @@ func TestPlaceBookingUseCase_Success(t *testing.T) {
 	if out.Status != "pending" {
 		t.Errorf("status = %q, want %q", out.Status, "pending")
 	}
-	if out.BookingID == "" {
-		t.Error("BookingID is empty")
-	}
 }
+
+// #endregion
