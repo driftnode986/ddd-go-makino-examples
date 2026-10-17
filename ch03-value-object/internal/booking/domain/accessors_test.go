@@ -1,6 +1,7 @@
 package domain_test
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -42,8 +43,9 @@ func TestMoney_AccessorsAndString(t *testing.T) {
 }
 
 func TestNewMoney_RequiresCurrency(t *testing.T) {
-	if _, err := domain.NewMoney(100, ""); err == nil {
-		t.Fatal("want error for empty currency")
+	_, err := domain.NewMoney(100, "")
+	if !errors.Is(err, domain.ErrCurrencyRequired) {
+		t.Fatalf("want ErrCurrencyRequired, got %v", err)
 	}
 }
 

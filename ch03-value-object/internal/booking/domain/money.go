@@ -24,11 +24,17 @@ type Money struct {
 	currency Currency
 }
 
+// #endregion
+
+// #region money-errors
 // ErrCurrencyMismatch は異なる通貨同士の演算を表すドメインエラー。
 var ErrCurrencyMismatch = errors.New("currency mismatch")
 
 // ErrNegativeAmount は負の金額を表すドメインエラー。
 var ErrNegativeAmount = errors.New("amount must not be negative")
+
+// ErrCurrencyRequired は通貨が空の金額を表すドメインエラー。
+var ErrCurrencyRequired = errors.New("currency required")
 
 // #endregion
 
@@ -39,7 +45,7 @@ func NewMoney(amount int64, currency Currency) (Money, error) {
 		return Money{}, ErrNegativeAmount
 	}
 	if currency == "" {
-		return Money{}, errors.New("currency required")
+		return Money{}, ErrCurrencyRequired
 	}
 	return Money{amount: amount, currency: currency}, nil
 }

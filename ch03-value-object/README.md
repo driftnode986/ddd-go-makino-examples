@@ -4,7 +4,7 @@
 
 ## 動作環境
 
-- Go 1.25.0 以上
+- Go 1.25 または 1.26 の最新のパッチ版（`go.mod` の `go` の行は 1.25.0。標準ライブラリの脆弱性はパッチ版で直るため、`go version` で確かめて最新に上げておく）
 
 ## 実行
 
@@ -20,7 +20,7 @@ go test -cover ./...
 - `internal/booking/domain/money.go` — Money 値オブジェクト（int64 最小単位保持）
 - `internal/booking/domain/hour.go` — Hour 値オブジェクト（営業時間の範囲制約）
 - `internal/booking/domain/id.go` — 型安全な ID（ジェネリクス + phantom type）
-- 各 `*_test.go` — Table-driven テスト + go-cmp での比較
+- 各 `*_test.go` — 標準の `testing` パッケージだけで書いた Table-driven テスト
 
 ## トピック
 
