@@ -13,27 +13,28 @@
 ```bash
 go test ./...                       # ユニットテスト (in-memory リポジトリ)
 go test -race ./...                 # race detector 付き
-go build -tags=pg ./...             # PostgreSQL 実装骨子のビルド確認
+go test -tags=integration ./...     # 統合テスト (Testcontainers で PostgreSQL を起動。要 Docker)
+sqlc generate                       # db/*.sql を変えたら sqlcgen/ を作り直す (生成物はコミット済み)
 ```
-
-PostgreSQL / Testcontainers を使った統合テストは本文 7.5-7.8 のコードを写経して読者が組み立てる構成です。本サンプル repo には骨子のみ収録しています。
 
 ## 構成
 
 - `internal/booking/domain/` — ドメイン層（集約 + ID 値オブジェクト + Repository interface）
-- `internal/booking/infrastructure/` — インフラ層（in-memory リポジトリ）
-- `internal/booking/infrastructure/booking_row.go`, `booking_mapper.go` — PostgreSQL リポジトリ用の Persistence Model + マッピング（`//go:build pg` で隔離、骨子のみ）
-- `db/schema.sql` — bookings テーブル定義（本文の sqlc 用）
+- `internal/booking/infrastructure/` — インフラ層（in-memory リポジトリ、PostgreSQL リポジトリ、トランザクションの伝播 `tx.go`）
+- `internal/booking/infrastructure/booking_row.go`, `booking_mapper.go` — Persistence Model とマッピング
+- `internal/booking/infrastructure/sqlcgen/` — `sqlc generate` の生成物
+- `sqlc.yaml`, `db/schema.sql`, `db/queries.sql`, `db/list_queries.sql` — sqlc の設定・テーブル定義・クエリ
+- `db/embed.go` — 統合テストの `MigrateSchema` が読む schema.sql を埋め込む
 
 ## トピック
 
 - consumer-side interface（ドメイン層に Repository interface を置く）
 - ドメインモデル ↔ Persistence Model の分離
 - in-memory リポジトリでテストダブルを作る（モックではなくフェイク）
-- 楽観的ロック（version スナップショット）の実装
+- 楽観的ロック（`UPDATE ... WHERE version = @expected_version` と in-memory での再現）
 - `pgx.ErrNoRows` → `domain.ErrNotFound` への変換
 - `context.Context` にトランザクションを乗せる方式
-- Testcontainers でのリアル DB 統合テスト（本文参照）
+- Testcontainers でのリアル DB 統合テスト
 
 ## ライセンス
 

@@ -1,3 +1,4 @@
+// #region booking-model
 package domain
 
 import "time"
@@ -10,6 +11,7 @@ const (
 	StatusCancelled BookingStatus = "cancelled"
 )
 
+// Booking 集約ルート。フィールドは非公開で、メソッド経由で操作する。
 type Booking struct {
 	id          BookingID
 	memberID    MemberID
@@ -18,6 +20,8 @@ type Booking struct {
 	scheduledAt time.Time
 	version     int
 }
+
+// #endregion
 
 func NewBooking(id BookingID, memberID MemberID, lessonID LessonID, scheduledAt time.Time) *Booking {
 	return &Booking{

@@ -1,5 +1,4 @@
-//go:build pg
-
+// #region to-row
 package infrastructure
 
 import (
@@ -19,6 +18,9 @@ func toBookingRow(b *domain.Booking) bookingRow {
 	}
 }
 
+// #endregion
+
+// #region to-domain
 func toBookingDomain(r bookingRow) (*domain.Booking, error) {
 	id, err := domain.ParseBookingID(r.ID)
 	if err != nil {
@@ -37,3 +39,5 @@ func toBookingDomain(r bookingRow) (*domain.Booking, error) {
 		id, memberID, lessonID, status, r.ScheduledAt, r.Version,
 	), nil
 }
+
+// #endregion
