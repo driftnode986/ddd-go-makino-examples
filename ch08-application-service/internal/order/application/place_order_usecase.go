@@ -1,3 +1,4 @@
+// #region usecase
 package application
 
 import (
@@ -8,6 +9,7 @@ import (
 	"github.com/driftnode986/ddd-go-makino-examples/ch08-application-service/internal/order/domain"
 )
 
+// PlaceOrderUseCase は注文を確定するユースケース。
 type PlaceOrderUseCase struct {
 	orders  domain.Repository
 	pricing PricingPort
@@ -26,6 +28,10 @@ func NewPlaceOrderUseCase(
 	}
 }
 
+// #endregion
+
+// #region execute
+// Execute は注文を確定する。1 ユースケース = 1 メソッド。
 func (uc *PlaceOrderUseCase) Execute(
 	ctx context.Context, cmd PlaceOrderCommand,
 ) (PlaceOrderResult, error) {
@@ -49,6 +55,9 @@ func (uc *PlaceOrderUseCase) Execute(
 		}
 	}
 
+	// #endregion
+
+	// #region execute-save
 	if err := uc.orders.Add(ctx, o); err != nil {
 		return PlaceOrderResult{}, fmt.Errorf("save order: %w", err)
 	}
@@ -60,8 +69,12 @@ func (uc *PlaceOrderUseCase) Execute(
 		slog.Int64("total", o.Total().Amount()),
 	)
 
+	// #region result
 	return PlaceOrderResult{
 		OrderID: o.ID().String(),
 		Total:   o.Total().Amount(),
 	}, nil
+	// #endregion
 }
+
+// #endregion

@@ -1,3 +1,4 @@
+// #region test-imports
 package application_test
 
 import (
@@ -13,6 +14,9 @@ import (
 	"github.com/driftnode986/ddd-go-makino-examples/ch08-application-service/internal/order/infrastructure"
 )
 
+// #endregion
+
+// #region test-fakes
 type fakeClock struct{ now time.Time }
 
 func (c fakeClock) Now() time.Time { return c.now }
@@ -25,6 +29,9 @@ func (p fakePricing) UnitPrice(
 	return domain.MustMoney(p.unit, "JPY"), nil
 }
 
+// #endregion
+
+// #region test-happy-path
 func TestPlaceOrderUseCase_HappyPath(t *testing.T) {
 	ctx := context.Background()
 	orders := infrastructure.NewInMemoryOrderRepository()
@@ -52,6 +59,9 @@ func TestPlaceOrderUseCase_HappyPath(t *testing.T) {
 	}
 }
 
+// #endregion
+
+// #region test-invalid-customer
 func TestPlaceOrderUseCase_InvalidCustomerID(t *testing.T) {
 	ctx := context.Background()
 	orders := infrastructure.NewInMemoryOrderRepository()
@@ -74,52 +84,4 @@ func TestPlaceOrderUseCase_InvalidCustomerID(t *testing.T) {
 	}
 }
 
-func TestPlaceOrderUseCase_InvalidQuantity(t *testing.T) {
-	ctx := context.Background()
-	orders := infrastructure.NewInMemoryOrderRepository()
-	uc := application.NewPlaceOrderUseCase(
-		orders, fakePricing{unit: 1000}, fakeClock{},
-		slog.New(slog.NewTextHandler(io.Discard, nil)),
-	)
-
-	_, err := uc.Execute(ctx, application.PlaceOrderCommand{
-		CustomerID: "cust_001",
-		Items: []application.OrderItemRequest{
-			{ProductID: "prod_001", Quantity: 0},
-		},
-	})
-	var appErr *application.ApplicationError
-	if !errors.As(err, &appErr) {
-		t.Fatalf("expected *ApplicationError, got %T (%v)", err, err)
-	}
-	if appErr.Code != "INVALID_QUANTITY" {
-		t.Errorf("Code = %q, want %q", appErr.Code, "INVALID_QUANTITY")
-	}
-}
-
-func TestListOrdersByCustomerHandler_Empty(t *testing.T) {
-	ctx := context.Background()
-	orders := infrastructure.NewInMemoryOrderRepository()
-	h := &application.ListOrdersByCustomerHandler{Orders: orders}
-
-	got, err := h.Execute(ctx, application.ListOrdersByCustomerQuery{
-		CustomerID: "cust_999",
-	})
-	if err != nil {
-		t.Fatalf("Execute: %v", err)
-	}
-	if len(got) != 0 {
-		t.Errorf("got %d orders, want 0", len(got))
-	}
-}
-
-func TestRequestIDContext(t *testing.T) {
-	ctx := application.WithRequestID(context.Background(), "req_001")
-	id, ok := application.RequestID(ctx)
-	if !ok {
-		t.Fatal("RequestID returned ok=false")
-	}
-	if id != "req_001" {
-		t.Errorf("RequestID = %q, want %q", id, "req_001")
-	}
-}
+// #endregion

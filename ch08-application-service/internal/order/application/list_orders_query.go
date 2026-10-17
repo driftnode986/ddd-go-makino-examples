@@ -1,3 +1,4 @@
+// #region list-query-types
 package application
 
 import (
@@ -21,6 +22,9 @@ type ListOrdersByCustomerHandler struct {
 	Orders domain.Repository
 }
 
+// #endregion
+
+// #region list-query-execute
 func (h *ListOrdersByCustomerHandler) Execute(
 	ctx context.Context, q ListOrdersByCustomerQuery,
 ) ([]OrderSummary, error) {
@@ -43,3 +47,5 @@ func (h *ListOrdersByCustomerHandler) Execute(
 	}
 	return result, nil
 }
+
+// #endregion
