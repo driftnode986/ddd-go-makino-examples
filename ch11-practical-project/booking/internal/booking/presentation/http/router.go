@@ -13,8 +13,8 @@ func NewRouter(
 ) chi.Router {
 	r := chi.NewRouter()
 	r.Use(chimiddleware.RequestID)
-	r.Use(chimiddleware.Recoverer)
 	r.Use(loggingMiddleware(logger))
+	r.Use(chimiddleware.Recoverer) // ロギングより内側（第9章）
 
 	r.Route("/booking", handler.Mount)
 	return r

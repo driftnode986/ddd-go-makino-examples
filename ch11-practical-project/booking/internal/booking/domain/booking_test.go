@@ -53,12 +53,11 @@ func TestBooking_Cancel_FromPending(t *testing.T) {
 	}
 }
 
+// #region builder-usage
 func TestBooking_Cancel_FromConfirmed(t *testing.T) {
-	// #region builder-usage
 	booking := testdata.NewBookingBuilder().
 		WithStatus(domain.BookingStatusConfirmed).
 		Build()
-	// #endregion
 
 	if err := booking.Cancel(); err != nil {
 		t.Fatalf("Cancel() error = %v", err)
@@ -77,6 +76,8 @@ func TestBooking_Cancel_FromConfirmed(t *testing.T) {
 		t.Error("second Cancel() expected error, got nil")
 	}
 }
+
+// #endregion
 
 func TestBookingBuilder_WithMember(t *testing.T) {
 	member := domain.NewMemberID()

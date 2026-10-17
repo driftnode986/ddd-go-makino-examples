@@ -6,11 +6,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      GOWORK: "off"  # 各 BC を独立 module として確かめる
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.25.0"
+          go-version: "1.25.x"  # 1.25 系の最新のパッチ版
       - name: Run tests (booking)
         working-directory: booking
         run: go test ./... -race -coverprofile=coverage.out
@@ -20,7 +22,8 @@ jobs:
       - name: Run tests (identity)
         working-directory: identity
         run: go test ./... -race -coverprofile=coverage.out
-      - uses: golangci/golangci-lint-action@v6
+      # 設定は v2 の書式。v2 に対応する action は v7 以降
+      - uses: golangci/golangci-lint-action@v9
         with:
-          version: latest
+          version: v2.5.0
           working-directory: booking

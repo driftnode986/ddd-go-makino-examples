@@ -2,7 +2,7 @@
 # トレーニング予約 SaaS の 3 BC モノレポを操作する最小コマンド集です。
 
 # #region minimal
-.PHONY: up down test build run-booking run-catalog run-identity
+.PHONY: up down test test-race test-db
 
 up:
 	docker compose up -d
@@ -15,6 +15,20 @@ test:
 	cd catalog && go test ./...
 	cd identity && go test ./...
 
+test-race:
+	cd booking && go test -race ./...
+	cd catalog && go test -race ./...
+	cd identity && go test -race ./...
+
+# 各 BC の SQL を PostgreSQL に流して確かめる（Docker が要る）。
+# dbtest は go.work に入れない独立 module なので GOWORK=off。
+test-db:
+	cd dbtest && GOWORK=off go test ./...
+# #endregion
+
+# #region run
+.PHONY: build run-booking run-catalog run-identity
+
 build:
 	cd booking && go build ./...
 	cd catalog && go build ./...
@@ -22,22 +36,10 @@ build:
 
 run-booking:
 	cd booking && go run ./cmd/api
-# #endregion
 
 run-catalog:
 	cd catalog && go run ./cmd/api
 
 run-identity:
 	cd identity && go run ./cmd/api
-
-.PHONY: test-race test-db
-
-test-race:
-	cd booking && go test -race ./...
-	cd catalog && go test -race ./...
-	cd identity && go test -race ./...
-
-# SQL（各 BC のマイグレーションと booking の queries.sql）を PostgreSQL に流して確かめる。
-# Docker が要る。dbtest は go.work に入れない独立 module なので GOWORK=off で動かす。
-test-db:
-	cd dbtest && GOWORK=off go test ./...
+# #endregion
