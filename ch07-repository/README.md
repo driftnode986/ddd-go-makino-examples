@@ -4,7 +4,8 @@
 
 ## 動作環境
 
-- Go 1.25.0 以上
+- Go 1.25 以降（1.25 / 1.26 系の最新のパッチ版を使ってください）
+- sqlc v1.30.0（`db/*.sql` を変えて生成し直す場合のみ。`go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.30.0`）
 - PostgreSQL 16 以上（統合テストを動かす場合のみ、Testcontainers 経由）
 - Docker（統合テストを動かす場合のみ）
 

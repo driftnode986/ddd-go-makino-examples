@@ -1,10 +1,16 @@
+# #region sqlc-config
 version: "2"
 sql:
   - schema: "db/schema.sql"
-    queries: ["db/queries.sql", "db/list_queries.sql"]
     engine: "postgresql"
     gen:
       go:
         package: "sqlcgen"
         out: "internal/booking/infrastructure/sqlcgen"
         sql_package: "pgx/v5"
+    queries:
+      - "db/queries.sql"
+# #endregion
+# #region sqlc-list-queries
+      - "db/list_queries.sql"
+# #endregion
