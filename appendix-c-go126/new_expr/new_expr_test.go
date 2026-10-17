@@ -35,3 +35,13 @@ func TestPersonJSON(t *testing.T) {
 		t.Errorf("expected age field in JSON: %s", data)
 	}
 }
+
+func TestPersonJSON_NoBirthday(t *testing.T) {
+	data, err := new_expr.PersonJSON("Bob", time.Time{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if strings.Contains(string(data), `"age"`) {
+		t.Errorf("age must be omitted without a birthday: %s", data)
+	}
+}

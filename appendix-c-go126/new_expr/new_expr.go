@@ -18,9 +18,9 @@ func yearsSince(t time.Time) int {
 // PersonJSON は Go 1.26 の new(expr) で
 // Optional フィールドを 1 行で初期化します。
 func PersonJSON(name string, born time.Time) ([]byte, error) {
-	p := Person{
-		Name: name,
-		Age:  new(yearsSince(born)),
+	p := Person{Name: name}
+	if !born.IsZero() { // 生年月日が未登録なら Age は nil のまま
+		p.Age = new(yearsSince(born))
 	}
 	return json.Marshal(p)
 }
