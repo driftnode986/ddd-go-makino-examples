@@ -4,7 +4,7 @@
 
 ## 動作環境
 
-- Go 1.25.0 以上
+- Go 1.25 以降（1.25 / 1.26 系の最新のパッチ版を使ってください）
 
 ## 実行
 
@@ -16,7 +16,7 @@ go test -cover ./...
 
 ## 構成
 
-- `internal/booking/domain/` — Clock interface、Booking、ConflictDetector、ExpirationChecker
+- `internal/booking/domain/` — Clock interface、Booking、Hour・HoursOverlap、ConflictDetector、ExpirationChecker
 - `internal/pricing/domain/` — Money、DiscountRate、CalculateDiscountedPrice（関数版ドメインサービス）
 - `internal/coupon/domain/` — CouponCode、RandomSource interface、CodeGenerator
 
